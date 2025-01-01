@@ -1,0 +1,66 @@
+{
+  "name": "hirasso/wp-thumbhash",
+  "description": "A WordPress plugin to generate and render thumbhash placeholders for your lazy-loaded images 🦦",
+  "license": "GPL-3.0-or-later",
+  "type": "wordpress-plugin",
+  "authors": [
+    {
+      "name": "Rasso Hilber",
+      "email": "mail@rassohilber.com"
+    }
+  ],
+  "require": {
+    "php": ">=8.2",
+    "composer/installers": "^2.3",
+    "snicco/better-wp-cli": "^1.2",
+    "sniccowp/php-scoper-wordpress-excludes": "*",
+    "srwiez/thumbhash": "^1.3",
+    "yahnis-elsts/plugin-update-checker": "^5.5"
+  },
+  "require-dev": {
+    "friendsofphp/php-cs-fixer": "^3.65",
+    "snicco/better-wp-cli-testing": "^1.10",
+    "symfony/var-dumper": "^7.2",
+    "wp-phpunit/wp-phpunit": "^6.7",
+    "yoast/wp-test-utils": "^1.2"
+  },
+  "minimum-stability": "dev",
+  "prefer-stable": true,
+  "autoload": {
+    "psr-4": {
+      "Hirasso\\WPThumbhash\\": "src/"
+    }
+  },
+  "autoload-dev": {
+    "psr-4": {
+      "Hirasso\\WPThumbhash\\Tests\\": "tests/"
+    }
+  },
+  "config": {
+    "optimize-autoloader": true,
+    "preferred-install": "dist",
+    "sort-packages": true,
+    "allow-plugins": {
+      "composer/installers": true,
+      "pestphp/pest-plugin": true
+    }
+  },
+  "scripts": {
+    "test": "vendor/bin/phpunit",
+    "plugin:check": [
+      "@scoped:create",
+      "pnpm run wp-env run cli wp plugin install plugin-check --activate",
+      "SLUG=$(basename \"$(pwd)\"); npx wp-env run cli wp plugin check wp-content/plugins/$SLUG/$SLUG --slug=$SLUG"
+    ],
+    "plugin:dist-archive": [
+      "rm -rf $(basename \"$(pwd)\").zip",
+      "@scoped:create",
+      "NAME=$(basename \"$(pwd)\"); wp dist-archive $NAME $NAME.zip --plugin-dirname=$NAME"
+    ]
+  },
+  "scripts-descriptions": {
+    "make-pot": "Update the pot file for translations",
+    "test": "Run tests in wp-env"
+  },
+  "post-install-cmd": "composer normalize"
+}

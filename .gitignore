@@ -1,0 +1,31 @@
+# System
+.DS_Store
+
+# JS & CSS
+node_modules/
+assets/
+
+# Composer
+vendor/
+.php-cs-fixer.cache
+
+# php-scoper
+php-scoper
+scoped/
+dist/
+
+# phpunit
+.phpunit.result.cache
+*.xml.dist.bak
+
+# Other
+*.sql
+*.log
+*.zip
+
+# Testing tools and outputs
+/tests/**/reports/
+/tests/**/results/
+playwright-report/
+/playwright/.cache/
+playwright-results.json

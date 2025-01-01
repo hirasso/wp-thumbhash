@@ -1,0 +1,38 @@
+{
+  "name": "wp-thumbhash",
+  "type": "module",
+  "private": true,
+  "version": "0.0.0",
+  "scripts": {
+    "prepare": "husky",
+    "preinstall": "npx only-allow pnpm",
+    "build": "config/scripts/buildAssets.js",
+    "format:assets": "npx prettier --write '**/*.{ts,js,css,scss}'",
+    "format:php": "vendor/bin/php-cs-fixer fix --config config/phpcsfixer.config.php --allow-risky=yes",
+    "version": "pnpm changeset version && pnpm run version:patch",
+    "version:patch": "config/scripts/patchVersion.js",
+    "pot:make": "SLUG=$(basename \"$(pwd)\"); wp i18n make-pot . languages/$SLUG.pot --include=src,$SLUG.php",
+    "wp-env": "wp-env",
+    "wp-env:theme:activate": "wp-env run cli wp theme activate twentytwentyfive",
+    "wp-env:cli:dev": "pnpm run wp-env run cli --env-cwd=wp-content/plugins/wp-thumbhash",
+    "wp-env:cli:tests": "pnpm run wp-env run tests-cli --env-cwd=wp-content/plugins/wp-thumbhash",
+    "test:wp": "pnpm run wp-env:cli:tests vendor/bin/phpunit --no-coverage",
+    "test:wp:ci": "pnpm run wp-env:cli:tests vendor/bin/phpunit --coverage-clover coverage.xml",
+    "test:e2e": "pnpm exec playwright test --config ./tests/E2E/playwright.config.js",
+    "test:e2e:dev": "PLAYWRIGHT_ENV=dev pnpm test:e2e --ui",
+    "test:e2e:install": "pnpm exec playwright install --with-deps"
+  },
+  "dependencies": {
+    "@hirasso/thumbhash-custom-element": "^0.5.3"
+  },
+  "devDependencies": {
+    "@changesets/cli": "^2.27.9",
+    "@playwright/test": "^1.49.1",
+    "@wordpress/env": "^10.11.0",
+    "fast-glob": "^3.3.2",
+    "husky": "^9.1.1",
+    "lint-staged": "^15.2.7",
+    "picocolors": "^1.1.1",
+    "prettier": "^3.3.3"
+  }
+}

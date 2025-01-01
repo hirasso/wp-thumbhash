@@ -1,0 +1,16 @@
+{
+  "name": "hirasso/wp-thumbhash",
+  "description": "A WordPress plugin to generate and render thumbhash placeholders for your lazy-loaded images 🦦",
+  "license": "GPL-3.0-or-later",
+  "type": "wordpress-plugin",
+  "authors": [
+    {
+      "name": "Rasso Hilber",
+      "email": "mail@rassohilber.com"
+    }
+  ],
+  "require": {
+    "php": ">=8.2",
+    "composer/installers": "^2.3"
+  }
+}

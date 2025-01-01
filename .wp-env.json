@@ -1,0 +1,15 @@
+{
+  "$schema": "https://schemas.wp.org/trunk/wp-env.json",
+  "core": null,
+  "themes": ["https://downloads.wordpress.org/theme/twentytwentyfive.latest-stable.zip"],
+  "plugins": [".", "./tests/E2E/e2e-plugin.php"],
+  "phpVersion": "8.2",
+  "env": {
+    "development": {
+      "port": 9783
+    },
+    "tests": {
+      "port": 9784
+    }
+  }
+}
