@@ -1,0 +1,36 @@
+thumbhash-attachment-field {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+thumbhash-attachment-field img {
+  display: block;
+  height: 26px;
+  width: auto;
+  border-radius: 3px;
+  overflow: hidden;
+}
+@keyframes disappear {
+  to {
+    opacity: 0;
+  }
+}
+[data-thumbhash-regenerated] {
+  background: hsl(168, 100%, 50%);
+  --size: 1.3rem;
+  display: block;
+  width: var(--size);
+  height: var(--size);
+  border-radius: var(--size);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: black;
+  font-style: normal;
+  border: 1px solid rgb(0 0 0 / 0.2);
+  animation: disappear 0.5s 1s linear;
+  animation-fill-mode: forwards;
+}
+[data-thumbhash-regenerated]::before {
+  content: "✔︎";
+}

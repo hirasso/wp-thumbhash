@@ -1,0 +1,37 @@
+# git & GitHub
+.git/ export-ignore
+.githooks/ export-ignore
+.github/ export-ignore
+.gitignore export-ignore
+.gitattributes export-ignore
+
+.vscode export-ignore
+.changeset export-ignore
+.browserslistrc export-ignore
+.editorconfig export-ignore
+
+# Tooling
+.prettierignore export-ignore
+assets-src export-ignore
+package.json export-ignore
+pnpm-lock.yaml export-ignore
+postcss.config.cjs export-ignore
+bin export-ignore
+*.sh export-ignore
+config/ export-ignore
+.husky/ export-ignore
+.lintstagedrc.js export-ignore
+.nvmrc export-ignore
+.wp-env.json export-ignore
+jsconfig.json export-ignore
+
+# composer
+composer.lock export-ignore
+composer.dist.json export-ignore
+
+*.md export-ignore
+
+# Tests
+tests/ export-ignore
+wp-content/ export-ignore
+phpunit.xml export-ignore

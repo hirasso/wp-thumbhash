@@ -1,0 +1,10 @@
+{
+  "compilerOptions": {
+    "checkJs": true,
+    "strict": true,
+    "target": "ES2020"
+  },
+  "include": [
+    "./assets-src/*.js"
+  ],
+}

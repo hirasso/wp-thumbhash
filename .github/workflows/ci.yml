@@ -1,0 +1,140 @@
+name: CI
+
+on:
+  push:
+  pull_request:
+
+# Cancels all previous workflow runs for the same branch that have not yet completed.
+concurrency:
+  # The concurrency group contains the workflow name and the branch name.
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+
+  php-tests:
+    name: "PHP ${{ matrix.php }} Tests"
+    runs-on: ubuntu-latest
+
+    strategy:
+      fail-fast: true
+      matrix:
+        php: ['8.2', '8.3']
+
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+
+      - name: Setup PNPM
+        uses: pnpm/action-setup@v4
+        with:
+          version: latest
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version-file: .nvmrc
+          cache: pnpm
+
+      - name: Install Dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Cache wp-env
+        id: cache-key
+        uses: actions/cache@v3
+        with:
+          path: |
+            ~/.wp-env
+            ~/.wp-cli
+            ./node_modules
+          key: wp-env-${{ hashFiles('.wp-env.json') }}
+
+      - name: Setup PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: ${{ matrix.php }}
+          tools: composer:v2
+          coverage: xdebug
+
+      - name: Install Composer Dependencies
+        uses: ramsey/composer-install@v3
+
+      - name: Start wp-env
+        uses: godaddy-wordpress/setup-wp-env@v1
+        with:
+          phpVersion: ${{ matrix.php }}
+
+      - name: Run Tests With Coverage
+        run: pnpm run test:wp:ci
+
+      # - name: Check code coverage
+      #   uses: codecov/codecov-action@v4
+      #   if: ${{ matrix.php == '8.3' }}
+      #   with:
+      #     file: ./coverage.xml
+      #     token: ${{ secrets.CODECOV_TOKEN }}
+
+      - name: Build Dependencies
+        run: pnpm run build
+
+      - name: Install Playwright
+        id: install-playwright
+        uses: ./.github/actions/playwright
+
+      - name: Debug Playwright Cache
+        run: |
+          echo "Playwright version – ${{ steps.install-playwright.outputs.version }}"
+          echo "Playwright cached – ${{ steps.install-playwright.outputs.cache-hit }}"
+
+      - name: Run E2E Tests
+        run: pnpm run test:e2e
+
+      - uses: daun/playwright-report-summary@v2
+        with:
+          report-file: playwright-results.json
+
+  # e2e-tests:
+  #   name: "E2E Tests"
+  #   timeout-minutes: 60
+  #   runs-on: ubuntu-latest
+
+  #   steps:
+  #     - name: Checkout Code
+  #       uses: actions/checkout@v4
+
+  #     - name: Setup PNPM
+  #       uses: pnpm/action-setup@v4
+  #       with:
+  #         version: latest
+
+  #     - name: Setup Node.js
+  #       uses: actions/setup-node@v4
+  #       with:
+  #         node-version-file: .nvmrc
+  #         cache: pnpm
+
+  #     - name: Install Dependencies
+  #       run: pnpm install --frozen-lockfile
+
+  #     - name: Cache wp-env
+  #       id: cache-key
+  #       uses: actions/cache@v3
+  #       with:
+  #         path: |
+  #           ~/.wp-env
+  #           ~/.wp-cli
+  #           ./node_modules
+  #         key: wp-env-${{ hashFiles('.wp-env.json') }}
+
+  #     - name: Setup PHP
+  #       uses: shivammathur/setup-php@v2
+  #       with:
+  #         php-version: 8.2
+  #         tools: composer:v2
+
+  #     - name: Install Composer Dependencies
+  #       uses: ramsey/composer-install@v3
+
+  #     - name: Start wp-env
+  #       uses: godaddy-wordpress/setup-wp-env@v1
+
