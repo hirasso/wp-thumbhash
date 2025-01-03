@@ -190,7 +190,7 @@ export function createReleaseFiles() {
   const phpScoperPath = "config/php-scoper";
   info("Ensuring php-scoper is available...");
   if (!existsSync(phpScoperPath)) {
-    run(`curl -sL https://github.com/humbug/php-scoper/releases/latest/download/php-scoper.phar -o ${phpScoperPath}`); // prettier-ignore
+    run(`curl -sL https://github.com/humbug/php-scoper/releases/download/0.18.15/php-scoper.phar -o ${phpScoperPath}`); // prettier-ignore
     run(`chmod +x ${phpScoperPath}`);
   }
 
