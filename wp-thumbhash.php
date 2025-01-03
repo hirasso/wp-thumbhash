@@ -37,6 +37,7 @@ if (is_readable(__DIR__ . '/vendor/autoload.php')) {
 }
 
 WPThumbhash::init();
+UpdateChecker::init(__FILE__);
 
 /**
  * Render a <thumb-hash> custom element for an image

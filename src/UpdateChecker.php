@@ -13,14 +13,14 @@ class UpdateChecker
     public static function init(string $entryPoint)
     {
         /** get owner and name from the composer.json */
-        $composerJSON = json_decode(file_get_contents(RHAU_PLUGIN_DIR . "/composer.json"));
-        [$owner, $name] = explode("/", $composerJSON->name);
+        $composerJSON = json_decode(file_get_contents(WP_THUMBHASH_PLUGIN_DIR . "/composer.json"));
+        [$vendor, $slug] = explode("/", $composerJSON->name);
 
         /** build the update checker */
         $checker = PucFactory::buildUpdateChecker(
-            "https://github.com/$owner/$name/",
+            "https://github.com/$vendor/$slug/",
             $entryPoint,
-            $name,
+            $slug,
         );
 
         $checker->setBranch('main');
@@ -30,26 +30,26 @@ class UpdateChecker
         }
 
         /**
-         * Expect a "$name.zip" attached to every release
+         * Expect a "$slug.zip" attached to every release
          * @var \YahnisElsts\PluginUpdateChecker\v5p5\Vcs\GitHubApi $api
          */
         $api = $checker->getVcsApi();
-        $api->enableReleaseAssets("/$name\.zip/i", $api::REQUIRE_RELEASE_ASSETS);
+        $api->enableReleaseAssets("/$slug\.zip/i", $api::REQUIRE_RELEASE_ASSETS);
 
         $checker->addFilter('vcs_update_detection_strategies', [static::class, 'update_strategies'], 999);
     }
 
     /**
-     * Get the RHAU_GITHUB_TOKEN for authenticated GitHub requests
+     * Get the WP_THUMBHASH_GITHUB_TOKEN for authenticated GitHub requests
      */
     private static function getGitHubToken(): ?string
     {
         if (
-            defined('RHAU_GITHUB_TOKEN')
-            && is_string(RHAU_GITHUB_TOKEN)
-            && !empty(trim(RHAU_GITHUB_TOKEN))
+            defined('WP_THUMBHASH_GITHUB_TOKEN')
+            && is_string(WP_THUMBHASH_GITHUB_TOKEN)
+            && !empty(trim(WP_THUMBHASH_GITHUB_TOKEN))
         ) {
-            return RHAU_GITHUB_TOKEN;
+            return WP_THUMBHASH_GITHUB_TOKEN;
         }
         return null;
     }

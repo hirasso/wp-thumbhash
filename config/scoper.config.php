@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Hirasso\WPThumbhash;
 
 use Exception;
+use SplFileInfo;
 use ZipArchive;
 
 /**
@@ -25,21 +26,37 @@ $finder = \Isolated\Symfony\Component\Finder\Finder::class;
 $extraFiles = [...getGitArchiveables()];
 
 /**
+ * Exclude yahnis-elsts/plugin-update-checker
+ * I don't know why, but this still scopes the plugin-update-checker.
+ * Resorted to a custom patcher for now.
+ */
+// $excludeFiles = array_map(
+//     static fn (SplFileInfo $fileInfo) => $fileInfo->getPathName(),
+//     iterator_to_array(
+//         $finder::create()->files()->in('vendor/yahnis-elsts/'),
+//         false
+//     )
+// );
+
+/**
  * Return the config for php-scoper
  * @see https://github.com/humbug/php-scoper/blob/main/docs/configuration.md
  */
 return [
-    'prefix' => __NAMESPACE__ . '\Vendor',
+    'prefix' => __NAMESPACE__ . '\\Vendor',
     'exclude-namespaces' => [__NAMESPACE__],
     'php-version' => ComposerJSON::instance()->phpVersion,
+    // 'exclude-files' => [...$excludeFiles],
 
     'exclude-classes' => [...$wpClasses, 'WP_CLI'],
     'exclude-functions' => [...$wpFunctions],
     'exclude-constants' => [...$wpConstants, 'WP_CLI', 'true', 'false'],
 
-    'expose-global-constants' => true,
-    'expose-global-classes' => true,
-    'expose-global-functions' => true,
+    'expose-namespaces' => [__NAMESPACE__ . '\\Vendor'],
+
+    // 'expose-global-constants' => true,
+    // 'expose-global-classes' => true,
+    // 'expose-global-functions' => true,
 
     'finders' => [
         $finder::create()->files()->in('src'),
@@ -54,12 +71,12 @@ return [
     ],
     'patchers' => [
         /**
-         * Remove the prefix from strings in plugin-update-checker/load-v5p5.php
+         * Remove the prefix from plugin-update-checker
          * @see https://github.com/YahnisElsts/plugin-update-checker/issues/586#issuecomment-2567753162
          */
         static function (string $filePath, string $prefix, string $content): string {
-            if (preg_match('/plugin-update-checker\/load-v\d+p\d\.php/', $filePath)) {
-                return preg_replace('/(["\'])' . preg_quote($prefix) . '\\/', '$1', $content);
+            if (str_contains($filePath, 'yahnis-elsts/plugin-update-checker', )) {
+                return str_replace("$prefix\\", '', $content);
             }
             return $content;
         },
