@@ -44,14 +44,7 @@ class UpdateChecker
      */
     private static function getGitHubToken(): ?string
     {
-        if (
-            defined('WP_THUMBHASH_GITHUB_TOKEN')
-            && is_string(WP_THUMBHASH_GITHUB_TOKEN)
-            && !empty(trim(WP_THUMBHASH_GITHUB_TOKEN))
-        ) {
-            return WP_THUMBHASH_GITHUB_TOKEN;
-        }
-        return null;
+        return defined('WP_THUMBHASH_GITHUB_TOKEN') ? WP_THUMBHASH_GITHUB_TOKEN : null;
     }
 
     /**
