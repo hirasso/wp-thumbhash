@@ -2,11 +2,11 @@ name: CI
 
 on:
   push:
+    branches:
+      main
   pull_request:
 
-# Cancels all previous workflow runs for the same branch that have not yet completed.
 concurrency:
-  # The concurrency group contains the workflow name and the branch name.
   group: ${{ github.workflow }}-${{ github.ref }}
   cancel-in-progress: true
 
@@ -67,7 +67,7 @@ jobs:
       - name: Run Tests With Coverage
         run: pnpm run test:wp:ci
 
-      # - name: Check code coverage
+      # - name: Handle Code Coverage
       #   uses: codecov/codecov-action@v4
       #   if: ${{ matrix.php == '8.3' }}
       #   with:
@@ -92,49 +92,3 @@ jobs:
       - uses: daun/playwright-report-summary@v2
         with:
           report-file: playwright-results.json
-
-  # e2e-tests:
-  #   name: "E2E Tests"
-  #   timeout-minutes: 60
-  #   runs-on: ubuntu-latest
-
-  #   steps:
-  #     - name: Checkout Code
-  #       uses: actions/checkout@v4
-
-  #     - name: Setup PNPM
-  #       uses: pnpm/action-setup@v4
-  #       with:
-  #         version: latest
-
-  #     - name: Setup Node.js
-  #       uses: actions/setup-node@v4
-  #       with:
-  #         node-version-file: .nvmrc
-  #         cache: pnpm
-
-  #     - name: Install Dependencies
-  #       run: pnpm install --frozen-lockfile
-
-  #     - name: Cache wp-env
-  #       id: cache-key
-  #       uses: actions/cache@v3
-  #       with:
-  #         path: |
-  #           ~/.wp-env
-  #           ~/.wp-cli
-  #           ./node_modules
-  #         key: wp-env-${{ hashFiles('.wp-env.json') }}
-
-  #     - name: Setup PHP
-  #       uses: shivammathur/setup-php@v2
-  #       with:
-  #         php-version: 8.2
-  #         tools: composer:v2
-
-  #     - name: Install Composer Dependencies
-  #       uses: ramsey/composer-install@v3
-
-  #     - name: Start wp-env
-  #       uses: godaddy-wordpress/setup-wp-env@v1
-

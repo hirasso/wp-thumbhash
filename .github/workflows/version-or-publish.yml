@@ -6,8 +6,8 @@ on:
       - main
 
 permissions:
-  contents: write # for merging the PR and creating the release
-  pull-requests: write # for creating the version PR
+  contents: write
+  pull-requests: write
 
 concurrency: ${{ github.workflow }}-${{ github.ref }}
 
