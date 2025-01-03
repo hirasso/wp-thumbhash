@@ -2,6 +2,11 @@
 
 declare(strict_types=1);
 
+namespace Hirasso\WPThumbhash;
+
+use Exception;
+use ZipArchive;
+
 /**
  * php-scoper config for creating a scoped release asset for GitHub Releases
  * This release asset serves as the source of truth for non-composer plugin updates
@@ -10,10 +15,8 @@ declare(strict_types=1);
  * @see https://github.com/YahnisElsts/plugin-update-checker?tab=readme-ov-file#how-to-release-an-update-1
  */
 
-$packageNamespace = 'Hirasso\WPThumbhash';
-
 /** @var Symfony\Component\Finder\Finder $finder */
-$finder = Isolated\Symfony\Component\Finder\Finder::class;
+$finder = \Isolated\Symfony\Component\Finder\Finder::class;
 
 /** exclude global WordPress symbols */
 [$wpClasses, $wpFunctions, $wpConstants] = getWpExcludes();
@@ -26,17 +29,13 @@ $extraFiles = [...getGitArchiveables()];
  * @see https://github.com/humbug/php-scoper/blob/main/docs/configuration.md
  */
 return [
-    'prefix' => "$packageNamespace\\Scoped",
-    'exclude-namespaces' => [
-        $packageNamespace,
-        /** Exclude PluginUpdateChecker as it breaks when scoped */
-        'YahnisElsts\PluginUpdateChecker',
-    ],
+    'prefix' => __NAMESPACE__ . '\Vendor',
+    'exclude-namespaces' => [__NAMESPACE__],
     'php-version' => ComposerJSON::instance()->phpVersion,
 
-    'exclude-classes' => [...$wpClasses, WP_CLI::class],
+    'exclude-classes' => [...$wpClasses, 'WP_CLI'],
     'exclude-functions' => [...$wpFunctions],
-    'exclude-constants' => [...$wpConstants, WP_CLI::class, 'true', 'false'],
+    'exclude-constants' => [...$wpConstants, 'WP_CLI', 'true', 'false'],
 
     'expose-global-constants' => true,
     'expose-global-classes' => true,
@@ -47,13 +46,24 @@ return [
         $finder::create()->files()->in('vendor')->ignoreVCS(true)
             ->notName('/.*\\.sh|composer\\.(json|lock)/')
             ->exclude([
-                ...ComposerJSON::instance()->devDependencies,
                 'sniccowp/php-scoper-wordpress-excludes',
                 'bin/'
             ]),
         $finder::create()->append(glob('*.php')),
         $finder::create()->append($extraFiles),
     ],
+    'patchers' => [
+        /**
+         * Remove the prefix from strings in plugin-update-checker/load-v5p5.php
+         * @see https://github.com/YahnisElsts/plugin-update-checker/issues/586#issuecomment-2567753162
+         */
+        static function (string $filePath, string $prefix, string $content): string {
+            if (preg_match('/plugin-update-checker\/load-v\d+p\d\.php/', $filePath) === false) {
+                return $content;
+            }
+            return preg_replace('/(["\'])' . preg_quote($prefix) . '\\/', '$1', $content);
+        },
+    ]
 ];
 
 /**
