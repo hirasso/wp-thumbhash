@@ -101,8 +101,11 @@ jobs:
           version: pnpm run version
           publish: pnpm changeset tag
         env:
-          # doesn't work with GITHUB_TOKEN for some reason
+          # Do not run husky/lintstaged
+          HUSKY: 0
+          # Doesn't work with GITHUB_TOKEN for some reason
           GITHUB_TOKEN: ${{ secrets.HIRASSO_ACTIONS_TOKEN }}
+
 
       - name: "Get Latest Tag"
         id: latest-tag
