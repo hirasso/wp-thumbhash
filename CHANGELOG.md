@@ -1,5 +1,12 @@
 # Changelog
 
+## 0.0.2
+
+### Patch Changes
+
+- 2989d2c: Manually copy plugin-update-checker (don't scope it at all)
+- 2989d2c: Load the scoped version at runtime when available
+
 ## 0.0.1
 
 ### Patch Changes
