@@ -201,6 +201,17 @@ export function createReleaseFiles() {
   success("Successfully scoped all namespaces!");
   line();
 
+  /**
+   * This needs to be done manually, since PUC causes problems when scoped.
+   * All changes to the vendor dir have to run BEFORE dumping the autolaoder!
+   */
+  info(`Copying plugin-update-checker/ to scoped/...`);
+  cpSync(
+    "vendor/yahnis-elsts/plugin-update-checker",
+    "scoped/vendor/yahnis-elsts/plugin-update-checker",
+    { force: true, recursive: true },
+  );
+
   /** Dump the autoloader in the scoped directory */
   info("Dumping the autoloader in the scoped directory...");
   run("composer dump-autoload --working-dir=scoped --classmap-authoritative");

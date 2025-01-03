@@ -33,7 +33,7 @@ $extraFiles = [...getGitArchiveables()];
 // $excludeFiles = array_map(
 //     static fn (SplFileInfo $fileInfo) => $fileInfo->getPathName(),
 //     iterator_to_array(
-//         $finder::create()->files()->in('vendor/yahnis-elsts/'),
+//         $finder::create()->files()->in('vendor/yahnis-elsts/plugin-update-checker'),
 //         false
 //     )
 // );
@@ -44,7 +44,11 @@ $extraFiles = [...getGitArchiveables()];
  */
 return [
     'prefix' => __NAMESPACE__ . '\\Vendor',
-    'exclude-namespaces' => [__NAMESPACE__],
+    'exclude-namespaces' => [
+        __NAMESPACE__,
+        /** Exclude plugin-update-checker in our plugin code */
+        'YahnisElsts\PluginUpdateChecker'
+    ],
     'php-version' => ComposerJSON::instance()->phpVersion,
     // 'exclude-files' => [...$excludeFiles],
 
@@ -59,28 +63,29 @@ return [
     // 'expose-global-functions' => true,
 
     'finders' => [
-        $finder::create()->files()->in('src'),
-        $finder::create()->files()->in('vendor')->ignoreVCS(true)
+        $finder::create()->files()->in('./src'),
+        $finder::create()->files()->in('./vendor')->ignoreVCS(true)
             ->notName('/.*\\.sh|composer\\.(json|lock)/')
             ->exclude([
                 'sniccowp/php-scoper-wordpress-excludes',
+                'yahnis-elsts/plugin-update-checker',
                 'bin/'
             ]),
         $finder::create()->append(glob('*.php')),
         $finder::create()->append($extraFiles),
     ],
-    'patchers' => [
-        /**
-         * Remove the prefix from plugin-update-checker
-         * @see https://github.com/YahnisElsts/plugin-update-checker/issues/586#issuecomment-2567753162
-         */
-        static function (string $filePath, string $prefix, string $content): string {
-            if (str_contains($filePath, 'yahnis-elsts/plugin-update-checker', )) {
-                return str_replace("$prefix\\", '', $content);
-            }
-            return $content;
-        },
-    ]
+    // 'patchers' => [
+    //     /**
+    //      * Remove the prefix from plugin-update-checker
+    //      * @see https://github.com/YahnisElsts/plugin-update-checker/issues/586#issuecomment-2567753162
+    //      */
+    //     static function (string $filePath, string $prefix, string $content): string {
+    //         if (preg_match('/plugin-update-checker\/load-v\d+p\d\.php/', $filePath)) {
+    //             return preg_replace('/(["\'])' . preg_quote($prefix) . '\\/', '$1', $content);
+    //         }
+    //         return $content;
+    //     },
+    // ]
 ];
 
 /**
