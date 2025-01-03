@@ -58,10 +58,10 @@ return [
          * @see https://github.com/YahnisElsts/plugin-update-checker/issues/586#issuecomment-2567753162
          */
         static function (string $filePath, string $prefix, string $content): string {
-            if (preg_match('/plugin-update-checker\/load-v\d+p\d\.php/', $filePath) === false) {
-                return $content;
+            if (preg_match('/plugin-update-checker\/load-v\d+p\d\.php/', $filePath)) {
+                return preg_replace('/(["\'])' . preg_quote($prefix) . '\\/', '$1', $content);
             }
-            return preg_replace('/(["\'])' . preg_quote($prefix) . '\\/', '$1', $content);
+            return $content;
         },
     ]
 ];
