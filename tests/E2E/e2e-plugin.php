@@ -1,18 +1,18 @@
 <?php
-/*
-Plugin Name: wp-thumbhash e2e bootstrap
-Description: Runs as a mu-plugin to support e2e tests using playwright
-*/
-
-namespace Hirasso\WPThumbhash\Tests\E2E;
 
 /**
- * This Plugin will be mounted automatically in the wp-env container
+ * Plugin Name: wp-thumbhash e2e test plugin
+ * Description: Runs as a plugin to support e2e tests using playwright via wp-env
+ */
+
+/**
+ * This Plugin will be mounted automatically in the wp-env container.
  * It renders all images with a thumbhash automatically on 'the_content'.
+ * It will also automatically create one image if none exists, yet
  * This URL can be used in e2e tests: http://localhost:9783/
  */
 
-add_action('plugins_loaded', fn() => new E2EPlugin());
+add_action('plugins_loaded', fn() => new WPThumbhashE2EPlugin());
 
 use Hirasso\WPThumbhash\WPThumbhash;
 
@@ -21,7 +21,7 @@ use WP_Query;
 use Exception;
 use Hirasso\WPThumbhash\Enums\QueryArgsCompare;
 
-class E2EPlugin
+class WPThumbhashE2EPlugin
 {
     public function __construct()
     {

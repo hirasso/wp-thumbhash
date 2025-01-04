@@ -15,11 +15,12 @@
     "wp-env:open": "open http://localhost:9783",
     "wp-env:open:test": "open http://localhost:9784",
     "test": "pnpm run test:phpunit --no-coverage && pnpm run test:e2e",
-    "test:phpunit": "pnpm run wp-env run tests-cli --env-cwd=wp-content/plugins/wp-thumbhash vendor/bin/phpunit",
+    "test:phpunit": "wp-env run tests-cli --env-cwd=wp-content/plugins/wp-thumbhash vendor/bin/phpunit",
     "test:phpunit:ci": "pnpm run test:phpunit --coverage-clover coverage.xml",
     "test:e2e": "pnpm exec playwright test --config ./tests/E2E/playwright.config.js",
     "test:e2e:dev": "PLAYWRIGHT_ENV=dev pnpm test:e2e --ui",
-    "test:e2e:install": "pnpm exec playwright install --with-deps"
+    "test:e2e:install": "pnpm exec playwright install --with-deps",
+    "act:php-tests": "act -j php-tests --matrix php:8.2 --container-options '--privileged'"
   },
   "dependencies": {
     "@hirasso/thumbhash-custom-element": "^0.5.3"
