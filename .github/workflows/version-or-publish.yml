@@ -87,8 +87,10 @@ jobs:
           token: ${{ secrets.HIRASSO_ACTIONS_TOKEN }}
 
       # Run this before changesets, to make sure releases actually work
-      - name: Prepare Release
-        run: config/scripts/prepareRelease.js
+      - name: Create Release Files and Prepare Dist Folder
+        run: |
+          config/cli/cli.js release:create
+          config/cli/cli.js dist:prepare
 
       # Run changesets action either if there are unreleased changesets (= a PR must be created)
       # or if the commit message matches the release PR (= new versions must be published to NPM)
@@ -125,4 +127,4 @@ jobs:
       - name: Push release to dist repo
         if: steps.cs.outputs.published == 'true'
         run: |
-          config/scripts/pushReleaseToDist.js
+          config/cli/cli.js dist:push

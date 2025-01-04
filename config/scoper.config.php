@@ -68,8 +68,7 @@ return [
             ->notName('/.*\\.sh|composer\\.(json|lock)/')
             ->exclude([
                 'sniccowp/php-scoper-wordpress-excludes',
-                'yahnis-elsts/plugin-update-checker',
-                'bin/'
+                'yahnis-elsts/plugin-update-checker'
             ]),
         $finder::create()->append(glob('*.php')),
         $finder::create()->append($extraFiles),

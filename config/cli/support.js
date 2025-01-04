@@ -9,11 +9,12 @@ import {
   mkdirSync,
   readFileSync,
   rmSync,
+  writeFileSync,
 } from "node:fs";
 import { fileURLToPath } from "node:url";
 import path, { basename, resolve } from "node:path";
 import { execSync } from "node:child_process";
-import { cwd, env, exit } from "node:process";
+import { chdir, cwd, env, exit } from "node:process";
 import pc from "picocolors";
 import fg from "fast-glob";
 
@@ -255,12 +256,28 @@ export function createReleaseFiles() {
 
   /** Create a zip file from the scoped directory */
   info(`Creating a zip file from ${scopedFolder}...`);
-  run(`cd ${scopedFolder} && zip -rq "../../${packageName}.zip" . && cd - >/dev/null`);
+  run(
+    `cd ${scopedFolder} && zip -rq "../../${packageName}.zip" . && cd - >/dev/null`,
+  );
 
   line();
   success(`Created a scoped release folder: ${blue(scopedFolder)}`);
   success(`Created a scoped release asset: ${blue(`${packageName}.zip`)}`);
   line();
+}
+
+/**
+ * Run Unit and E2E tests from the scoped plugin folder
+ * @TODO:
+ *  - copy the scoped folder to a /tmp location
+ *  - copy phpunit.xml and tests/ into the /tmp folder
+ *  - create a .wp-env.override.json with the "." replaced by the /tmp folder
+ *  - Run wp-env start --update
+ *  - Run php unit in the tmp folder (maybe not even any adjustment needed here?!)
+ */
+export function testScopedRelease() {
+  const { plugins } = JSON.parse(readFileSync(".wp-env.json", "utf8"));
+  throwError("Not yet implemented");
 }
 
 /**
@@ -274,11 +291,6 @@ export function prepareDistFolder() {
 
   const { fullName } = getInfosFromComposerJSON();
   const scopedFolder = getScopedFolder();
-
-  // Ensure the script is run from the project root
-  if (!isAtRootDir()) {
-    throwError(`${basename(__filename)} must be executed from the package root directory`); // prettier-ignore
-  }
 
   // Check if the scoped folder exists
   if (!existsSync(scopedFolder)) {
@@ -332,4 +344,123 @@ export async function copyFiles(sourceDir, destDir, pattern = "**/*.{js,css}") {
 
     success(`Copied: ${sourceDir}/${relativePath} → ${destPath}`);
   });
+}
+
+/**
+ * Push scoped release files to the dist repo
+ */
+export async function pushReleaseToDist() {
+  const rootDir = cwd();
+  const packageInfos = getInfosFromPackageJSON();
+  const { packageName } = getInfosFromComposerJSON();
+  const packageVersion = `v${packageInfos.version}`;
+  const scopedFolder = getScopedFolder();
+
+  const onGitHub = isGitHubActions();
+  debug({ onGitHub });
+
+  if (!isAtRootDir()) {
+    throwError(`${basename(__filename)} must be executed from the package root directory`); // prettier-ignore
+  }
+
+  const hasValidDirectories = await validateDirectories(scopedFolder, "dist");
+
+  debug({ hasValidDirectories });
+
+  if (hasValidDirectories !== true) {
+    throwError(
+      `The validation of the scoped and dist folder failed.`,
+      `Did you run 'release:prepare'?`,
+    );
+  }
+
+  /** Ensure the script is running in a GitHub Action */
+  if (!onGitHub) {
+    throwError(`${basename(__filename)} can only run on GitHub`);
+  }
+
+  if (!packageVersion) {
+    throwError("Empty package version");
+  }
+
+  info(`Committing and pushing new release: 'v${packageVersion}'...`);
+  line();
+
+  /** Navigate to the dist folder and perform Git operations */
+  try {
+    chdir("dist/");
+    run(`git add .`);
+    run(`git commit -m "Release: ${packageName}@${packageVersion}"`);
+    run(`git tag "${packageVersion}"`);
+    run(`git push origin "${packageVersion}"`);
+    success(`Released '${packageVersion}' to the dist repo.`);
+    chdir(rootDir);
+  } catch (err) {
+    throwError("An error occurred while releasing the package.", err);
+  }
+
+  /** Change back to the root dir */
+  chdir(rootDir);
+}
+
+/**
+ * A simplistic build script for "compiling" the frontend assets
+ */
+export async function buildAssets() {
+  rmSync("assets", { force: true, recursive: true });
+
+  await copyFiles("assets-src", "assets", "**/*.{js,css}");
+
+  cpSync(
+    "node_modules/@hirasso/thumbhash-custom-element/dist/index.umd.js",
+    "assets/thumbhash-custom-element.iife.js",
+  );
+}
+
+/**
+ * Patch the version in the main plugin php file, based on the
+ * current version in the package.json
+ */
+export async function patchVersion() {
+  /** Read the version and name from package.json */
+  const { version: packageVersion } = getInfosFromPackageJSON();
+  const { packageName } = getInfosFromComposerJSON();
+
+  /** Allow to overwrite the plugin main file via an argument: `config/cli/cli.js version:patch foo.php` */
+  const [, , pluginFileName = `${packageName}.php`] = process.argv;
+
+  const pluginFilePath = path.join(process.cwd(), pluginFileName);
+
+  /** Bail early if the file doesn't exist */
+  if (!existsSync(pluginFilePath)) {
+    throwError(`❌ plugin file not found: ${pluginFileName}`);
+  }
+
+  /** Update the version in the main plugin PHP file */
+  let pluginFile = fs.readFileSync(pluginFilePath, "utf8");
+
+  const versionRegexp = /\*\s*Version:\s*(\d+\.\d+\.\d+)/;
+  const currentVersion = pluginFile.match(versionRegexp)?.[1];
+
+  line();
+  info(`Patching version in ${pluginFileName}...`);
+
+  if (!currentVersion) {
+    throwError(`No version found in file: ${pluginFileName}`);
+    process.exit(1);
+  }
+
+  if (currentVersion === packageVersion) {
+    success(`Version already patched in ${pluginFileName}: ${currentVersion}`);
+    process.exit(0);
+  }
+
+  pluginFile = pluginFile.replace(
+    versionRegexp,
+    `* Version: ${packageVersion}`,
+  );
+  writeFileSync(pluginFilePath, pluginFile, "utf8");
+
+  success(`Patched version to ${packageVersion} in ${pluginFileName}`);
+  line();
 }

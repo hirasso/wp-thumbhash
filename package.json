@@ -6,11 +6,10 @@
   "scripts": {
     "prepare": "husky",
     "preinstall": "npx only-allow pnpm",
-    "build": "config/scripts/buildAssets.js",
+    "build": "config/cli/cli.js assets:build",
     "format:assets": "npx prettier --write '**/*.{ts,js,css,scss}'",
     "format:php": "vendor/bin/php-cs-fixer fix --config config/phpcsfixer.config.php --allow-risky=yes",
-    "version": "pnpm changeset version && pnpm run version:patch",
-    "version:patch": "config/scripts/patchVersion.js",
+    "version": "pnpm changeset version && config/cli/cli.js version:patch",
     "pot:make": "SLUG=$(basename \"$(pwd)\"); wp i18n make-pot . languages/$SLUG.pot --include=src,$SLUG.php",
     "wp-env": "wp-env",
     "wp-env:open": "open http://localhost:9783",
