@@ -17,6 +17,9 @@ import { cwd, env, exit } from "node:process";
 import pc from "picocolors";
 import fg from "fast-glob";
 
+// extract colors from common.js module picocolors
+const { blue, bgRed, bold, gray, green } = pc;
+
 // Get the equivalent of __filename
 const __filename = fileURLToPath(import.meta.url);
 
@@ -54,15 +57,31 @@ export function getInfosFromPackageJSON() {
 }
 
 /**
+ * Get the path to the scoped folder
+ */
+export function getScopedFolder() {
+  const { packageName } = getInfosFromComposerJSON();
+  return `scoped/${packageName}`;
+}
+
+/**
  * Get infos from the composer.json
- * @return {{fullName: string, owner: string, packageName: string}}
+ * @return {{fullName: string, vendorName: string, packageName: string}}
  */
 export function getInfosFromComposerJSON() {
   // Read the version and name from package.json
   const composerJsonPath = path.join(process.cwd(), "./composer.json");
   const { name: fullName } = JSON.parse(readFileSync(composerJsonPath, "utf8"));
-  const [owner, packageName] = fullName.split("/");
-  return { fullName, owner, packageName };
+  if (!fullName) {
+    throw new Error(`No name found in composer.json`);
+  }
+  if (!fullName.includes("/")) {
+    throw new Error(
+      `Invalid name found in composer.json. It must be 'vendor-name/package-name'`,
+    );
+  }
+  const [vendorName, packageName] = fullName.split("/");
+  return { fullName, vendorName, packageName };
 }
 
 /**
@@ -77,7 +96,7 @@ export const run = (command) => execSync(command, { stdio: "inherit" });
  * @param {...any} rest
  */
 export const info = (message, ...rest) => {
-  console.log(`💡 ${pc.gray(message)}`, ...rest);
+  console.log(`💡 ${gray(message)}`, ...rest);
 };
 
 /**
@@ -86,7 +105,7 @@ export const info = (message, ...rest) => {
  * @param {...any} rest
  */
 export const success = (message, ...rest) => {
-  console.log(`✅ ${pc.green(message)}`, ...rest);
+  console.log(`✅ ${green(message)}`, ...rest);
 };
 
 /**
@@ -96,9 +115,9 @@ export const success = (message, ...rest) => {
 export const headline = (message) => {
   message = ` ℹ️  ${message} `;
   line();
-  console.log(pc.blue("-".repeat(message.length)));
-  console.log(`${pc.blue(message)}`);
-  console.log(pc.blue("-".repeat(message.length)));
+  console.log(blue("-".repeat(message.length)));
+  console.log(`${blue(message)}`);
+  console.log(blue("-".repeat(message.length)));
   line();
 };
 
@@ -109,7 +128,7 @@ export const headline = (message) => {
  */
 export const throwError = (message, ...rest) => {
   line();
-  console.log(` ❌ ${pc.bgRed(pc.bold(`${message}`))}`, ...rest);
+  console.log(` ❌ ${bgRed(bold(`${message}`))}`, ...rest);
   exit(1);
 };
 
@@ -168,16 +187,15 @@ export const validateDirectories = async (dir1, dir2, ignore = [".git"]) => {
 export function createReleaseFiles() {
   headline(`Creating Release Files...`);
 
-  /** Validate that we are at the project root */
-  const projectRoot = cwd();
-  if (!existsSync(resolve(projectRoot, ".gitignore"))) {
-    throwError(`${basename(__filename)} must run from the package root`);
+  if (!isAtRootDir()) {
+    throwError(`${basename(__filename)} must be executed from the package root directory`); // prettier-ignore
   }
 
-  const { fullName, packageName } = getInfosFromComposerJSON();
+  const { packageName } = getInfosFromComposerJSON();
+  const scopedFolder = getScopedFolder();
 
   line();
-  info(`Creating a scoped release for ${fullName}...`);
+  info(`Creating a scoped release in ${blue(scopedFolder)}...`);
   line();
 
   // Install Composer dependencies in GitHub Actions
@@ -189,6 +207,7 @@ export function createReleaseFiles() {
   /** Ensure php-scoper is available */
   const phpScoperPath = "config/php-scoper";
   info("Ensuring php-scoper is available...");
+
   if (!existsSync(phpScoperPath)) {
     run(`curl -sL https://github.com/humbug/php-scoper/releases/download/0.18.15/php-scoper.phar -o ${phpScoperPath}`); // prettier-ignore
     run(`chmod +x ${phpScoperPath}`);
@@ -196,8 +215,8 @@ export function createReleaseFiles() {
 
   /** Scope namespaces using php-scoper */
   info("Scoping namespaces using php-scoper...");
-  rmSync("scoped", { recursive: true, force: true });
-  run(`${phpScoperPath} add-prefix --quiet --output-dir=scoped --config=config/scoper.config.php`); // prettier-ignore
+  rmSync(scopedFolder, { recursive: true, force: true });
+  run(`${phpScoperPath} add-prefix --quiet --output-dir=${scopedFolder} --config=config/scoper.config.php`); // prettier-ignore
   success("Successfully scoped all namespaces!");
   line();
 
@@ -205,40 +224,42 @@ export function createReleaseFiles() {
    * This needs to be done manually, since PUC causes problems when scoped.
    * All changes to the vendor dir have to run BEFORE dumping the autolaoder!
    */
-  info(`Copying plugin-update-checker/ to scoped/...`);
+  info(`Copying plugin-update-checker/ to ${scopedFolder}/...`);
   cpSync(
     "vendor/yahnis-elsts/plugin-update-checker",
-    "scoped/vendor/yahnis-elsts/plugin-update-checker",
+    `${scopedFolder}/vendor/yahnis-elsts/plugin-update-checker`,
     { force: true, recursive: true },
   );
 
   /** Dump the autoloader in the scoped directory */
-  info("Dumping the autoloader in the scoped directory...");
-  run("composer dump-autoload --working-dir=scoped --classmap-authoritative");
+  info(`Dumping the autoloader in ${scopedFolder}...`);
+  run(
+    `composer dump-autoload --working-dir=${scopedFolder} --classmap-authoritative`,
+  );
 
   line();
 
   /** Clean up the scoped directory */
-  info("Cleaning up the scoped directory...");
-  ["scoped/composer.json", "scoped/composer.lock"].forEach((file) => {
-    rmSync(resolve(projectRoot, file), { force: true });
+  info(`Cleaning up ${scopedFolder}...`);
+  ["composer.json", "composer.lock"].forEach((file) => {
+    rmSync(resolve(`${cwd()}/${scopedFolder}`, file), { force: true });
   });
 
-  info(`Overwriting the composer.json in scoped/...`);
-  cpSync("composer.dist.json", "scoped/composer.json");
+  info(`Overwriting the composer.json in ${scopedFolder}/...`);
+  cpSync("composer.dist.json", `${scopedFolder}/composer.json`);
 
-  info(`Copying assets/ to scoped/assets...`);
-  cpSync("assets", "scoped/assets", { force: true, recursive: true });
+  info(`Copying assets/ to ${scopedFolder}/assets...`);
+  cpSync("assets", `${scopedFolder}/assets`, { force: true, recursive: true });
 
   line();
 
   /** Create a zip file from the scoped directory */
-  info("Creating a zip file from the scoped directory...");
-  run(`cd scoped && zip -rq "../${packageName}.zip" . && cd ..`);
+  info(`Creating a zip file from ${scopedFolder}...`);
+  run(`cd ${scopedFolder} && zip -rq "../../${packageName}.zip" . && cd - >/dev/null`);
 
   line();
-  success(`Created a scoped release folder: scoped/`);
-  success(`Created a scoped release asset: ${packageName}.zip`);
+  success(`Created a scoped release folder: ${blue(scopedFolder)}`);
+  success(`Created a scoped release asset: ${blue(`${packageName}.zip`)}`);
   line();
 }
 
@@ -251,29 +272,24 @@ export function createReleaseFiles() {
 export function prepareDistFolder() {
   headline(`Preparing Dist Folder...`);
 
-  const { owner, packageName } = getInfosFromComposerJSON();
-  if (!owner || !packageName) {
-    throwError(`Could not read owner and/or packageName`, {
-      owner,
-      packageName,
-    });
-  }
+  const { fullName } = getInfosFromComposerJSON();
+  const scopedFolder = getScopedFolder();
 
   // Ensure the script is run from the project root
   if (!isAtRootDir()) {
     throwError(`${basename(__filename)} must be executed from the package root directory`); // prettier-ignore
   }
 
-  // Check if the `scoped` folder exists
-  if (!existsSync("scoped")) {
-    throwError('The "scoped" folder does not exist');
+  // Check if the scoped folder exists
+  if (!existsSync(scopedFolder)) {
+    throwError(`'${scopedFolder}' scoped folder does not exist`);
   }
 
   // Initialize the dist folder if not in GitHub Actions
   if (env.GITHUB_ACTIONS !== "true") {
     info(`Cloning the dist repo into dist/...`);
     rmSync("dist", { recursive: true, force: true });
-    run(`git clone -b empty git@github.com:${owner}/${packageName}-dist.git dist/`); // prettier-ignore
+    run(`git clone -b empty git@github.com:${fullName}-dist.git dist/`); // prettier-ignore
   }
 
   info(`Checking out the empty tagged root commit..`);
@@ -281,8 +297,8 @@ export function prepareDistFolder() {
 
   line();
 
-  info(`Copying files from scoped/ to dist/...`);
-  cpSync("scoped", "dist", { recursive: true, force: true });
+  info(`Copying files from ${scopedFolder} to dist/...`);
+  cpSync(scopedFolder, "dist", { recursive: true, force: true });
 
   success(`Dist folder preparation complete!`);
 }

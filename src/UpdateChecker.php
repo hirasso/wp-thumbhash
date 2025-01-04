@@ -12,7 +12,7 @@ class UpdateChecker
 {
     public static function init(string $entryPoint)
     {
-        /** get owner and name from the composer.json */
+        /** get vendorName and name from the composer.json */
         $composerJSON = json_decode(file_get_contents(WP_THUMBHASH_PLUGIN_DIR . "/composer.json"));
         [$vendor, $slug] = explode("/", $composerJSON->name);
 

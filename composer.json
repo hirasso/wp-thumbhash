@@ -45,22 +45,7 @@
       "pestphp/pest-plugin": true
     }
   },
-  "scripts": {
-    "test": "vendor/bin/phpunit",
-    "plugin:check": [
-      "@scoped:create",
-      "pnpm run wp-env run cli wp plugin install plugin-check --activate",
-      "SLUG=$(basename \"$(pwd)\"); npx wp-env run cli wp plugin check wp-content/plugins/$SLUG/$SLUG --slug=$SLUG"
-    ],
-    "plugin:dist-archive": [
-      "rm -rf $(basename \"$(pwd)\").zip",
-      "@scoped:create",
-      "NAME=$(basename \"$(pwd)\"); wp dist-archive $NAME $NAME.zip --plugin-dirname=$NAME"
-    ]
-  },
-  "scripts-descriptions": {
-    "make-pot": "Update the pot file for translations",
-    "test": "Run tests in wp-env"
-  },
+  "scripts": {},
+  "scripts-descriptions": {},
   "post-install-cmd": "composer normalize"
 }

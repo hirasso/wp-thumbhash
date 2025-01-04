@@ -22,10 +22,16 @@ import {
   isGitHubActions,
   validateDirectories,
   success,
+  getScopedFolder,
 } from "./support.js";
 
 const rootDir = cwd();
 const __filename = fileURLToPath(import.meta.url);
+
+const packageInfos = getInfosFromPackageJSON();
+const { packageName } = getInfosFromComposerJSON();
+const packageVersion = `v${packageInfos.version}`;
+const scopedFolder = getScopedFolder();
 
 const onGitHub = isGitHubActions();
 debug({ onGitHub });
@@ -34,8 +40,10 @@ if (!isAtRootDir()) {
   throwError(`${basename(__filename)} must be executed from the package root directory`); // prettier-ignore
 }
 
-const hasValidDirectories = await validateDirectories("scoped", "dist");
+const hasValidDirectories = await validateDirectories(scopedFolder, "dist");
+
 debug({ hasValidDirectories });
+
 if (hasValidDirectories !== true) {
   throwError(
     `The validation of the scoped and dist folder failed.`,
@@ -48,11 +56,6 @@ if (!onGitHub) {
   throwError(`${basename(__filename)} can only run on GitHub`);
 }
 
-/** Get the package version and name */
-
-const packageInfos = getInfosFromPackageJSON();
-const { packageName } = getInfosFromComposerJSON();
-const packageVersion = `v${packageInfos.version}`;
 
 if (!packageVersion) {
   throwError("Empty package version");
