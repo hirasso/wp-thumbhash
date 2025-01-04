@@ -19,7 +19,7 @@ import pc from "picocolors";
 import fg from "fast-glob";
 
 // extract colors from common.js module picocolors
-const { blue, bgRed, bold, gray, green } = pc;
+const { blue, red, bold, gray, green } = pc;
 
 // Get the equivalent of __filename
 const __filename = fileURLToPath(import.meta.url);
@@ -67,12 +67,21 @@ export function getScopedFolder() {
 
 /**
  * Get infos from the composer.json
- * @return {{fullName: string, vendorName: string, packageName: string}}
+ * @return {{
+ *    fullName: string,
+ *    vendorName: string,
+ *    packageName: string,
+ *    dependencies: string[],
+ *    devDependencies: string[]
+ * }}
  */
 export function getInfosFromComposerJSON() {
   // Read the version and name from package.json
   const composerJsonPath = path.join(process.cwd(), "./composer.json");
-  const { name: fullName } = JSON.parse(readFileSync(composerJsonPath, "utf8"));
+  const json = JSON.parse(readFileSync(composerJsonPath, "utf8"));
+  const fullName = json.name;
+  const dependencies = json["require"] || {};
+  const devDependencies = json["require-dev"] || {};
   if (!fullName) {
     throw new Error(`No name found in composer.json`);
   }
@@ -82,7 +91,7 @@ export function getInfosFromComposerJSON() {
     );
   }
   const [vendorName, packageName] = fullName.split("/");
-  return { fullName, vendorName, packageName };
+  return { fullName, vendorName, packageName, dependencies, devDependencies };
 }
 
 /**
@@ -129,7 +138,7 @@ export const headline = (message) => {
  */
 export const throwError = (message, ...rest) => {
   line();
-  console.log(` ❌ ${bgRed(bold(`${message}`))}`, ...rest);
+  console.log(` ❌ ${red(bold(`${message}`))}`, ...rest);
   exit(1);
 };
 
@@ -185,7 +194,7 @@ export const validateDirectories = async (dir1, dir2, ignore = [".git"]) => {
  * - creates a folder scoped/ with all required plugin files
  * - creates a zip file from the scoped/ folder, named after the package
  */
-export function createReleaseFiles() {
+export function createRelease() {
   headline(`Creating Release Files...`);
 
   if (!isAtRootDir()) {
@@ -199,12 +208,6 @@ export function createReleaseFiles() {
   info(`Creating a scoped release in ${blue(scopedFolder)}...`);
   line();
 
-  // Install Composer dependencies in GitHub Actions
-  if (env.GITHUB_ACTIONS === "true") {
-    console.log("💡 Installing non-dev composer dependencies...");
-    run("composer install --no-scripts --no-dev");
-  }
-
   /** Ensure php-scoper is available */
   const phpScoperPath = "config/php-scoper";
   info("Ensuring php-scoper is available...");
@@ -214,12 +217,17 @@ export function createReleaseFiles() {
     run(`chmod +x ${phpScoperPath}`);
   }
 
-  /** Scope namespaces using php-scoper */
-  info("Scoping namespaces using php-scoper...");
+  info("Installing non-dev composer dependencies...");
+  run("composer install --no-scripts --no-dev --quiet");
+
+  info("Scoping non-dev dependencies...");
   rmSync(scopedFolder, { recursive: true, force: true });
   run(`${phpScoperPath} add-prefix --quiet --output-dir=${scopedFolder} --config=config/scoper.config.php`); // prettier-ignore
   success("Successfully scoped all namespaces!");
   line();
+
+  info("Re-installing dev depdendencies...");
+  run("composer install --no-scripts --quiet");
 
   /**
    * This needs to be done manually, since PUC causes problems when scoped.
@@ -267,17 +275,73 @@ export function createReleaseFiles() {
 }
 
 /**
- * Run Unit and E2E tests from the scoped plugin folder
- * @TODO:
- *  - copy the scoped folder to a /tmp location
- *  - copy phpunit.xml and tests/ into the /tmp folder
- *  - create a .wp-env.override.json with the "." replaced by the /tmp folder
- *  - Run wp-env start --update
- *  - Run php unit in the tmp folder (maybe not even any adjustment needed here?!)
+ * Read a file, fall back to undefined if it doesn't exist
+ * @param {string} path
  */
-export function testScopedRelease() {
-  const { plugins } = JSON.parse(readFileSync(".wp-env.json", "utf8"));
-  throwError("Not yet implemented");
+function readFile(path) {
+  return existsSync(path)
+    ? readFileSync(path, { encoding: "utf-8" })
+    : undefined;
+}
+
+/**
+ * Run Unit and E2E tests from the root (dev)
+ */
+export function testDev() {
+  info(`Deleting .wp-env.override.json...`);
+  rmSync(".wp-env.override.json", { force: true });
+
+  info(`Re-Starting wp-env with root folder...`);
+  run(`wp-env start --update`);
+
+  info(`Running tests...`);
+  run("pnpm run test");
+}
+
+/**
+ * Run Unit and E2E tests from the scoped release folder
+ */
+export function testRelease() {
+  // createRelease();
+
+  const scopedFolder = getScopedFolder();
+
+  info(`Copying required files for tests into ${scopedFolder}...`);
+  run(`cp -Rf composer.json phpunit.xml tests ${scopedFolder}/`);
+
+  info(`Installing dev dependencies in ${scopedFolder}...`);
+  const { devDependencies } = getInfosFromComposerJSON();
+
+  const requireDev = Object.entries(devDependencies).reduce(
+    /**
+     * @param {string[]} acc - The accumulator array.
+     * @param {[string, string]} entry - An array containing the dependency name and version.
+     * @returns {string[]} The updated accumulator array.
+     */
+    (acc, [name, version]) => {
+      acc.push(`"${name}:${version}"`);
+      return acc;
+    },
+    [],
+  );
+
+  run(`composer require --dev --quiet --working-dir=${scopedFolder} ${requireDev.join(" ")}`); // prettier-ignore
+
+  /** @type {{ plugins: string[] }} */
+  const { plugins } = JSON.parse(readFile(".wp-env.json") || "{}");
+  const overrides = JSON.parse(readFile(".wp-env.override.json") || "{}");
+
+  overrides.plugins = plugins.map((plugin) => {
+    return plugin.replace(/^\.\/?/, `./${scopedFolder}/`);
+  });
+  const stringifiedOverrides = JSON.stringify(overrides, undefined, 2);
+  writeFileSync(".wp-env.override.json", stringifiedOverrides, "utf-8");
+
+  info(`Re-Starting wp-env with ${scopedFolder}...`);
+  run(`wp-env start --update`);
+
+  info(`Running tests in ${scopedFolder}...`);
+  run("pnpm run test");
 }
 
 /**
@@ -424,43 +488,45 @@ export async function buildAssets() {
 export async function patchVersion() {
   /** Read the version and name from package.json */
   const { version: packageVersion } = getInfosFromPackageJSON();
-  const { packageName } = getInfosFromComposerJSON();
+  const { packageName: name } = getInfosFromComposerJSON();
 
-  /** Allow to overwrite the plugin main file via an argument: `config/cli/cli.js version:patch foo.php` */
-  const [, , pluginFileName = `${packageName}.php`] = process.argv;
+  const phpFiles = await fg("*.php");
 
-  const pluginFilePath = path.join(process.cwd(), pluginFileName);
+  const nameRegexp = new RegExp(`^\\s*\\*\\s*Plugin Name:\\s*${name}`, "m");
+  const versionRegexp = /\*\s*Version:\s*(\d+\.\d+\.\d+)/;
+
+  const fileName = phpFiles.find((file) => {
+    const contents = readFileSync(file, "utf-8");
+    return nameRegexp.test(contents) && versionRegexp.test(contents);
+  });
 
   /** Bail early if the file doesn't exist */
-  if (!existsSync(pluginFilePath)) {
-    throwError(`❌ plugin file not found: ${pluginFileName}`);
+  if (!fileName) {
+    return throwError(`Main plugin file not found: ${fileName}`);
   }
 
-  /** Update the version in the main plugin PHP file */
-  let pluginFile = fs.readFileSync(pluginFilePath, "utf8");
-
-  const versionRegexp = /\*\s*Version:\s*(\d+\.\d+\.\d+)/;
-  const currentVersion = pluginFile.match(versionRegexp)?.[1];
+  const contents = readFileSync(fileName, "utf8");
+  const currentVersion = contents.match(versionRegexp)?.[1];
 
   line();
-  info(`Patching version in ${pluginFileName}...`);
+  info(`Patching version in ${fileName}...`);
 
   if (!currentVersion) {
-    throwError(`No version found in file: ${pluginFileName}`);
+    throwError(`No version found in file: ${fileName}`);
     process.exit(1);
   }
 
   if (currentVersion === packageVersion) {
-    success(`Version already patched in ${pluginFileName}: ${currentVersion}`);
+    success(`Version already patched in ${fileName}: ${currentVersion}`);
     process.exit(0);
   }
 
-  pluginFile = pluginFile.replace(
-    versionRegexp,
-    `* Version: ${packageVersion}`,
+  writeFileSync(
+    fileName,
+    contents.replace(versionRegexp, `* Version: ${packageVersion}`),
+    "utf8",
   );
-  writeFileSync(pluginFilePath, pluginFile, "utf8");
 
-  success(`Patched version to ${packageVersion} in ${pluginFileName}`);
+  success(`Patched version to ${packageVersion} in ${fileName}`);
   line();
 }

@@ -10,16 +10,16 @@ import pc from "picocolors";
 
 import {
   dd,
-  createReleaseFiles,
-  testScopedRelease,
+  createRelease,
+  testRelease,
   pushReleaseToDist,
   buildAssets,
   patchVersion,
   prepareDistFolder,
   isAtRootDir,
   throwError,
+  testDev,
 } from "./support.js";
-import { execSync } from "node:child_process";
 
 // Get the equivalent of __filename
 const __filename = fileURLToPath(import.meta.url);
@@ -27,11 +27,12 @@ const __filename = fileURLToPath(import.meta.url);
 // List of available commands
 const commands = {
   "assets:build": buildAssets,
-  "release:create": createReleaseFiles,
-  "release:test": testScopedRelease,
+  "release:create": createRelease,
   "version:patch": patchVersion,
   "dist:prepare": prepareDistFolder,
   "dist:push": pushReleaseToDist,
+  "test:dev": testDev,
+  "test:release": testRelease,
 };
 
 const {

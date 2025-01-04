@@ -47,7 +47,7 @@ return [
     'exclude-namespaces' => [
         __NAMESPACE__,
         /** Exclude plugin-update-checker in our plugin code */
-        'YahnisElsts\PluginUpdateChecker'
+        'YahnisElsts\PluginUpdateChecker',
     ],
     'php-version' => ComposerJSON::instance()->phpVersion,
     // 'exclude-files' => [...$excludeFiles],
@@ -68,7 +68,7 @@ return [
             ->notName('/.*\\.sh|composer\\.(json|lock)/')
             ->exclude([
                 'sniccowp/php-scoper-wordpress-excludes',
-                'yahnis-elsts/plugin-update-checker'
+                'yahnis-elsts/plugin-update-checker',
             ]),
         $finder::create()->append(glob('*.php')),
         $finder::create()->append($extraFiles),

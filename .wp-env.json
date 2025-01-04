@@ -7,10 +7,8 @@
     "https://downloads.wordpress.org/plugin/debug-bar.latest-stable.zip"
   ],
   "phpVersion": "8.2",
+  "port": 9783,
   "env": {
-    "development": {
-      "port": 9783
-    },
     "tests": {
       "port": 9784
     }

@@ -29,3 +29,4 @@ dist/
 playwright-report/
 /playwright/.cache/
 playwright-results.json
+.wp-env.override.json

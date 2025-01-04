@@ -12,14 +12,14 @@
  * This URL can be used in e2e tests: http://localhost:9783/
  */
 
-add_action('plugins_loaded', fn() => new WPThumbhashE2EPlugin());
-
 use Hirasso\WPThumbhash\WPThumbhash;
 
 use WP_Query;
 
 use Exception;
 use Hirasso\WPThumbhash\Enums\QueryArgsCompare;
+
+add_action('plugins_loaded', fn() => new WPThumbhashE2EPlugin());
 
 class WPThumbhashE2EPlugin
 {
