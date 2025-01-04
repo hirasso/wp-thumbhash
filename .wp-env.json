@@ -11,5 +11,8 @@
     "tests": {
       "port": 9784
     }
+  },
+  "lifecycleScripts": {
+    "afterStart": "wp-env run cli wp theme activate twentytwentyfive"
   }
 }

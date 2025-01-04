@@ -64,8 +64,8 @@ jobs:
         with:
           phpVersion: ${{ matrix.php }}
 
-      - name: Run Tests With Coverage
-        run: pnpm run test:wp:ci
+      - name: Run Tests
+        run: pnpm run test:phpunit:ci
 
       # - name: Handle Code Coverage
       #   uses: codecov/codecov-action@v4
