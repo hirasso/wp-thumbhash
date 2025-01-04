@@ -16,6 +16,8 @@
     "wp-env:theme:activate": "wp-env run cli wp theme activate twentytwentyfive",
     "wp-env:cli:dev": "pnpm run wp-env run cli --env-cwd=wp-content/plugins/wp-thumbhash",
     "wp-env:cli:tests": "pnpm run wp-env run tests-cli --env-cwd=wp-content/plugins/wp-thumbhash",
+    "wp-env:open:dev": "open http://localhost:9783",
+    "wp-env:open:test": "open http://localhost:9784",
     "test:wp": "pnpm run wp-env:cli:tests vendor/bin/phpunit --no-coverage",
     "test:wp:ci": "pnpm run wp-env:cli:tests vendor/bin/phpunit --coverage-clover coverage.xml",
     "test:e2e": "pnpm exec playwright test --config ./tests/E2E/playwright.config.js",
