@@ -12,5 +12,10 @@
   "require": {
     "php": ">=8.2",
     "composer/installers": "^2.3"
+  },
+  "config": {
+    "allow-plugins": {
+      "composer/installers": true
+    }
   }
 }
