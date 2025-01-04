@@ -266,7 +266,7 @@ export function prepareDistFolder() {
 
   // Check if the `scoped` folder exists
   if (!existsSync("scoped")) {
-    throwError("The 'scoped' folder does not exist");
+    throwError('The "scoped" folder does not exist');
   }
 
   // Initialize the dist folder if not in GitHub Actions

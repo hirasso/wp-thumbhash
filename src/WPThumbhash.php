@@ -48,7 +48,7 @@ class WPThumbhash
     }
 
     /**
-     * Load the plugin text domain manually, so that it prevails over the folder name (it's "scoped" during tests)
+     * Load the plugin text domain
      */
     public static function loadTextDomain(): void
     {

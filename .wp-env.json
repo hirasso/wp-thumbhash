@@ -1,8 +1,11 @@
 {
   "$schema": "https://schemas.wp.org/trunk/wp-env.json",
   "core": null,
-  "themes": ["https://downloads.wordpress.org/theme/twentytwentyfive.latest-stable.zip"],
-  "plugins": [".", "./tests/E2E/e2e-plugin.php"],
+  "plugins": [
+    ".",
+    "./tests/E2E/e2e-plugin.php",
+    "https://downloads.wordpress.org/plugin/debug-bar.latest-stable.zip"
+  ],
   "phpVersion": "8.2",
   "env": {
     "development": {
