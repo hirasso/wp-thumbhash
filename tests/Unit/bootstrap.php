@@ -24,7 +24,10 @@ if (\function_exists('xdebug_disable')) {
  */
 require_once \dirname(__DIR__, 2) . '/vendor/yoast/wp-test-utils/src/WPIntegration/bootstrap-functions.php';
 
-// Get access to tests_add_filter() function.
+/**
+ * Get access (GLOBAL!!) to tests_add_filter() function.
+ * wp-phpunit is located in `/wordpress-phpunit/` in the wp-env container
+ */
 require_once WPIntegration\get_path_to_wp_test_dir() . 'includes/functions.php';
 
 \tests_add_filter(

@@ -288,8 +288,15 @@ function readFile(path) {
  * Run Unit and E2E tests from the root (dev)
  */
 export function testDev() {
-  info(`Deleting .wp-env.override.json...`);
-  rmSync(".wp-env.override.json", { force: true });
+  if (existsSync(".wp-env.override.json")) {
+    info(`Deleting plugins in .wp-env.override.json...`);
+    const overrides = JSON.parse(readFile(".wp-env.override.json") || "{}");
+    rmSync(".wp-env.override.json", { force: true });
+    delete overrides.plugins;
+    if (Object.values(overrides).length) {
+      writeJsonFile(".wp-env.override.json", overrides);
+    }
+  }
 
   info(`Re-Starting wp-env with root folder...`);
   run(`wp-env start --update`);
@@ -299,10 +306,19 @@ export function testDev() {
 }
 
 /**
+ * Write JSON to a file
+ * @param {string} name
+ * @param {any} data
+ */
+function writeJsonFile(name, data) {
+  writeFileSync(name, JSON.stringify(data, undefined, 2), "utf-8");
+}
+
+/**
  * Run Unit and E2E tests from the scoped release folder
  */
 export function testRelease() {
-  // createRelease();
+  createRelease();
 
   const scopedFolder = getScopedFolder();
 
@@ -325,7 +341,7 @@ export function testRelease() {
     [],
   );
 
-  run(`composer require --dev --quiet --working-dir=${scopedFolder} ${requireDev.join(" ")}`); // prettier-ignore
+  run(`composer require --dev ${requireDev.join(" ")} --quiet --working-dir=${scopedFolder} --with-all-dependencies`); // prettier-ignore
 
   /** @type {{ plugins: string[] }} */
   const { plugins } = JSON.parse(readFile(".wp-env.json") || "{}");
@@ -334,8 +350,7 @@ export function testRelease() {
   overrides.plugins = plugins.map((plugin) => {
     return plugin.replace(/^\.\/?/, `./${scopedFolder}/`);
   });
-  const stringifiedOverrides = JSON.stringify(overrides, undefined, 2);
-  writeFileSync(".wp-env.override.json", stringifiedOverrides, "utf-8");
+  writeJsonFile(".wp-env.override.json", overrides);
 
   info(`Re-Starting wp-env with ${scopedFolder}...`);
   run(`wp-env start --update`);
