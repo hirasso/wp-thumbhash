@@ -18,10 +18,10 @@ import { chdir, cwd, env, exit } from "node:process";
 import pc from "picocolors";
 import fg from "fast-glob";
 
-// extract colors from common.js module picocolors
+/** extract colors from common.js module picocolors */
 const { blue, red, bold, gray, green } = pc;
 
-// Get the equivalent of __filename
+/** Get the equivalent of __filename */
 const __filename = fileURLToPath(import.meta.url);
 
 /**
@@ -51,7 +51,6 @@ export function isAtRootDir() {
  * @return {{version: string}}
  */
 export function getInfosFromPackageJSON() {
-  // Read the version and name from package.json
   const packageJsonPath = path.join(process.cwd(), "./package.json");
   const { version } = JSON.parse(readFileSync(packageJsonPath, "utf8"));
   return { version };
@@ -76,7 +75,6 @@ export function getScopedFolder() {
  * }}
  */
 export function getInfosFromComposerJSON() {
-  // Read the version and name from package.json
   const composerJsonPath = path.join(process.cwd(), "./composer.json");
   const json = JSON.parse(readFileSync(composerJsonPath, "utf8"));
   const fullName = json.name;
@@ -196,10 +194,6 @@ export const validateDirectories = async (dir1, dir2, ignore = [".git"]) => {
  */
 export function createRelease() {
   headline(`Creating Release Files...`);
-
-  if (!isAtRootDir()) {
-    throwError(`${basename(__filename)} must be executed from the package root directory`); // prettier-ignore
-  }
 
   const { packageName } = getInfosFromComposerJSON();
   const scopedFolder = getScopedFolder();
@@ -371,12 +365,17 @@ export function prepareDistFolder() {
   const { fullName } = getInfosFromComposerJSON();
   const scopedFolder = getScopedFolder();
 
-  // Check if the scoped folder exists
+  /** Check if the scoped folder exists */
   if (!existsSync(scopedFolder)) {
     throwError(`'${scopedFolder}' scoped folder does not exist`);
   }
 
-  // Initialize the dist folder if not in GitHub Actions
+  /** Re-create the release files if the scoped folder is not clean */
+  if (existsSync(`${scopedFolder}/phpunit.xml`)) {
+    createRelease();
+  }
+
+  /** Initialize the dist folder if not in GitHub Actions */
   if (env.GITHUB_ACTIONS !== "true") {
     info(`Cloning the dist repo into dist/...`);
     rmSync("dist", { recursive: true, force: true });
@@ -438,10 +437,6 @@ export async function pushReleaseToDist() {
   const onGitHub = isGitHubActions();
   debug({ onGitHub });
 
-  if (!isAtRootDir()) {
-    throwError(`${basename(__filename)} must be executed from the package root directory`); // prettier-ignore
-  }
-
   const hasValidDirectories = await validateDirectories(scopedFolder, "dist");
 
   debug({ hasValidDirectories });
@@ -501,7 +496,6 @@ export async function buildAssets() {
  * current version in the package.json
  */
 export async function patchVersion() {
-  /** Read the version and name from package.json */
   const { version: packageVersion } = getInfosFromPackageJSON();
   const { packageName: name } = getInfosFromComposerJSON();
 
@@ -515,7 +509,6 @@ export async function patchVersion() {
     return nameRegexp.test(contents) && versionRegexp.test(contents);
   });
 
-  /** Bail early if the file doesn't exist */
   if (!fileName) {
     return throwError(`Main plugin file not found: ${fileName}`);
   }
