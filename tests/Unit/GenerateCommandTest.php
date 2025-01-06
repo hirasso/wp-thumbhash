@@ -1,63 +1,41 @@
 <?php
 
-namespace Hirasso\WPThumbhash\Tests\Unit;
+uses(\Hirasso\WPThumbhash\Tests\Unit\WPTestCase::class);
 
 use Hirasso\WPThumbhash\CLI\Commands\GenerateCommand;
 use Hirasso\WPThumbhash\WPThumbhash;
 use Snicco\Component\BetterWPCLI\Testing\CommandTester;
 
-/**
- * @coversDefaultClass \Hirasso\WPThumbhash\CLI\Commands\GenerateCommand
- */
-final class GenerateCommandTest extends WPTestCase
-{
-    private int $attachmentID;
+beforeEach(function () {
+    $this->attachmentID = $this->factory()->attachment->create_upload_object(
+        WPThumbhash::getAssetPath(FIXTURES_ORIGINAL_IMAGE)
+    );
 
-    /**
-     * Setting up
-     */
-    public function set_up()
-    {
-        parent::set_up();
+    expect($this->attachmentID)->toBeInt();
+});
 
-        $this->attachmentID = $this->factory()->attachment->create_upload_object(
-            WPThumbhash::getAssetPath(FIXTURES_ORIGINAL_IMAGE)
-        );
+test('synopsis', function () {
+    $synopsis = GenerateCommand::synopsis();
+    expect($synopsis->hasRepeatingPositionalArgument())->toBeTrue();
 
-        $this->assertIsInt($this->attachmentID);
-    }
+    [$ids, $force] = $synopsis->toArray();
 
-    /**
-     * @covers ::synopsis
-     */
-    public function test_synopsis()
-    {
-        $synopsis = GenerateCommand::synopsis();
-        $this->assertTrue($synopsis->hasRepeatingPositionalArgument());
+    expect($ids['name'])->toEqual('ids');
+    expect($ids['repeating'])->toBeTrue();
+    expect($ids['optional'])->toBeTrue();
 
-        [$ids, $force] = $synopsis->toArray();
+    expect($force['name'])->toEqual('force');
+    expect($force['optional'])->toBeTrue();
+});
 
-        $this->assertEquals('ids', $ids['name']);
-        $this->assertTrue($ids['repeating']);
-        $this->assertTrue($ids['optional']);
+test('execute', function () {
+    $tester = new CommandTester(new GenerateCommand());
 
-        $this->assertEquals('force', $force['name']);
-        $this->assertTrue($force['optional']);
-    }
+    $tester->run([], ['force' => true]);
 
-    /**
-     * @covers ::execute
-     */
-    public function test_execute()
-    {
-        $tester = new CommandTester(new GenerateCommand());
+    $tester->assertCommandIsSuccessful();
+    $tester->assertStatusCode(0);
 
-        $tester->run([], ['force' => true]);
-
-        $tester->assertCommandIsSuccessful();
-        $tester->assertStatusCode(0);
-
-        $tester->seeInStderr('Generating Thumbhashes (force: true)');
-        $tester->seeInStderr('[OK]');
-    }
-}
+    $tester->seeInStderr('Generating Thumbhashes (force: true)');
+    $tester->seeInStderr('[OK]');
+});

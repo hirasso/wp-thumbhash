@@ -1,63 +1,40 @@
 <?php
 
-namespace Hirasso\WPThumbhash\Tests\Unit;
+uses(\Hirasso\WPThumbhash\Tests\Unit\WPTestCase::class);
 
 use Hirasso\WPThumbhash\CLI\Commands\ClearCommand;
 use Hirasso\WPThumbhash\WPThumbhash;
 use Snicco\Component\BetterWPCLI\Testing\CommandTester;
 
-/**
- * @coversDefaultClass \Hirasso\WPThumbhash\CLI\Commands\ClearCommand
- */
-final class ClearCommandTest extends WPTestCase
-{
-    private int $attachmentID;
+beforeEach(function () {
+    $this->attachmentID = $this->factory()->attachment->create_upload_object(
+        WPThumbhash::getAssetPath(FIXTURES_ORIGINAL_IMAGE)
+    );
+    expect($this->attachmentID)->toBeInt();
+});
 
-    /**
-     * Setting up
-     */
-    public function set_up()
-    {
-        parent::set_up();
+test('synopsis', function () {
+    $synopsis = ClearCommand::synopsis();
+    expect($synopsis->hasRepeatingPositionalArgument())->toBeTrue();
 
-        $this->attachmentID = $this->factory()->attachment->create_upload_object(
-            WPThumbhash::getAssetPath(FIXTURES_ORIGINAL_IMAGE)
-        );
+    [$ids] = $synopsis->toArray();
 
-        $this->assertIsInt($this->attachmentID);
-    }
+    expect($ids['name'])->toEqual('ids');
+    expect($ids['repeating'])->toBeTrue();
+    expect($ids['optional'])->toBeTrue();
+});
 
-    /**
-     * @covers ::synopsis
-     */
-    public function test_synopsis()
-    {
-        $synopsis = ClearCommand::synopsis();
-        $this->assertTrue($synopsis->hasRepeatingPositionalArgument());
+test('execute', function () {
+    $tester = new CommandTester(new ClearCommand());
 
-        [$ids] = $synopsis->toArray();
+    $tester->run(["$this->attachmentID"]);
 
-        $this->assertEquals('ids', $ids['name']);
-        $this->assertTrue($ids['repeating']);
-        $this->assertTrue($ids['optional']);
-    }
+    $tester->assertCommandIsSuccessful();
+    $tester->assertStatusCode(0);
 
-    /**
-     * @covers ::execute
-     */
-    public function test_execute()
-    {
-        $tester = new CommandTester(new ClearCommand());
+    $tester->seeInStderr('[OK] 1 thumbhash cleared');
 
-        $tester->run(["$this->attachmentID"]);
+    $hash = WPThumbhash::getHash($this->attachmentID);
 
-        $tester->assertCommandIsSuccessful();
-        $tester->assertStatusCode(0);
-
-        $tester->seeInStderr('[OK] 1 thumbhash cleared');
-
-        $hash = WPThumbhash::getHash($this->attachmentID);
-
-        $this->assertNull($hash);
-    }
-}
+    expect($hash)->toBeNull();
+});
