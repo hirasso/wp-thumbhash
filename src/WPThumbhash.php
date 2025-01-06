@@ -1,4 +1,5 @@
 <?php
+
 /*
  * Copyright (c) Rasso Hilber
  * https://rassohilber.com
@@ -31,8 +32,8 @@ class WPThumbhash
         add_action('plugins_loaded', [static::class, 'loadTextDomain']);
 
         // Load thumbhash-custom-element as early as possible on every page
-        add_action('wp_enqueue_scripts', [static::class, 'enqueueAssets']);
-        add_action('admin_enqueue_scripts', [static::class, 'enqueueAssets']);
+        add_action('wp_enqueue_scripts', [static::class, 'enqueueCustomElement']);
+        add_action('admin_enqueue_scripts', [static::class, 'enqueueCustomElement']);
 
         // Initialize WP CLI application
         if (defined('WP_CLI') && class_exists(WP_CLI::class)) {
@@ -60,7 +61,7 @@ class WPThumbhash
      * Enqueue the thumbhash-custom-element
      * @see https://github.com/hirasso/thumbhash-custom-element
      */
-    public static function enqueueAssets(): void
+    public static function enqueueCustomElement(): void
     {
         wp_enqueue_script(
             handle: 'thumbhash-custom-element',

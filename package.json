@@ -17,7 +17,7 @@
     "test": "pnpm run test:pest --no-coverage && pnpm run test:e2e",
     "test:pest": "wp-env run tests-cli --env-cwd=wp-content/plugins/wp-thumbhash vendor/bin/pest",
     "test:pest:ci": "pnpm run test:pest --coverage-clover coverage.xml",
-    "test:e2e": "pnpm exec playwright test --config ./tests/E2E/playwright.config.js",
+    "test:e2e": "pnpm exec playwright test --config ./tests/E2E/playwright.config.ts",
     "test:e2e:dev": "PLAYWRIGHT_ENV=dev pnpm test:e2e --ui",
     "test:e2e:install": "pnpm exec playwright install --with-deps",
     "act:php-tests": "act -j php-tests --matrix php:8.2 --container-options '--privileged'"

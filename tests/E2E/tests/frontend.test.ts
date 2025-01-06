@@ -1,6 +1,4 @@
 import { test, expect } from "@playwright/test";
-import { scrollTo, scrollToEnd, expectScrollPosition, sleep } from "./support";
-import { baseURL } from "../playwright.config.js";
 
 test.describe("Strategies", () => {
   test.beforeEach(async ({ page }) => {
@@ -8,7 +6,6 @@ test.describe("Strategies", () => {
   });
 
   test("Renders a canvas (strategy: 'canvas')", async ({ page }) => {
-    await page.goto("/");
     page.setViewportSize({ width: 1000, height: 1000 });
 
     await page.waitForTimeout(2000);

@@ -9,7 +9,7 @@ type ScrollPosition = {
 export function scrollTo(
   page: Page,
   position: Partial<ScrollPosition>,
-  testId?: string
+  testId?: string,
 ) {
   return page.evaluate(
     (args) => {
@@ -27,7 +27,7 @@ export function scrollTo(
         ...position,
       },
       testId,
-    }
+    },
   );
 }
 
@@ -41,20 +41,20 @@ export function scrollToEnd(page: Page, testId?: string) {
       }
       window.scrollTo(document.body.scrollWidth, document.body.scrollHeight);
     },
-    { testId }
+    { testId },
   );
 }
 
-export function sleep(timeout = 0): Promise<void> {
+export function wait(timeout = 0): Promise<void> {
   return new Promise((resolve) =>
-    setTimeout(() => resolve(undefined), timeout)
+    setTimeout(() => resolve(undefined), timeout),
   );
 }
 
 export async function expectScrollPosition(
   page: Page,
   expected: ScrollPosition,
-  testId?: string
+  testId?: string,
 ) {
   const scrollY = await page.evaluate((testId): ScrollPosition => {
     if (!testId)
