@@ -1,5 +1,6 @@
 import { test, expect } from "@playwright/test";
 import { scrollTo, scrollToEnd, expectScrollPosition, sleep } from "./support";
+import { baseURL } from "../playwright.config.js";
 
 test.describe("Strategies", () => {
   test.beforeEach(async ({ page }) => {
@@ -7,17 +8,19 @@ test.describe("Strategies", () => {
   });
 
   test("Renders a canvas (strategy: 'canvas')", async ({ page }) => {
-    await page.goto('/');
+    await page.goto("/");
     page.setViewportSize({ width: 1000, height: 1000 });
 
     await page.waitForTimeout(2000);
 
     // Locate the thumb-hash element
-    const canvas = page.getByTestId('using-canvas').locator('thumb-hash canvas');
+    const canvas = page
+      .getByTestId("using-canvas")
+      .locator("thumb-hash canvas");
     expect(canvas).toHaveCount(1);
-    expect(canvas).toHaveAttribute('width');
-    expect(canvas).toHaveAttribute('height');
-    expect(canvas).toHaveAttribute('style', 'width: 100%; height: 100%;');
+    expect(canvas).toHaveAttribute("width");
+    expect(canvas).toHaveAttribute("height");
+    expect(canvas).toHaveAttribute("style", "width: 100%; height: 100%;");
   });
 
   // test("Renders the average color in a div (strategy: 'average')", async ({ page }) => {

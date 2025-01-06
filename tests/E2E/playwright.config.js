@@ -9,7 +9,8 @@ const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
 /** The URL of the wp-env development site */
-const baseURL = "http://localhost:9783";
+export const baseURL = "http://localhost:9783";
+export const authFile = path.join(__dirname, "playwright/.auth/user.json");
 
 /**
  * See https://playwright.dev/website/test-configuration.
@@ -64,17 +65,39 @@ export default defineConfig({
     video: "retain-on-failure",
   },
 
-  /* Configure projects for major browsers */
+  /* Configure projects for setup and major browsers */
   projects: [
-    { name: "chromium", use: { ...devices["Desktop Chrome"] } },
-    { name: "firefox", use: { ...devices["Desktop Firefox"] } },
-    { name: "webkit", use: { ...devices["Desktop Safari"] } },
+    { name: "setup", testMatch: /.*\.setup\.ts/ },
+    {
+      name: "chromium",
+      use: {
+        ...devices["Desktop Chrome"],
+        storageState: authFile,
+      },
+      dependencies: ["setup"],
+    },
+    {
+      name: "firefox",
+      use: {
+        ...devices["Desktop Firefox"],
+        storageState: authFile,
+      },
+      dependencies: ["setup"],
+    },
+    {
+      name: "webkit",
+      use: {
+        ...devices["Desktop Safari"],
+        storageState: authFile,
+      },
+      dependencies: ["setup"],
+    },
   ],
 
   /* Run your local dev server before starting the tests */
   webServer: {
     url: baseURL,
     command: "pnpm run wp-env start",
-    reuseExistingServer: true,//!process.env.CI,
+    reuseExistingServer: true, //!process.env.CI,
   },
 });
