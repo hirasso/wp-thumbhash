@@ -1,7 +1,5 @@
 <?php
 
-namespace Hirasso\WPThumbhash\Tests\Unit\AdminTest;
-
 uses(\Hirasso\WPThumbhash\Tests\Unit\WPTestCase::class);
 
 use Hirasso\WPThumbhash\Admin;
