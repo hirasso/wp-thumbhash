@@ -1,7 +1,9 @@
 parameters:
   level: 1
+  bootstrapFiles:
+    - config/phpstan.bootstrap.php
   paths:
-      - wp-thumbhash.php
-      - src/WPThumbhash.php
+    - wp-thumbhash.php
+    - src/WPThumbhash.php
   ignoreErrors:
     - '#Action callback returns .+ but should not return anything#'
