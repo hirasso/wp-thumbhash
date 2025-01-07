@@ -341,9 +341,10 @@ export function testRelease() {
   const { plugins } = JSON.parse(readFile(".wp-env.json") || "{}");
   const overrides = JSON.parse(readFile(".wp-env.override.json") || "{}");
 
-  overrides.plugins = plugins.map((plugin) => {
-    return plugin.replace(/^\.\/?/, `./${scopedFolder}/`);
+  overrides.plugins = plugins.map((path) => {
+    return path === "." ? `./${scopedFolder}/` : path;
   });
+
   writeJsonFile(".wp-env.override.json", overrides);
   debug("Contents of .wp-env.override.json:", overrides);
 
