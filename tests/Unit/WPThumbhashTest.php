@@ -1,14 +1,11 @@
 <?php
 
-uses(\Hirasso\WPThumbhash\Tests\Unit\WPTestCase::class);
+uses(\Yoast\WPTestUtils\WPIntegration\TestCase::class);
 
 use Hirasso\WPThumbhash\WPThumbhash;
 
 test('generates a thumbhash on upload', function () {
-    $this->assertHasAction(
-        'add_attachment',
-        [WPThumbhash::class, 'generate']
-    );
+    expect(has_action('add_attachment', [WPThumbhash::class, 'generate']))->toBeTruthy();
 
     $attachmentID = $this->factory()->attachment->create_upload_object(
         WPThumbhash::getAssetPath(FIXTURES_ORIGINAL_IMAGE)

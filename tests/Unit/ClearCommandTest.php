@@ -1,6 +1,6 @@
 <?php
 
-uses(\Hirasso\WPThumbhash\Tests\Unit\WPTestCase::class);
+uses(\Yoast\WPTestUtils\WPIntegration\TestCase::class);
 
 use Hirasso\WPThumbhash\CLI\Commands\ClearCommand;
 use Hirasso\WPThumbhash\WPThumbhash;
