@@ -134,7 +134,7 @@ export const headline = (message) => {
  * @param {string} message
  * @param {...any} rest
  */
-export const throwError = (message, ...rest) => {
+export const error = (message, ...rest) => {
   line();
   console.log(` ❌ ${red(bold(`${message}`))}`, ...rest);
   exit(1);
@@ -182,7 +182,7 @@ export const validateDirectories = async (dir1, dir2, ignore = [".git"]) => {
       files1.every((file, index) => file === files2[index])
     );
   } catch (err) {
-    throwError("Error comparing directories:", err);
+    error("Error comparing directories:", err);
   }
 };
 
@@ -367,7 +367,7 @@ export function prepareDistFolder() {
 
   /** Check if the scoped folder exists */
   if (!existsSync(scopedFolder)) {
-    throwError(`'${scopedFolder}' scoped folder does not exist`);
+    error(`'${scopedFolder}' scoped folder does not exist`);
   }
 
   /** Re-create the release files if the scoped folder is not clean */
@@ -442,7 +442,7 @@ export async function pushReleaseToDist() {
   debug({ hasValidDirectories });
 
   if (hasValidDirectories !== true) {
-    throwError(
+    error(
       `The validation of the scoped and dist folder failed.`,
       `Did you run 'release:prepare'?`,
     );
@@ -450,11 +450,11 @@ export async function pushReleaseToDist() {
 
   /** Ensure the script is running in a GitHub Action */
   if (!onGitHub) {
-    throwError(`${basename(__filename)} can only run on GitHub`);
+    error(`${basename(__filename)} can only run on GitHub`);
   }
 
   if (!packageVersion) {
-    throwError("Empty package version");
+    error("Empty package version");
   }
 
   info(`Committing and pushing new release: 'v${packageVersion}'...`);
@@ -470,7 +470,7 @@ export async function pushReleaseToDist() {
     success(`Released '${packageVersion}' to the dist repo.`);
     chdir(rootDir);
   } catch (err) {
-    throwError("An error occurred while releasing the package.", err);
+    error("An error occurred while releasing the package.", err);
   }
 
   /** Change back to the root dir */
@@ -510,7 +510,7 @@ export async function patchVersion() {
   });
 
   if (!fileName) {
-    return throwError(`Main plugin file not found: ${fileName}`);
+    return error(`Main plugin file not found: ${fileName}`);
   }
 
   const contents = readFileSync(fileName, "utf8");
@@ -520,7 +520,7 @@ export async function patchVersion() {
   info(`Patching version in ${fileName}...`);
 
   if (!currentVersion) {
-    throwError(`No version found in file: ${fileName}`);
+    error(`No version found in file: ${fileName}`);
     process.exit(1);
   }
 
