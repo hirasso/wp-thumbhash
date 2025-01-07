@@ -27,6 +27,7 @@
     "@changesets/cli": "^2.27.9",
     "@hirasso/thumbhash-custom-element": "^0.5.3",
     "@playwright/test": "^1.49.1",
+    "@types/node": "^22.10.5",
     "@wordpress/env": "^10.11.0",
     "fast-glob": "^3.3.2",
     "husky": "^9.1.1",
