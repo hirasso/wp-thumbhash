@@ -1,45 +1,59 @@
 import { test, expect } from "@playwright/test";
 
-test.describe("Strategies", () => {
+test.describe("Render", () => {
   test.beforeEach(async ({ page }) => {
+    page.setViewportSize({ width: 1000, height: 1000 });
     await page.goto("/");
   });
 
-  test("Renders a canvas (strategy: 'canvas')", async ({ page }) => {
-    page.setViewportSize({ width: 1000, height: 1000 });
+  test("supports default strategy 'canvas'", async ({ page }) => {
+    const el = page.getByTestId("strategy--default");
+    await el.scrollIntoViewIfNeeded();
 
-    await page.waitForTimeout(2000);
+    expect(el.locator("thumb-hash")).toHaveAttribute("strategy", "canvas");
 
-    // Locate the thumb-hash element
-    const canvas = page
-      .getByTestId("strategy--canvas")
-      .locator("thumb-hash canvas");
+    const canvas = el.locator("thumb-hash canvas");
     expect(canvas).toHaveCount(1);
     expect(canvas).toHaveAttribute("width");
     expect(canvas).toHaveAttribute("height");
     expect(canvas).toHaveAttribute("style", "width: 100%; height: 100%;");
   });
 
-  // test("Renders the average color in a div (strategy: 'average')", async ({ page }) => {
-  //   await page.goto('/');
-  //   page.setViewportSize({ width: 1000, height: 1000 });
+  test("supports explicit strategy 'canvas'", async ({ page }) => {
+    const el = page.getByTestId("strategy--canvas");
+    await el.scrollIntoViewIfNeeded();
 
-  //   await page.waitForTimeout(2000);
+    expect(el.locator("thumb-hash")).toHaveAttribute("strategy", "canvas");
 
-  //   const div = page.getByTestId('demos-1').locator('thumb-hash[strategy="average"] div');
-  //   expect(div).toHaveCount(1);
-  //   expect(div).toHaveAttribute('style', 'width: 100%; height: 100%; background: rgb(163, 134, 104);');
-  // });
+    const canvas = el.locator("thumb-hash canvas");
+    expect(canvas).toHaveCount(1);
+    expect(canvas).toHaveAttribute("width");
+    expect(canvas).toHaveAttribute("height");
+    expect(canvas).toHaveAttribute("style", "width: 100%; height: 100%;");
+  });
 
-  // test("Renders an image with a data URI (strategy: 'img')", async ({ page }) => {
-  //   await page.goto('/');
-  //   page.setViewportSize({ width: 1000, height: 1000 });
+  test("supports strategy 'img'", async ({ page }) => {
+    const el = page.getByTestId("strategy--img");
+    await el.scrollIntoViewIfNeeded();
 
-  //   await page.waitForTimeout(2000);
+    expect(el.locator("thumb-hash")).toHaveAttribute("strategy", "img");
 
-  //   const div = page.getByTestId('demos-2').locator('thumb-hash[strategy="img"] img');
-  //   expect(div).toHaveCount(1);
-  //   expect(div).toHaveAttribute('style', 'width: 100%; height: 100%;');
-  //   expect(div).toHaveAttribute('alt', '');
-  // });
+    const img = el.locator("thumb-hash img");
+    expect(img).toHaveAttribute("style", "width: 100%; height: 100%;");
+    expect(img).toHaveAttribute("alt", "");
+  });
+
+  test("supports strategy 'average'", async ({ page }) => {
+    const el = page.getByTestId("strategy--average");
+    await el.scrollIntoViewIfNeeded();
+
+    expect(el.locator("thumb-hash")).toHaveAttribute("strategy", "average");
+
+    const div = el.locator("thumb-hash div");
+    expect(div).toHaveCount(1);
+    expect(div).toHaveAttribute(
+      "style",
+      "width: 100%; height: 100%; background: rgb(163, 134, 104);",
+    );
+  });
 });
