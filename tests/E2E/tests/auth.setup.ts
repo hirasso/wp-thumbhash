@@ -1,7 +1,5 @@
 import { test as setup, expect } from "@playwright/test";
-import path from "node:path";
-import { authFile, baseURL, storageState } from "../playwright.config.js";
-import { fileURLToPath } from "url";
+import { authFile, baseURL } from "../playwright.config.js";
 
 setup("authenticate", async ({ page }) => {
   // Perform authentication steps.
