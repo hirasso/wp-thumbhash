@@ -64,7 +64,10 @@ jobs:
         with:
           phpVersion: ${{ matrix.php }}
 
-      - name: Run PHP Tests
+      - name: Run PHPStan Tests
+        run: pnpm run analyse
+
+      - name: Run Pest Tests
         run: pnpm run test:pest:ci
 
       # - name: Handle Code Coverage
@@ -86,7 +89,7 @@ jobs:
           echo "Playwright version – ${{ steps.install-playwright.outputs.version }}"
           echo "Playwright cached – ${{ steps.install-playwright.outputs.cache-hit }}"
 
-      - name: Run E2E Tests
+      - name: Run Playwright Tests Against the Scoped Release
         run: config/cli/cli.js test:release
 
       - uses: daun/playwright-report-summary@v2
