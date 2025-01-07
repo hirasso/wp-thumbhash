@@ -17,9 +17,9 @@ use Hirasso\WPThumbhash\Enums\RenderStrategy;
 use InvalidArgumentException;
 use Snicco\Component\BetterWPCLI\CommandLoader\ArrayCommandLoader;
 use Snicco\Component\BetterWPCLI\WPCLIApplication;
-use WP_Post;
-use WP_Error;
 use WP_CLI;
+use WP_Error;
+use WP_Post;
 
 class WPThumbhash
 {
@@ -65,6 +65,7 @@ class WPThumbhash
 
     /**
      * Enqueue the thumbhash-custom-element
+     *
      * @see https://github.com/hirasso/thumbhash-custom-element
      */
     public static function enqueueCustomElement(): void
@@ -84,7 +85,7 @@ class WPThumbhash
     public static function generate(
         int $attachmentID
     ): bool|WP_Error {
-        if (!wp_attachment_is_image($attachmentID)) {
+        if (! wp_attachment_is_image($attachmentID)) {
             return new WP_Error('not_an_image', sprintf(
                 /* translators: %s is a path to a file */
                 __('File is not an image: %s', 'wp-thumbhash'),
@@ -97,8 +98,8 @@ class WPThumbhash
 
         /** @var ImageDownloader|null $downloader */
         $downloader = null;
-        if (!file_exists($file)) {
-            $downloader = new ImageDownloader();
+        if (! file_exists($file)) {
+            $downloader = new ImageDownloader;
             $file = $downloader->download(wp_get_attachment_url($attachmentID));
         }
 
@@ -115,6 +116,7 @@ class WPThumbhash
         }
 
         update_post_meta($attachmentID, static::META_KEY, $hash);
+
         return true;
     }
 
@@ -125,7 +127,7 @@ class WPThumbhash
     {
         $imageID = $imageID->ID ?? $imageID;
 
-        if (!wp_attachment_is_image($imageID)) {
+        if (! wp_attachment_is_image($imageID)) {
             return null;
         }
 
@@ -151,12 +153,12 @@ class WPThumbhash
     ) {
         $strategy = RenderStrategy::tryFrom($strategyName);
 
-        if (!$strategy) {
+        if (! $strategy) {
             static::throw(new InvalidArgumentException(sprintf(
                 "do_action(\"wp-thumbhash/render\") was called wrong.
                 Invalid strategy '$strategyName' provided.
                 Available strategies: %s",
-                implode(" | ", array_column(RenderStrategy::cases(), 'value'))
+                implode(' | ', array_column(RenderStrategy::cases(), 'value'))
             )));
             $strategy = RenderStrategy::CANVAS;
         }
@@ -172,7 +174,7 @@ class WPThumbhash
         RenderStrategy $strategy = RenderStrategy::CANVAS
     ): ?string {
 
-        if (!$value = static::getHash($imageID)) {
+        if (! $value = static::getHash($imageID)) {
             return null;
         }
 
@@ -188,7 +190,7 @@ class WPThumbhash
      */
     public static function getAssetPath(string $path): string
     {
-        return baseDir() . '/' . ltrim($path, '/');
+        return baseDir().'/'.ltrim($path, '/');
     }
 
     /**
@@ -196,7 +198,7 @@ class WPThumbhash
      */
     public static function getAssetURI(string $path): string
     {
-        $uri = baseURL() . '/' . ltrim($path, '/');
+        $uri = baseURL().'/'.ltrim($path, '/');
         $file = static::getAssetPath($path);
 
         if (file_exists($file)) {
@@ -226,6 +228,7 @@ class WPThumbhash
                 ],
             ],
         ];
+
         return $args;
     }
 }

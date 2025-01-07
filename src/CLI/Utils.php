@@ -16,6 +16,7 @@ class Utils
         ];
         $dotsAmount = max(0, static::getTerminalWidth() - strlen($start) - strlen($end));
         $dots = str_repeat('.', $dotsAmount);
+
         return sanitize_text_field("$start $dots $end");
     }
 
@@ -27,6 +28,7 @@ class Utils
         // Redirect stderr to /dev/null to handle potential errors gracefully
         if ($output = exec('stty size 2>/dev/null')) {
             [$rows, $cols] = explode(' ', $output);
+
             return (int) $cols;
         }
 
@@ -53,6 +55,6 @@ class Utils
         $start = substr($string, 0, floor($keepLength));
         $end = substr($string, -ceil($keepLength));
 
-        return $start . $placeholder . $end;
+        return $start.$placeholder.$end;
     }
 }

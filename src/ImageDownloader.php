@@ -15,9 +15,7 @@ class ImageDownloader
 {
     private ?string $file = null;
 
-    public function __construct()
-    {
-    }
+    public function __construct() {}
 
     /**
      * Get the custom dir in /wp-content/uploads/
@@ -25,10 +23,11 @@ class ImageDownloader
     private static function getDir(): string
     {
         $uploadDir = wp_upload_dir();
-        $dir = $uploadDir['basedir'] . '/' . 'wp-thumbhash';
-        if (!file_exists($dir)) {
+        $dir = $uploadDir['basedir'].'/'.'wp-thumbhash';
+        if (! file_exists($dir)) {
             wp_mkdir_p($dir);
         }
+
         return $dir;
     }
 
@@ -53,8 +52,8 @@ class ImageDownloader
 
         $fs = Utils::getFilesystem();
 
-        $filename = uniqid() . '-' . basename($url);
-        $file = static::getDir() . "/$filename";
+        $filename = uniqid().'-'.basename($url);
+        $file = static::getDir()."/$filename";
         $fileContents = wp_remote_retrieve_body($response);
 
         if ($fs->put_contents($file, $fileContents, FS_CHMOD_FILE) === false) {

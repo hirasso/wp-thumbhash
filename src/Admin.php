@@ -12,13 +12,14 @@ use WP_Post;
 class Admin
 {
     public static $assetHandle = 'wp-thumbhash-admin';
+
     public static $ajaxAction = 'generate_thumbhash';
 
     public static function init()
     {
         add_filter('attachment_fields_to_edit', [static::class, 'attachmentFieldsToEdit'], 10, 2);
         add_action('admin_enqueue_scripts', [static::class, 'enqueueAssets']);
-        add_action('wp_ajax_' . static::$ajaxAction, [static::class, 'wpAjaxGenerateThumbhash']);
+        add_action('wp_ajax_'.static::$ajaxAction, [static::class, 'wpAjaxGenerateThumbhash']);
     }
 
     /**
@@ -56,13 +57,13 @@ class Admin
         array $fields,
         WP_Post $attachment
     ): array {
-        if (!wp_attachment_is_image($attachment)) {
+        if (! wp_attachment_is_image($attachment)) {
             return $fields;
         }
 
         $fields['thumbhash-attachment-field'] = [
             'label' => __('Thumbhash', 'wp-thumbhash'),
-            'input'  => 'html',
+            'input' => 'html',
             'html' => static::renderAttachmentField($attachment->ID, AdminContext::INITIAL),
         ];
 
@@ -75,7 +76,7 @@ class Admin
     private static function renderAttachmentField(int $id, AdminContext $context): string
     {
         $element = WPThumbhash::render($id);
-        $buttonLabel = !!$element ? __('Regenerate', 'wp-thumbhash') : __('Generate', 'wp-thumbhash');
+        $buttonLabel = (bool) $element ? __('Regenerate', 'wp-thumbhash') : __('Generate', 'wp-thumbhash');
 
         ob_start() ?>
 
@@ -89,9 +90,9 @@ class Admin
                 <?php echo esc_html($buttonLabel) ?>
             </button>
 
-            <?php if ($context === AdminContext::REGENERATE): ?>
+            <?php if ($context === AdminContext::REGENERATE) { ?>
                 <i aria-hidden="true" data-thumbhash-regenerated></i>
-            <?php endif; ?>
+            <?php } ?>
 
         </thumbhash-attachment-field>
 
@@ -108,7 +109,7 @@ class Admin
 
         $id = intval($_POST['id'] ?? null);
 
-        if (empty($id) || !is_numeric($id)) {
+        if (empty($id) || ! is_numeric($id)) {
             wp_send_json_error([
                 'message' => 'Invalid id provided',
             ]);

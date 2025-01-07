@@ -2,10 +2,10 @@
 
 namespace Hirasso\WPThumbhash\CLI\Commands;
 
-use Hirasso\WPThumbhash\WPThumbhash;
 use Hirasso\WPThumbhash\CLI\InputValidator;
 use Hirasso\WPThumbhash\CLI\Utils;
 use Hirasso\WPThumbhash\Enums\QueryArgsCompare;
+use Hirasso\WPThumbhash\WPThumbhash;
 use Snicco\Component\BetterWPCLI\Command;
 use Snicco\Component\BetterWPCLI\Input\Input;
 use Snicco\Component\BetterWPCLI\Output\Output;
@@ -17,6 +17,7 @@ use WP_Query;
 
 /**
  * Clear thumbhashes from all or select images
+ *
  * @see https://github.com/snicco/better-wp-cli
  */
 class ClearCommand extends Command
@@ -45,23 +46,24 @@ class ClearCommand extends Command
 
         $ids = $input->getRepeatingArgument('ids', []);
 
-        $io->title("Clearing Thumbhashes");
+        $io->title('Clearing Thumbhashes');
 
         $validator = new InputValidator($io);
-        if (!$validator->isNumericArray($ids, "Non-numeric ids provided")) {
+        if (! $validator->isNumericArray($ids, 'Non-numeric ids provided')) {
             return Command::INVALID;
         }
 
         $queryArgs = WPThumbhash::getQueryArgs(QueryArgsCompare::EXISTS);
 
-        if (!empty($ids)) {
+        if (! empty($ids)) {
             $queryArgs['post__in'] = array_map('absint', array_map('trim', $ids));
         }
 
         $query = new WP_Query($queryArgs);
 
-        if (!$query->have_posts()) {
-            $io->success("No images with placeholders found");
+        if (! $query->have_posts()) {
+            $io->success('No images with placeholders found');
+
             return Command::SUCCESS;
         }
 
@@ -82,7 +84,7 @@ class ClearCommand extends Command
 
         $io->success(match ($count) {
             1 => "$count thumbhash cleared",
-            0 => "No thumbhashes cleared",
+            0 => 'No thumbhashes cleared',
             default => "$count thumbhashes cleared"
         });
 

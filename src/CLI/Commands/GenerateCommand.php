@@ -2,11 +2,11 @@
 
 namespace Hirasso\WPThumbhash\CLI\Commands;
 
-use Hirasso\WPThumbhash\ImageDownloader;
-use Hirasso\WPThumbhash\WPThumbhash;
 use Hirasso\WPThumbhash\CLI\InputValidator;
 use Hirasso\WPThumbhash\CLI\Utils;
 use Hirasso\WPThumbhash\Enums\QueryArgsCompare;
+use Hirasso\WPThumbhash\ImageDownloader;
+use Hirasso\WPThumbhash\WPThumbhash;
 use Snicco\Component\BetterWPCLI\Command;
 use Snicco\Component\BetterWPCLI\Input\Input;
 use Snicco\Component\BetterWPCLI\Output\Output;
@@ -55,12 +55,12 @@ class GenerateCommand extends Command
         $force = $input->getFlag('force');
 
         $io->title(match ($force) {
-            true => "Generating Thumbhashes (force: true)",
-            default => "Generating Thumbhashes"
+            true => 'Generating Thumbhashes (force: true)',
+            default => 'Generating Thumbhashes'
         });
 
         $validator = new InputValidator($io);
-        if (!$validator->isNumericArray($ids, "Non-numeric ids provided")) {
+        if (! $validator->isNumericArray($ids, 'Non-numeric ids provided')) {
             return Command::INVALID;
         }
 
@@ -74,15 +74,16 @@ class GenerateCommand extends Command
 
         ImageDownloader::cleanupTemporaryFiles();
 
-        if (!$query->have_posts()) {
-            $io->success("No images without placeholders found");
+        if (! $query->have_posts()) {
+            $io->success('No images without placeholders found');
+
             return Command::SUCCESS;
         }
 
         $count = 0;
         foreach ($query->posts as $id) {
             $thumbhash = WPThumbhash::generate($id);
-            $status = match (!!$thumbhash) {
+            $status = match ((bool) $thumbhash) {
                 true => $io->colorize('generated ✔︎', Text::GREEN),
                 default => $io->colorize('failed ❌', Text::RED)
             };
@@ -95,7 +96,7 @@ class GenerateCommand extends Command
 
         $io->success(match ($count) {
             1 => "$count placeholder generated",
-            0 => "No placeholders generated",
+            0 => 'No placeholders generated',
             default => "$count placeholders generated"
         });
 

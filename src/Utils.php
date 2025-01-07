@@ -14,7 +14,7 @@ class Utils
 
         // Initialize the WP_Filesystem if it hasn't been initialized yet.
         if (empty($wp_filesystem)) {
-            require_once ABSPATH . 'wp-admin/includes/file.php';
+            require_once ABSPATH.'wp-admin/includes/file.php';
             WP_Filesystem();
         }
 

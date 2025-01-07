@@ -19,6 +19,7 @@
   },
   "require-dev": {
     "friendsofphp/php-cs-fixer": "^3.65",
+    "laravel/pint": "^1.19",
     "pestphp/pest": "^1.23",
     "phpstan/extension-installer": "^1.4",
     "phpstan/phpstan": "^2.1",

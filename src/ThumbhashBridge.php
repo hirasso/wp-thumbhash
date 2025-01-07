@@ -5,9 +5,9 @@ namespace Hirasso\WPThumbhash;
 use Exception;
 use Hirasso\WPThumbhash\Enums\ImageDriver;
 use RuntimeException;
-use WP_Image_Editor;
-use WP_Error;
 use Thumbhash\Thumbhash;
+use WP_Error;
+use WP_Image_Editor;
 
 use function Thumbhash\extract_size_and_pixels_with_gd;
 use function Thumbhash\extract_size_and_pixels_with_imagick;
@@ -21,7 +21,7 @@ class ThumbhashBridge
         string $file,
         string $mimeType
     ): string {
-        if (!file_exists($file)) {
+        if (! file_exists($file)) {
             throw new WP_Error(sprintf(
                 'File not found: %s',
                 esc_html($file)
@@ -43,6 +43,7 @@ class ThumbhashBridge
         );
 
         $hash = Thumbhash::RGBAToHash($width, $height, $pixels);
+
         return Thumbhash::convertHashToString($hash);
     }
 
@@ -59,6 +60,7 @@ class ThumbhashBridge
         try {
 
             $hashArray = Thumbhash::convertStringToHash($hashString);
+
             return Thumbhash::toDataURL($hashArray);
 
         } catch (Exception $e) {
@@ -92,7 +94,7 @@ class ThumbhashBridge
         $fs = Utils::getFilesystem();
 
         // Check if the file exists and is readable
-        if (!$fs->exists($file) || !$fs->is_readable($file)) {
+        if (! $fs->exists($file) || ! $fs->is_readable($file)) {
             return new WP_Error('Temporary image file is not accessible.');
         }
 
@@ -129,7 +131,7 @@ class ThumbhashBridge
         return match ($editor::class) {
             'WP_Image_Editor_Imagick' => ImageDriver::IMAGICK,
             'WP_Image_Editor_GD' => ImageDriver::GD,
-            default => throw new RuntimeException("Unsupported image driver")
+            default => throw new RuntimeException('Unsupported image driver')
         };
     }
 }
