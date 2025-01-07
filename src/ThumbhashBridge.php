@@ -39,7 +39,7 @@ class ThumbhashBridge
 
         [$width, $height, $pixels] = static::extractSizeAndPixels(
             driver: static::getImageDriver($editor),
-            image: static::getDownsizedImage($editor, get_post_mime_type($file, $mimeType))
+            image: static::getDownsizedImage($editor, get_post_mime_type($file))
         );
 
         $hash = Thumbhash::RGBAToHash($width, $height, $pixels);

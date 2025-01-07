@@ -9,11 +9,12 @@ class Utils
 {
     public static function getFilesystem(): WP_Filesystem_Direct|WP_Filesystem_Base
     {
-        /** @var WP_Filesystem_Base $wp_filesystem */
+        /** @var ?WP_Filesystem_Base $wp_filesystem */
         global $wp_filesystem;
 
-        // Initialize the WP_Filesystem if it hasn't been initialized yet.
-        if (empty($wp_filesystem)) {
+        /** Initialize the WP_Filesystem if it hasn't been initialized yet. */
+        if (! $wp_filesystem) {
+            /** @phpstan-ignore requireOnce.fileNotFound */
             require_once ABSPATH.'wp-admin/includes/file.php';
             WP_Filesystem();
         }
