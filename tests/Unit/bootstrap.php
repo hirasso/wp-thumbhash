@@ -12,7 +12,7 @@ define('WP_ENV_DEV_URL', 'http://localhost:9783');
 define('WP_ENV_TEST_URL', 'http://localhost:9784');
 define('FIXTURES_ORIGINAL_IMAGE', '/tests/__fixtures__/original.jpg');
 define('FIXTURES_EXPECTED_HASH', 'YTkGJwaRhWUIt4lbgnhZl3ath2BUBGYA');
-define('FIXTURES_EXPECTED_CUSTOM_ELEMENT', '<thumb-hash value="YTkGJwaRhWUIt4lbgnhZl3ath2BUBGYA"></thumb-hash>');
+define('FIXTURES_EXPECTED_CUSTOM_ELEMENT', '<thumb-hash value="YTkGJwaRhWUIt4lbgnhZl3ath2BUBGYA" strategy="canvas"></thumb-hash>');
 
 // Disable xdebug backtrace.
 if (\function_exists('xdebug_disable')) {

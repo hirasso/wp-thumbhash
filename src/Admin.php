@@ -31,13 +31,21 @@ class Admin
         wp_enqueue_script(static::$assetHandle, WPThumbhash::getAssetURI('/assets/admin.js'), ['jquery'], null, true);
         // phpcs:enable WordPress.WP.EnqueuedResourceParameters.MissingVersion
 
-        wp_localize_script(static::$assetHandle, 'wpThumbhash', [
+        $globals = [
             'ajax' => [
                 'url' => admin_url('admin-ajax.php'),
                 'action' => static::$ajaxAction,
                 'nonce' => wp_create_nonce(static::$ajaxAction),
             ],
-        ]);
+        ];
+        wp_add_inline_script(
+            static::$assetHandle,
+            sprintf(
+                'var wpThumbhash = %s;',
+                wp_json_encode($globals, JSON_PRETTY_PRINT)
+            ),
+            'before'
+        );
     }
 
     /**

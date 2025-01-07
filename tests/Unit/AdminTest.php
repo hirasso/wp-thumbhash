@@ -5,6 +5,7 @@ uses(\Hirasso\WPThumbhash\Tests\Unit\WPTestCase::class);
 use Hirasso\WPThumbhash\Admin;
 
 test('registers actions', function () {
+    /** @var \Hirasso\WPThumbhash\Tests\Unit\WPTestCase $this */
     $this->assertHasAction(
         'attachment_fields_to_edit',
         [Admin::class, 'attachmentFieldsToEdit'],
@@ -21,35 +22,31 @@ test('registers actions', function () {
     );
 });
 
-test('enqueues all assets', function () {
+test('enqueues admin assets', function () {
     Admin::enqueueAssets();
 
     expect(wp_style_is(Admin::$assetHandle, 'enqueued'))->toBeTrue();
     expect(wp_script_is(Admin::$assetHandle, 'enqueued'))->toBeTrue();
+});
 
-    /**
-     * Test wp_localize_script
-     */
-    $data = wp_scripts()->get_data(Admin::$assetHandle, 'data');
-    $this->assertNotFalse($data);
+test('prints the global admin script tag', function () {
+    Admin::enqueueAssets();
 
-    /**
-     * Converts something like "var foo = {"bar": "baz"};" to "{"bar": "baz"}"
-     */
-    $start = strpos($data, '{');
-    $length = strrpos($data, '}') - $start + 1;
-    $localized = substr($data, $start, $length);
+    $jsString = wp_scripts()->get_inline_script_data(Admin::$assetHandle, 'before');
+    $this->assertNotEmpty($jsString);
 
-    $json = json_decode($localized);
+    preg_match('/var\s+wpThumbhash\s*=\s*(\{.*\});/s', $jsString, $matches);
 
-    $this->assertObjectHasProperty('ajax', $json);
+    $object = json_decode($matches[1]);
 
-    $this->assertObjectHasProperty('url', $json->ajax);
-    expect(admin_url('admin-ajax.php'))->toBe($json->ajax->url);
+    $this->assertObjectHasProperty('ajax', $object);
 
-    $this->assertObjectHasProperty('action', $json->ajax);
-    expect(Admin::$ajaxAction)->toBe($json->ajax->action);
+    $this->assertObjectHasProperty('url', $object->ajax);
+    expect(admin_url('admin-ajax.php'))->toBe($object->ajax->url);
 
-    $this->assertObjectHasProperty('nonce', $json->ajax);
-    expect(wp_verify_nonce($json->ajax->nonce, Admin::$ajaxAction))->toBe(1);
+    $this->assertObjectHasProperty('action', $object->ajax);
+    expect(Admin::$ajaxAction)->toBe($object->ajax->action);
+
+    $this->assertObjectHasProperty('nonce', $object->ajax);
+    expect(wp_verify_nonce($object->ajax->nonce, Admin::$ajaxAction))->toBe(1);
 });
