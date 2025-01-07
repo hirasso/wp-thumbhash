@@ -31,4 +31,3 @@ dist/
 **/playwright/.auth
 playwright-results.json
 .wp-env.override.json
-config/wordpress/
