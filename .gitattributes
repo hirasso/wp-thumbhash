@@ -24,6 +24,7 @@ config/ export-ignore
 .nvmrc export-ignore
 .wp-env.json export-ignore
 jsconfig.json export-ignore
+phpstan.neon export-ignore
 
 # composer
 composer.lock export-ignore
