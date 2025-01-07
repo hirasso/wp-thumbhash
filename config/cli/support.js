@@ -290,10 +290,10 @@ export function testDev() {
     if (Object.values(overrides).length) {
       writeJsonFile(".wp-env.override.json", overrides);
     }
-  }
 
-  info(`Re-Starting wp-env with root folder...`);
-  run(`wp-env start --update`);
+    info(`Re-Starting wp-env with root folder...`);
+    run(`wp-env start --update`);
+  }
 
   info(`Running tests...`);
   run("pnpm run test");

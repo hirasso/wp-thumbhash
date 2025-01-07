@@ -29,12 +29,21 @@ if (!defined('ABSPATH')) {
     exit;
 }
 
-define('WP_THUMBHASH_PLUGIN_URI', untrailingslashit(plugin_dir_url(__FILE__)));
-define('WP_THUMBHASH_PLUGIN_DIR', __DIR__);
-
 /** load the prefixed vendors if scoped  */
 if (is_readable(__DIR__ . '/vendor/autoload.php')) {
     require_once __DIR__ . '/vendor/autoload.php';
+}
+
+/** Get the plugin's base URL */
+function baseURL()
+{
+    return plugins_url('', __FILE__);
+}
+
+/** Get the plugin's base directory */
+function baseDir()
+{
+    return __DIR__;
 }
 
 WPThumbhash::init();

@@ -4,6 +4,10 @@ uses(\Hirasso\WPThumbhash\Tests\Unit\WPTestCase::class);
 
 use Hirasso\WPThumbhash\Admin;
 
+beforeAll(function () {
+    Admin::enqueueAssets();
+});
+
 test('registers actions', function () {
     /** @var \Hirasso\WPThumbhash\Tests\Unit\WPTestCase $this */
     $this->assertHasAction(
@@ -23,15 +27,11 @@ test('registers actions', function () {
 });
 
 test('enqueues admin assets', function () {
-    Admin::enqueueAssets();
-
     expect(wp_style_is(Admin::$assetHandle, 'enqueued'))->toBeTrue();
     expect(wp_script_is(Admin::$assetHandle, 'enqueued'))->toBeTrue();
 });
 
 test('prints the global admin script tag', function () {
-    Admin::enqueueAssets();
-
     $jsString = wp_scripts()->get_inline_script_data(Admin::$assetHandle, 'before');
     $this->assertNotEmpty($jsString);
 
@@ -39,7 +39,7 @@ test('prints the global admin script tag', function () {
 
     $object = json_decode($matches[1]);
 
-    $this->assertObjectHasProperty('ajax', $object);
+    expect($object)->toHaveProperty('ajax');
 
     $this->assertObjectHasProperty('url', $object->ajax);
     expect(admin_url('admin-ajax.php'))->toBe($object->ajax->url);

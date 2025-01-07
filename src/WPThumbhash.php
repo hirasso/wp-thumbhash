@@ -188,7 +188,7 @@ class WPThumbhash
      */
     public static function getAssetPath(string $path): string
     {
-        return WP_THUMBHASH_PLUGIN_DIR . '/' . ltrim($path, '/');
+        return baseDir() . '/' . ltrim($path, '/');
     }
 
     /**
@@ -196,7 +196,7 @@ class WPThumbhash
      */
     public static function getAssetURI(string $path): string
     {
-        $uri = WP_THUMBHASH_PLUGIN_URI . '/' . ltrim($path, '/');
+        $uri = baseURL() . '/' . ltrim($path, '/');
         $file = static::getAssetPath($path);
 
         if (file_exists($file)) {
