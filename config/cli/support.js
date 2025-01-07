@@ -345,6 +345,7 @@ export function testRelease() {
     return plugin.replace(/^\.\/?/, `./${scopedFolder}/`);
   });
   writeJsonFile(".wp-env.override.json", overrides);
+  debug("Contents of .wp-env.override.json:", overrides);
 
   info(`Re-Starting wp-env with ${scopedFolder}...`);
   run(`wp-env start --update`);
