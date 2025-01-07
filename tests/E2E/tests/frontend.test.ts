@@ -12,7 +12,7 @@ test.describe("Strategies", () => {
 
     // Locate the thumb-hash element
     const canvas = page
-      .getByTestId("using-canvas")
+      .getByTestId("strategy--canvas")
       .locator("thumb-hash canvas");
     expect(canvas).toHaveCount(1);
     expect(canvas).toHaveAttribute("width");

@@ -12,14 +12,14 @@
  * This URL can be used in e2e tests: http://localhost:9783/
  */
 
+namespace Hirasso\WPThumbhash\E2EPlugin;
+
 use Hirasso\WPThumbhash\WPThumbhash;
-
 use WP_Query;
-
 use Exception;
 use Hirasso\WPThumbhash\Enums\QueryArgsCompare;
 
-add_action('plugins_loaded', fn() => new WPThumbhashE2EPlugin());
+add_action('plugins_loaded', fn () => new WPThumbhashE2EPlugin());
 
 class WPThumbhashE2EPlugin
 {
@@ -47,6 +47,10 @@ class WPThumbhashE2EPlugin
     {
         ob_start(); ?>
         <style>
+            figure:has(thumb-hash) {
+                aspect-ratio: 1;
+            }
+
             figure,
             figure img {
                 position: relative;
@@ -56,6 +60,7 @@ class WPThumbhashE2EPlugin
                 display: block;
                 width: 100%;
                 height: auto;
+                transform: translate(10px, 10px);
             }
 
             figure thumb-hash {
@@ -94,11 +99,34 @@ class WPThumbhashE2EPlugin
     {
         ob_start() ?>
 
-        <div data-testid="using-canvas">
+        <div data-testid="strategy--default">
+            <h2>Default Strategy ('canvas'):</h2>
             <figure>
-                <?php if (class_exists('Hirasso\\WPThumbhash\\WPThumbhash')): ?>
-                    <?= \Hirasso\WPThumbhash\WPThumbhash::render($id) ?>
-                <?php endif; ?>
+                <?php do_action('wp-thumbhash/render', $id) ?>
+                <?php echo wp_get_attachment_image($id, 'large') ?>
+            </figure>
+        </div>
+
+        <div data-testid="strategy--canvas">
+            <h2>Explicit Strategy 'canvas':</h2>
+            <figure>
+                <?php do_action('wp-thumbhash/render', $id, 'canvas') ?>
+                <?php echo wp_get_attachment_image($id, 'large') ?>
+            </figure>
+        </div>
+
+        <div data-testid="strategy--img">
+            <h2>Explicit Strategy 'img':</h2>
+            <figure>
+                <?php do_action('wp-thumbhash/render', $id, 'img') ?>
+                <?php echo wp_get_attachment_image($id, 'large') ?>
+            </figure>
+        </div>
+
+        <div data-testid="strategy--average">
+            <h2>Explicit Strategy 'average'</h2>
+            <figure>
+                <?php do_action('wp-thumbhash/render', $id, 'average') ?>
                 <?php echo wp_get_attachment_image($id, 'large') ?>
             </figure>
         </div>

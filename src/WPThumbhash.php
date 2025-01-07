@@ -12,6 +12,7 @@ namespace Hirasso\WPThumbhash;
 use Hirasso\WPThumbhash\CLI\Commands\ClearCommand;
 use Hirasso\WPThumbhash\CLI\Commands\GenerateCommand;
 use Hirasso\WPThumbhash\Enums\QueryArgsCompare;
+use Hirasso\WPThumbhash\Enums\RenderStrategy;
 use Snicco\Component\BetterWPCLI\CommandLoader\ArrayCommandLoader;
 use Snicco\Component\BetterWPCLI\WPCLIApplication;
 use WP_Post;
@@ -27,13 +28,16 @@ class WPThumbhash
      */
     public static function init()
     {
-        // Hook for generating Thumbhash on upload
+        // Hook for generating a thumbhash on upload
         add_action('add_attachment', [static::class, 'generate']);
         add_action('plugins_loaded', [static::class, 'loadTextDomain']);
 
         // Load thumbhash-custom-element as early as possible on every page
         add_action('wp_enqueue_scripts', [static::class, 'enqueueCustomElement']);
         add_action('admin_enqueue_scripts', [static::class, 'enqueueCustomElement']);
+
+        // action-based interface
+        add_action('wp-thumbhash/render', [static::class, 'doActionRender'], 10, 2);
 
         // Initialize WP CLI application
         if (defined('WP_CLI') && class_exists(WP_CLI::class)) {
@@ -127,17 +131,42 @@ class WPThumbhash
     }
 
     /**
+     * Allows rendering a thumbhash via `do_action('wp-thumbhash/render', $id)`
+     */
+    public static function doActionRender(
+        int|WP_Post $imageID,
+        ?string $strategyName = 'canvas'
+    ) {
+        $strategy = RenderStrategy::tryFrom($strategyName);
+
+        if (!$strategy) {
+            _doing_it_wrong(
+                "do_action(\"wp-thumbhash/render\")",
+                "Invalid \$strategy '$strategyName' provided. Falling back to 'canvas'",
+                "1.0.0"
+            );
+            $strategy = RenderStrategy::CANVAS;
+        }
+
+        echo static::render($imageID, $strategy);
+    }
+
+    /**
      * Get a <thumb-hash> element value for an image
      */
-    public static function render(int|WP_Post $imageID): ?string
-    {
+    public static function render(
+        int|WP_Post $imageID,
+        RenderStrategy $strategy = RenderStrategy::CANVAS
+    ): ?string {
+
         if (!$value = static::getHash($imageID)) {
             return null;
         }
 
         return sprintf(
-            '<thumb-hash value="%s"></thumb-hash>',
-            esc_attr($value)
+            '<thumb-hash value="%s" strategy="%s"></thumb-hash>',
+            esc_attr($value),
+            esc_attr($strategy->value)
         );
     }
 
