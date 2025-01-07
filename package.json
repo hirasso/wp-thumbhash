@@ -20,13 +20,12 @@
     "test:e2e": "pnpm exec playwright test --config ./tests/E2E/playwright.config.ts",
     "test:e2e:dev": "PLAYWRIGHT_ENV=dev pnpm test:e2e --ui",
     "test:e2e:install": "pnpm exec playwright install --with-deps",
-    "act:php-tests": "act -j php-tests --matrix php:8.2 --container-options '--privileged'"
-  },
-  "dependencies": {
-    "@hirasso/thumbhash-custom-element": "^0.5.3"
+    "act:php-tests": "act -j php-tests --matrix php:8.2 --container-options '--privileged'",
+    "analyse": "vendor/bin/phpstan analyse --memory-limit=2G"
   },
   "devDependencies": {
     "@changesets/cli": "^2.27.9",
+    "@hirasso/thumbhash-custom-element": "^0.5.3",
     "@playwright/test": "^1.49.1",
     "@wordpress/env": "^10.11.0",
     "fast-glob": "^3.3.2",

@@ -20,8 +20,11 @@
   "require-dev": {
     "friendsofphp/php-cs-fixer": "^3.65",
     "pestphp/pest": "^1.23",
+    "phpstan/extension-installer": "^1.4",
+    "phpstan/phpstan": "^2.1",
     "snicco/better-wp-cli-testing": "^1.10",
     "symfony/var-dumper": "^7.2",
+    "szepeviktor/phpstan-wordpress": "^2.0",
     "yoast/wp-test-utils": "^1.2"
   },
   "minimum-stability": "dev",
@@ -45,7 +48,8 @@
     "sort-packages": true,
     "allow-plugins": {
       "composer/installers": true,
-      "pestphp/pest-plugin": true
+      "pestphp/pest-plugin": true,
+      "phpstan/extension-installer": true
     }
   },
   "scripts": {},

@@ -1,4 +1,5 @@
 <?php
+
 /*
  * Copyright (c) Rasso Hilber
  * https://rassohilber.com
@@ -13,6 +14,10 @@ use RuntimeException;
 class ImageDownloader
 {
     private ?string $file = null;
+
+    public function __construct()
+    {
+    }
 
     /**
      * Get the custom dir in /wp-content/uploads/

@@ -98,7 +98,7 @@ class WPThumbhash
         /** @var ImageDownloader|null $downloader */
         $downloader = null;
         if (!file_exists($file)) {
-            $downloader = new ImageDownloader($mimeType);
+            $downloader = new ImageDownloader();
             $file = $downloader->download(wp_get_attachment_url($attachmentID));
         }
 
