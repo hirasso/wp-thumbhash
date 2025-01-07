@@ -321,6 +321,7 @@ export function testRelease() {
   const overrides = JSON.parse(readFile(".wp-env.override.json") || "{}");
 
   overrides.plugins = plugins.map((path) => {
+    return path.replace(/^\.\/?/, `./${scopedFolder}/`);
     return path === "." ? `./${scopedFolder}/` : path;
   });
 
