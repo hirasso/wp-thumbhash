@@ -39,15 +39,15 @@ jobs:
       - name: Install Dependencies
         run: pnpm install --frozen-lockfile
 
-      - name: Cache wp-env
-        id: cache-key
-        uses: actions/cache@v3
-        with:
-          path: |
-            ~/.wp-env
-            ~/.wp-cli
-            ./node_modules
-          key: wp-env-${{ hashFiles('.wp-env.json') }}
+      # - name: Cache wp-env
+      #   id: cache-key
+      #   uses: actions/cache@v3
+      #   with:
+      #     path: |
+      #       ~/.wp-env
+      #       ~/.wp-cli
+      #       ./node_modules
+      #     key: wp-env-${{ hashFiles('.wp-env.json') }}
 
       - name: Setup PHP
         uses: shivammathur/setup-php@v2
@@ -59,7 +59,7 @@ jobs:
       - name: Install Composer Dependencies
         uses: ramsey/composer-install@v3
 
-      - name: Start wp-env
+      - name: Setup and Start wp-env
         uses: godaddy-wordpress/setup-wp-env@v1
         with:
           phpVersion: ${{ matrix.php }}
