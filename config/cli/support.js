@@ -279,7 +279,7 @@ function readFile(path) {
 }
 
 /**
- * Run Unit and E2E tests from the root (dev)
+ * Run Unit and E2E tests from the unscoped version
  */
 export function testDev() {
   if (existsSync(".wp-env.override.json")) {
@@ -309,33 +309,12 @@ function writeJsonFile(name, data) {
 }
 
 /**
- * Run Unit and E2E tests from the scoped release folder
+ * Run E2E tests from the scoped release folder
  */
 export function testRelease() {
   createRelease();
 
   const scopedFolder = getScopedFolder();
-
-  info(`Copying required files for tests into ${scopedFolder}...`);
-  run(`cp -Rf composer.json phpunit.xml tests ${scopedFolder}/`);
-
-  info(`Installing dev dependencies in ${scopedFolder}...`);
-  const { devDependencies } = getInfosFromComposerJSON();
-
-  const requireDev = Object.entries(devDependencies).reduce(
-    /**
-     * @param {string[]} acc - The accumulator array.
-     * @param {[string, string]} entry - An array containing the dependency name and version.
-     * @returns {string[]} The updated accumulator array.
-     */
-    (acc, [name, version]) => {
-      acc.push(`"${name}:${version}"`);
-      return acc;
-    },
-    [],
-  );
-
-  run(`composer require --dev ${requireDev.join(" ")} --quiet --working-dir=${scopedFolder} --with-all-dependencies`); // prettier-ignore
 
   /** @type {{ plugins: string[] }} */
   const { plugins } = JSON.parse(readFile(".wp-env.json") || "{}");
