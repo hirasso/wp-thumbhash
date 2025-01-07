@@ -6,7 +6,7 @@ test.describe("Admin Interface", () => {
     await page.goto("/wp-admin/upload.php");
   });
 
-  test.only("Renders the admin UI in the media modal", async ({ page }) => {
+  test("Renders the admin UI in the media modal", async ({ page }) => {
     page.setViewportSize({ width: 1000, height: 900 });
 
     await page.locator(".attachment-preview .thumbnail").click();
