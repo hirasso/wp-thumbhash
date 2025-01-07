@@ -9,10 +9,12 @@ declare(strict_types=1);
 
 namespace Hirasso\WPThumbhash;
 
+use Exception;
 use Hirasso\WPThumbhash\CLI\Commands\ClearCommand;
 use Hirasso\WPThumbhash\CLI\Commands\GenerateCommand;
 use Hirasso\WPThumbhash\Enums\QueryArgsCompare;
 use Hirasso\WPThumbhash\Enums\RenderStrategy;
+use InvalidArgumentException;
 use Snicco\Component\BetterWPCLI\CommandLoader\ArrayCommandLoader;
 use Snicco\Component\BetterWPCLI\WPCLIApplication;
 use WP_Post;
@@ -131,6 +133,16 @@ class WPThumbhash
     }
 
     /**
+     * Throw an exception if WP_DEBUG is true
+     */
+    public static function throw(Exception $exception)
+    {
+        if (defined('WP_DEBUG') && WP_DEBUG) {
+            throw $exception;
+        }
+    }
+
+    /**
      * Allows rendering a thumbhash via `do_action('wp-thumbhash/render', $id)`
      */
     public static function doActionRender(
@@ -140,11 +152,12 @@ class WPThumbhash
         $strategy = RenderStrategy::tryFrom($strategyName);
 
         if (!$strategy) {
-            _doing_it_wrong(
-                "do_action(\"wp-thumbhash/render\")",
-                "Invalid \$strategy '$strategyName' provided. Falling back to 'canvas'",
-                "1.0.0"
-            );
+            static::throw(new InvalidArgumentException(sprintf(
+                "do_action(\"wp-thumbhash/render\") was called wrong.
+                Invalid strategy '$strategyName' provided.
+                Available strategies: %s",
+                implode(" | ", array_column(RenderStrategy::cases(), 'value'))
+            )));
             $strategy = RenderStrategy::CANVAS;
         }
 
