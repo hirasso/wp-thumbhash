@@ -64,7 +64,7 @@ jobs:
         with:
           phpVersion: ${{ matrix.php }}
 
-      - name: Run Tests
+      - name: Run PHP Tests
         run: pnpm run test:pest:ci
 
       # - name: Handle Code Coverage
@@ -87,7 +87,7 @@ jobs:
           echo "Playwright cached – ${{ steps.install-playwright.outputs.cache-hit }}"
 
       - name: Run E2E Tests
-        run: pnpm run test:e2e
+        run: config/cli/cli.js test:release
 
       - uses: daun/playwright-report-summary@v2
         with:
