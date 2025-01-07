@@ -20,9 +20,9 @@
   "require-dev": {
     "friendsofphp/php-cs-fixer": "^3.65",
     "pestphp/pest": "^1.23",
+    "roots/wordpress": "^6.7",
     "snicco/better-wp-cli-testing": "^1.10",
     "symfony/var-dumper": "^7.2",
-    "wp-phpunit/wp-phpunit": "^6.7",
     "yoast/wp-test-utils": "^1.2"
   },
   "minimum-stability": "dev",
@@ -46,10 +46,14 @@
     "sort-packages": true,
     "allow-plugins": {
       "composer/installers": true,
-      "pestphp/pest-plugin": true
+      "pestphp/pest-plugin": true,
+      "roots/wordpress-core-installer": true
     }
   },
   "scripts": {},
   "scripts-descriptions": {},
-  "post-install-cmd": "composer normalize"
+  "post-install-cmd": "composer normalize",
+  "extra": {
+    "wordpress-install-dir": "config/wordpress"
+  }
 }
