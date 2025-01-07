@@ -350,7 +350,7 @@ export function testRelease() {
   run(`wp-env start --update`);
 
   info(`Running tests in ${scopedFolder}...`);
-  run("pnpm run test");
+  run("pnpm run test:e2e");
 }
 
 /**
