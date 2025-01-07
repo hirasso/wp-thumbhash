@@ -12,6 +12,7 @@ use ZipArchive;
  * php-scoper config for creating a scoped release asset for GitHub Releases
  * This release asset serves as the source of truth for non-composer plugin updates
  * via yahnis-elsts/plugin-update-checker
+ *
  * @see https://github.com/humbug/php-scoper/blob/main/docs/configuration.md
  * @see https://github.com/YahnisElsts/plugin-update-checker?tab=readme-ov-file#how-to-release-an-update-1
  */
@@ -40,10 +41,11 @@ $extraFiles = [...getGitArchiveables()];
 
 /**
  * Return the config for php-scoper
+ *
  * @see https://github.com/humbug/php-scoper/blob/main/docs/configuration.md
  */
 return [
-    'prefix' => __NAMESPACE__ . '\\Vendor',
+    'prefix' => __NAMESPACE__.'\\Vendor',
     'exclude-namespaces' => [
         __NAMESPACE__,
         /** Exclude plugin-update-checker in our plugin code */
@@ -56,7 +58,7 @@ return [
     'exclude-functions' => [...$wpFunctions],
     'exclude-constants' => [...$wpConstants, 'WP_CLI', 'true', 'false'],
 
-    'expose-namespaces' => [__NAMESPACE__ . '\\Vendor'],
+    'expose-namespaces' => [__NAMESPACE__.'\\Vendor'],
 
     // 'expose-global-constants' => true,
     // 'expose-global-classes' => true,
@@ -93,22 +95,22 @@ return [
  */
 final readonly class ComposerJSON
 {
-    /** @var string[] $devDependencies An array of all dev-dependencies' names */
+    /** @var string[] An array of all dev-dependencies' names */
     public array $devDependencies;
 
-    /** @var string $phpVersion e.g. '8.2' */
+    /** @var string e.g. '8.2' */
     public string $phpVersion;
 
-    /** @var string $fullName e.g. 'vendor-name/package-name' */
+    /** @var string e.g. 'vendor-name/package-name' */
     public string $fullName;
 
-    /** @var string $vendorName e.g. 'vendor-name' */
+    /** @var string e.g. 'vendor-name' */
     public string $vendorName;
 
-    /** @var string $vendorName e.g. 'package-name' */
+    /** @var string e.g. 'package-name' */
     public string $packageName;
 
-    /** @var string $vendorDir e.g. 'vendor' */
+    /** @var string e.g. 'vendor' */
     public string $vendorDir;
 
     public function __construct()
@@ -136,7 +138,7 @@ final readonly class ComposerJSON
     {
         static $instance;
 
-        $instance ??= new static();
+        $instance ??= new self;
 
         return $instance;
     }
@@ -144,11 +146,12 @@ final readonly class ComposerJSON
 
 /**
  * Read WordPress excludes from sniccowp/php-scoper-wordpress-excludes
+ *
  * @see https://github.com/humbug/php-scoper/blob/main/docs/further-reading.md#wordpress-support
  */
 function getWpExcludes(): array
 {
-    $baseDir = dirname(__DIR__) . '/vendor/sniccowp/php-scoper-wordpress-excludes/generated';
+    $baseDir = dirname(__DIR__).'/vendor/sniccowp/php-scoper-wordpress-excludes/generated';
 
     $excludes = [];
 
@@ -168,12 +171,12 @@ function getWpExcludes(): array
 function getGitArchiveables(bool $includeDirs = false): array
 {
     $entries = [];
-    $name = ComposerJSON::instance()->vendorName . '-' . ComposerJSON::instance()->packageName;
+    $name = ComposerJSON::instance()->vendorName.'-'.ComposerJSON::instance()->packageName;
     $zipFile = "/tmp/$name.zip";
 
     exec("git archive --format=zip --output=$zipFile HEAD");
 
-    $zip = new ZipArchive();
+    $zip = new ZipArchive;
 
     if ($zip->open($zipFile) !== true) {
         throw new Exception("Failed to open ZIP archive: $zipFile");
@@ -182,13 +185,13 @@ function getGitArchiveables(bool $includeDirs = false): array
     for ($i = 0; $i < $zip->numFiles; $i++) {
         $entry = $zip->getNameIndex($i);
 
-        $isToplevelFile = !str_contains($entry, '/');
+        $isToplevelFile = ! str_contains($entry, '/');
         $isToplevelDir = str_ends_with($entry, '/');
 
-        if ($isToplevelDir && !$includeDirs) {
+        if ($isToplevelDir && ! $includeDirs) {
             continue;
         }
-        if (!$isToplevelFile) {
+        if (! $isToplevelFile) {
             continue;
         }
 

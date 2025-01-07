@@ -8,7 +8,7 @@
     "preinstall": "npx only-allow pnpm",
     "build": "config/cli/cli.js assets:build",
     "format:assets": "npx prettier --write '**/*.{ts,js,css,scss}'",
-    "format:php": "./vendor/bin/pint src",
+    "format:php": "./vendor/bin/pint src config",
     "version": "pnpm changeset version && config/cli/cli.js version:patch",
     "pot:make": "SLUG=$(basename \"$(pwd)\"); wp i18n make-pot . languages/$SLUG.pot --include=src,$SLUG.php",
     "wp-env": "wp-env",

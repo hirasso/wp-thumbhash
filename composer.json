@@ -18,7 +18,6 @@
     "yahnis-elsts/plugin-update-checker": "^5.5"
   },
   "require-dev": {
-    "friendsofphp/php-cs-fixer": "^3.65",
     "laravel/pint": "^1.19",
     "pestphp/pest": "^1.23",
     "phpstan/extension-installer": "^1.4",
