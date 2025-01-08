@@ -1,8 +1,10 @@
-# wp-thumbhash
+# WP Thumbhash
+
+[![Test Status](https://img.shields.io/github/actions/workflow/status/hirasso/wp-thumbhash/ci.yml?label=tests)](https://github.com/hirasso/wp-thumbhash/actions/workflows/ci.yml)
 
 **Generate and render thumbhash placeholders for your lazy-loaded images 🦦**
 
-[![Test Status](https://img.shields.io/github/actions/workflow/status/hirasso/wp-thumbhash/ci.yml?label=tests)](https://github.com/hirasso/wp-thumbhash/actions/workflows/ci.yml)
+![Example image placeholders](./docs/example-thumbhash.png)
 
 ## How it works
 
