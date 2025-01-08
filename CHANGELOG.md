@@ -1,5 +1,22 @@
 # Changelog
 
+## 0.1.0
+
+### Minor Changes
+
+- ffcc62c: Add render strategies for the <thumb-hash> element: "canvas" | "img" | "average". Default is "canvas". See the docs of the [underlying library](https://github.com/hirasso/thumbhash-custom-element?tab=readme-ov-file#strategies) for more information.
+
+### Patch Changes
+
+- 84d100b: Reorganize npm scripts
+- 7dadbce: Switch php tests from phpunit to pest
+- d9d7a1b: Run only the playwright e2e tests against the scoped release
+- 1322292: Update usage guide to include wp-cli commands
+- 17278cf: Add e2e tests for admin interface
+- c005370: Create a minimal `cli` for all scripts
+- f05f7b0: Throw an exception if WP_DEBUG is true and the strategy in`do_action('wp-thumbhash/render', $id, $strategy)` doesn't exist
+- c60b235: Add phpstan
+
 ## 0.0.2
 
 ### Patch Changes
