@@ -2,7 +2,7 @@
 
 [![Latest Version on Packagist](https://img.shields.io/packagist/v/hirasso/wp-thumbhash.svg)](https://packagist.org/packages/hirasso/wp-thumbhash)
 [![Test Status](https://img.shields.io/github/actions/workflow/status/hirasso/wp-thumbhash/ci.yml?label=tests)](https://github.com/hirasso/wp-thumbhash/actions/workflows/ci.yml)
-[![License](https://img.shields.io/github/license/hirasso/wp-thumbhash.svg)](https://github.com/hirasso/wp-thumbhash/blob/main/LICENSE)
+<!--[![License](https://img.shields.io/github/license/hirasso/wp-thumbhash.svg)](https://github.com/hirasso/wp-thumbhash/blob/main/LICENSE)-->
 
 **Generate and render thumbhash placeholders for your lazy-loaded images 🦦**
 
