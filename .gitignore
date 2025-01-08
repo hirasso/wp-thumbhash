@@ -22,6 +22,7 @@ dist/
 *.sql
 *.log
 *.zip
+*.afphoto~lock~
 
 # Testing tools and outputs
 /tests/**/reports/
