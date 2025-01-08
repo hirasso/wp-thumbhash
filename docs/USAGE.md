@@ -2,9 +2,11 @@
 
 ## Display Placeholders in Your Frontend
 
+Trigger the action `wp-thumbhash/render` for displaying a thumbhash for an image ID:
+
 ```php
 <figure>
-  <?php do_action('wp-thumbhash', $id) ?>
+  <?php do_action('wp-thumbhash/render', $id) ?>
   <?php echo wp_get_attachment_image($id, 'large') ?>
 </figure>
 ```
@@ -23,6 +25,23 @@ figure thumb-hash {
   width: 100%;
   height: 100%;
 }
+```
+
+## Render Strategies
+
+wp-thumbhash supports three different render strategies:
+
+- `canvas` (default): Display a canvas with the blurry placeholder image
+- `img`: Looks the same as `canvas`, but uses an image with a data URI instead
+- `average`: Display a div with the average color of the original image
+
+For example, pass `"average"` as the third argument to display a div with the average color instead:
+
+```php
+<figure>
+  <?php do_action('wp-thumbhash/render', $id, /* strategy: */ 'average') ?>
+  <?php echo wp_get_attachment_image($id, 'large') ?>
+</figure>
 ```
 
 ## WP-CLI Commands
