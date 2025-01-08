@@ -1,5 +1,8 @@
 # Usage
 
+WP Thumbhash generates placeholders on upload so they're ready to go when displaying a page. If you need to generate placeholders for existing images, have
+a look at the [WP-CLI commands](#wp-cli-commands).
+
 ## Display Placeholders in Your Frontend
 
 Trigger the action `wp-thumbhash/render` for displaying a thumbhash for an image ID:
@@ -46,7 +49,7 @@ For example, pass `"average"` as the third argument to display a div with the av
 
 ## WP-CLI Commands
 
-Thumbhashes are generated on upload so they're ready to go when displaying a page. If you install wp-thumbhash on an existing site, you can generate thumbhashes for your existing images via [WP-CLI](https://wp-cli.org/):
+If you install wp-thumbhash on an existing site, you can generate thumbhash placeholders for your existing images via [WP-CLI](https://wp-cli.org/):
 
 ### Generate Thumbhashes for Existing Images
 
@@ -54,7 +57,7 @@ Thumbhashes are generated on upload so they're ready to go when displaying a pag
 wp thumbhash generate
 ```
 
-This will generate thumbhashes for all your images. To force regeneration even for images that already have a thumbhash, pass a `force` flag:
+This will generate thumbhash placeholders for all your images. To force regeneration even for images that already have a thumbhash, pass a `force` flag:
 
 ```shell
 wp thumbhash generate --force
@@ -62,13 +65,13 @@ wp thumbhash generate --force
 
 ### Clear Existing Thumbhashes
 
-To clear thumbhashes for all images, run this command:
+To clear thumbhash placeholders for all images, run this command:
 
 ```shell
 wp thumbhash clear
 ```
 
-To clear thumbhashes only for select images, pass the image ids:
+To clear thumbhash placeholders only for select images, pass the image ids:
 
 ```shell
 wp thumbhash clear 50 72 1872

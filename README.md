@@ -10,8 +10,7 @@
 
 ## How it works
 
-This plugin uses [ThumbHash](https://evanw.github.io/thumbhash/) to generate and render small
-blurry placeholders for your lazy-loaded images.
+This plugin uses [ThumbHash](https://evanw.github.io/thumbhash/) to generate and render small blurry placeholders for your lazy-loaded images.
 
 ## Docs
 - [**🔌 Installation**](./docs/INSTALLATION.md)
