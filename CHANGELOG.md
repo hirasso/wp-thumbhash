@@ -1,5 +1,12 @@
 # Changelog
 
+## 0.1.1
+
+### Patch Changes
+
+- 253e906: Render the ID when generating or claring via WP-CLI
+- 253e906: Throw more exceptions if WP_DEBUG is true
+
 ## 0.1.0
 
 ### Minor Changes
