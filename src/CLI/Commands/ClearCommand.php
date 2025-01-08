@@ -73,7 +73,7 @@ class ClearCommand extends Command
             delete_post_meta($id, WPThumbhash::META_KEY);
 
             $output->writeln(Utils::getStatusLine(
-                basename(wp_get_attachment_url($id)),
+                "ID $id – ".basename(wp_get_attachment_url($id)),
                 $io->colorize('cleared ✔︎', Text::GREEN)
             ));
 

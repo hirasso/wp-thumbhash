@@ -86,6 +86,11 @@ class WPThumbhash
         int $attachmentID
     ): bool|WP_Error {
         if (! wp_attachment_is_image($attachmentID)) {
+            static::throw(new InvalidArgumentException(sprintf(
+                'File is not an image: %s',
+                esc_html($attachmentID)
+            )));
+
             return new WP_Error('not_an_image', sprintf(
                 /* translators: %s is a path to a file */
                 __('File is not an image: %s', 'wp-thumbhash'),
@@ -128,6 +133,11 @@ class WPThumbhash
         $imageID = $imageID->ID ?? $imageID;
 
         if (! wp_attachment_is_image($imageID)) {
+            static::throw(new InvalidArgumentException(sprintf(
+                'Not an image: %s',
+                esc_html($imageID)
+            )));
+
             return null;
         }
 
@@ -173,7 +183,6 @@ class WPThumbhash
         int|WP_Post $imageID,
         RenderStrategy $strategy = RenderStrategy::CANVAS
     ): ?string {
-
         if (! $value = static::getHash($imageID)) {
             return null;
         }

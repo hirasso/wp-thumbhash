@@ -87,7 +87,11 @@ class GenerateCommand extends Command
                 true => $io->colorize('generated ✔︎', Text::GREEN),
                 default => $io->colorize('failed ❌', Text::RED)
             };
-            $output->writeln(Utils::getStatusLine(basename(wp_get_attachment_url($id)), $status));
+
+            $output->writeln(Utils::getStatusLine(
+                "ID $id – ".basename(wp_get_attachment_url($id)),
+                $status
+            ));
             if ($thumbhash) {
                 $count++;
             }
