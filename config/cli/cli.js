@@ -1,7 +1,5 @@
 #!/usr/bin/env node
 
-// @ts-check
-
 import { parseArgs } from "node:util";
 import { basename } from "node:path";
 import { fileURLToPath } from "node:url";
@@ -14,7 +12,6 @@ import {
   createRelease,
   testRelease,
   pushReleaseToDist,
-  buildAssets,
   patchVersion,
   prepareDistFolder,
   isAtRootDir,
@@ -38,10 +35,6 @@ const __filename = fileURLToPath(import.meta.url);
  * @type {Object<string, Command>}
  */
 const commands = {
-  "assets:build": {
-    fn: buildAssets,
-    description: "Build JS and CSS assets",
-  },
   "release:create": {
     fn: createRelease,
     description: "Create a scoped release",

@@ -1,5 +1,3 @@
-// @ts-check
-
 import { defineConfig, devices } from "@playwright/test";
 
 import { fileURLToPath } from "node:url";

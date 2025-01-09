@@ -12,7 +12,7 @@
 
 # Tooling
 .prettierignore export-ignore
-assets-src export-ignore
+*.d.ts export-ignore
 package.json export-ignore
 pnpm-lock.yaml export-ignore
 postcss.config.cjs export-ignore

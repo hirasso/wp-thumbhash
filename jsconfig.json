@@ -2,9 +2,12 @@
   "compilerOptions": {
     "checkJs": true,
     "strict": true,
-    "target": "ES2020"
+    "target": "ES2020",
+    "moduleResolution": "NodeNext",
+    "module": "NodeNext"
   },
   "include": [
-    "./assets-src/*.js"
+    "./assets/*.js",
+    "./config/cli/*.js"
   ],
 }

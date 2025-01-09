@@ -1,7 +1,3 @@
-#!/usr/bin/env node
-
-// @ts-check
-
 import {
   copyFileSync,
   cpSync,
@@ -457,20 +453,6 @@ export async function pushReleaseToDist() {
 
   /** Change back to the root dir */
   chdir(rootDir);
-}
-
-/**
- * A simplistic build script for "compiling" the frontend assets
- */
-export async function buildAssets() {
-  rmSync("assets", { force: true, recursive: true });
-
-  await copyFiles("assets-src", "assets", "**/*.{js,css}");
-
-  cpSync(
-    "node_modules/@hirasso/thumbhash-custom-element/dist/index.umd.js",
-    "assets/thumbhash-custom-element.iife.js",
-  );
 }
 
 /**
