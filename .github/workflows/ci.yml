@@ -25,30 +25,6 @@ jobs:
       - name: Checkout Code
         uses: actions/checkout@v4
 
-      - name: Setup PNPM
-        uses: pnpm/action-setup@v4
-        with:
-          version: latest
-
-      - name: Setup Node.js
-        uses: actions/setup-node@v4
-        with:
-          node-version-file: .nvmrc
-          cache: pnpm
-
-      - name: Install Dependencies
-        run: pnpm install --frozen-lockfile
-
-      - name: Cache wp-env
-        id: cache-key
-        uses: actions/cache@v3
-        with:
-          path: |
-            ~/.wp-env
-            ~/.wp-cli
-            ./node_modules
-          key: wp-env-${{ hashFiles('.wp-env.json') }}
-
       - name: Setup PHP
         uses: shivammathur/setup-php@v2
         with:
@@ -58,6 +34,9 @@ jobs:
 
       - name: Install Composer Dependencies
         uses: ramsey/composer-install@v3
+
+      - name: Install Node + PNPM
+        uses: ./.github/actions/install-js
 
       - name: Run PHPStan Tests
         run: pnpm run analyse
@@ -70,12 +49,32 @@ jobs:
       - name: Run Pest Tests Against the Unscoped Release
         run: pnpm run test:pest:ci
 
-      # - name: Handle Code Coverage
-      #   uses: codecov/codecov-action@v4
-      #   if: ${{ matrix.php == 8.3 }}
-      #   with:
-      #     file: ./coverage.xml
-      #     token: ${{ secrets.CODECOV_TOKEN }}
+  e2e-tests:
+    name: E2E Tests
+    runs-on: ubuntu-latest
+
+    strategy:
+      fail-fast: true
+
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+
+      - name: Setup PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          tools: composer:v2
+          coverage: xdebug
+          php-version: 8.3
+
+      - name: Install Composer Dependencies
+        uses: ramsey/composer-install@v3
+
+      - name: Install Node + PNPM
+        uses: ./.github/actions/install-js
+
+      - name: Setup and Start wp-env
+        uses: godaddy-wordpress/setup-wp-env@v1
 
       - name: Install Playwright
         id: install-playwright
@@ -94,3 +93,4 @@ jobs:
         if: always()
         with:
           report-file: playwright-results.json
+
