@@ -302,7 +302,8 @@ function writeJsonFile(name, data) {
 }
 
 /**
- * Run E2E tests from the scoped release folder
+ * Run E2E tests from the scoped release folder.
+ * This command is only required for local tests.
  */
 export function testRelease() {
   createRelease();

@@ -12,6 +12,8 @@ const testURL = "http://localhost:9784";
 export const baseURL = testURL;
 export const authFile = path.join(__dirname, "playwright/.auth/user.json");
 
+const isCI = !!process.env.CI;
+
 /**
  * See https://playwright.dev/website/test-configuration.
  */
@@ -97,7 +99,7 @@ export default defineConfig({
   /* Run your local dev server before starting the tests */
   webServer: {
     url: baseURL,
-    command: "pnpm run wp-env start",
-    reuseExistingServer: true, //!process.env.CI,
+    command: "pnpm run wp-env start --update",
+    reuseExistingServer: true,
   },
 });

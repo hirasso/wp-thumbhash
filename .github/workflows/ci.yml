@@ -68,7 +68,7 @@ jobs:
 
       - name: Run Playwright Tests Against the Scoped Release
         run: |
-          config/cli/cli.js test:release
+          pnpm run test:e2e
 
       - uses: daun/playwright-report-summary@v3
         if: always()
