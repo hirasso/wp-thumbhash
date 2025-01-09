@@ -91,7 +91,6 @@ jobs:
 
       - name: Run Playwright Tests Against the Scoped Release
         run: |
-          wp-env destroy
           config/cli/cli.js test:release
 
       - uses: daun/playwright-report-summary@v2

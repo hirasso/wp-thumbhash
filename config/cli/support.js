@@ -343,8 +343,13 @@ export function testRelease() {
   debug("Contents of .wp-env.override.json:", overrides);
 
   info(`Re-Starting wp-env with ${scopedFolder}...`);
-  run(`wp-env clean`);
-  run(`wp-env start --update`);
+  if (isGitHubActions()) {
+    run(`yes | wp-env destroy`);
+    run(`wp-env start`);
+  } else {
+    run(`wp-env clean`);
+    run(`wp-env start --update`);
+  }
 
   info(`Running e2e tests against ${scopedFolder}...`);
   run("pnpm run test:e2e");
