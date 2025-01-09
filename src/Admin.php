@@ -27,6 +27,12 @@ class Admin
      */
     public static function enqueueAssets(): void
     {
+        static $enqueued = false;
+        if ($enqueued) {
+            return;
+        }
+        $enqueued = true;
+
         // phpcs:disable WordPress.WP.EnqueuedResourceParameters.MissingVersion -- the version is derived from the filemtime
         wp_enqueue_style(static::$assetHandle, WPThumbhash::getAssetURI('/assets/admin.css'), [], null);
         wp_enqueue_script(static::$assetHandle, WPThumbhash::getAssetURI('/assets/admin.js'), ['jquery'], null, true);

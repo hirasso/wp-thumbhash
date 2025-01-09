@@ -6,7 +6,6 @@
   "scripts": {
     "prepare": "husky",
     "preinstall": "npx only-allow pnpm",
-    "build": "config/cli/cli.js assets:build",
     "format:assets": "npx prettier --write '**/*.{ts,js,css,scss}'",
     "format:php": "./vendor/bin/pint src config",
     "version": "pnpm changeset version && config/cli/cli.js version:patch",

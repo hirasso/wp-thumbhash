@@ -247,9 +247,6 @@ export function createRelease() {
   info(`Overwriting the composer.json in ${scopedFolder}/...`);
   cpSync("composer.dist.json", `${scopedFolder}/composer.json`);
 
-  info(`Copying assets/ to ${scopedFolder}/assets...`);
-  cpSync("assets", `${scopedFolder}/assets`, { force: true, recursive: true });
-
   line();
 
   /** Create a zip file from the scoped directory */

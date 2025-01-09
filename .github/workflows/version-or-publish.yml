@@ -72,10 +72,10 @@ jobs:
       - name: Install Asset Dependencies
         run: pnpm install --frozen-lockfile
 
-      - name: Build and bundle assets
-        run: |
-          pnpm run build
-          zip -rq assets.zip assets
+      # - name: Build and bundle assets
+      #   run: |
+      #     pnpm run build
+      #     zip -rq assets.zip assets
 
       - name: Checkout Distribution Repository
         uses: actions/checkout@v4
@@ -122,7 +122,7 @@ jobs:
           omitBodyDuringUpdate: true
           omitNameDuringUpdate: true
           omitPrereleaseDuringUpdate: true
-          artifacts: "${{ needs.package-infos.outputs.packageName }}.zip,assets.zip"
+          artifacts: "${{ needs.package-infos.outputs.packageName }}.zip"
 
       - name: Push release to dist repo
         if: steps.cs.outputs.published == 'true'
