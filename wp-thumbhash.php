@@ -3,7 +3,6 @@
 /**
  * Plugin Name
  *
- * @package           wp-thumbhash
  * @author            Rasso Hilber
  * @copyright         2024 Rasso Hilber
  * @license           GPL-2.0-or-later
@@ -22,16 +21,24 @@
 
 namespace Hirasso\WPThumbhash;
 
-use WP_Post;
-
 /** Exit if accessed directly */
-if (!defined('ABSPATH')) {
+if (! defined('ABSPATH')) {
     exit;
 }
 
-/** load the prefixed vendors if scoped  */
-if (is_readable(__DIR__ . '/vendor/autoload.php')) {
-    require_once __DIR__ . '/vendor/autoload.php';
+/** Load vendors */
+if (is_readable(__DIR__.'/vendor/scoper-autoload.php')) {
+    /**
+     * Load scoper-autoload if available
+     *
+     * @see https://github.com/humbug/php-scoper/discussions/1101
+     */
+    require_once __DIR__.'/vendor/scoper-autoload.php';
+} elseif (is_readable(__DIR__.'/vendor/autoload.php')) {
+    /**
+     * Otherwise, load the normal autoloader if available
+     */
+    require_once __DIR__.'/vendor/autoload.php';
 }
 
 /** Get the plugin's base URL */
@@ -47,20 +54,4 @@ function baseDir()
 }
 
 WPThumbhash::init();
-UpdateChecker::init(__DIR__ . '/wp-thumbhash.php');
-
-/**
- * Render a <thumb-hash> custom element for an image
- */
-function render(int|WP_Post $imageID)
-{
-    return WPThumbhash::render($imageID);
-}
-
-/**
- * Render a <thumb-hash> custom element for an image
- */
-function getHash(int|WP_Post $imageID)
-{
-    return WPThumbhash::getHash($imageID);
-}
+UpdateChecker::init(__DIR__.'/wp-thumbhash.php');
