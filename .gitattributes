@@ -30,6 +30,8 @@ phpstan.neon export-ignore
 composer.lock export-ignore
 composer.dist.json export-ignore
 
+# docs
+docs export-ignore
 *.md export-ignore
 
 # Tests
