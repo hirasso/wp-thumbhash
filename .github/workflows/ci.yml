@@ -93,6 +93,7 @@ jobs:
         run: |
           config/cli/cli.js test:release
 
-      - uses: daun/playwright-report-summary@v2
+      - uses: daun/playwright-report-summary@v3
+        if: always()
         with:
           report-file: playwright-results.json
