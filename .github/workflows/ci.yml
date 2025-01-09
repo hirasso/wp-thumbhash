@@ -29,6 +29,11 @@ jobs:
         with:
           php-version: ${{ matrix.php }}
 
+      - name: Setup and Start wp-env
+        uses: godaddy-wordpress/setup-wp-env@v1
+        with:
+          phpVersion: ${{ matrix.php }}
+
       - name: Run PHPStan Tests
         run: pnpm run analyse
 
@@ -51,6 +56,16 @@ jobs:
         with:
           php-version: ${{ matrix.php }}
           playwright: true
+
+      - name: Create Release Files
+        run: |
+          config/cli/cli.js release:create
+
+      - name: Setup and Start wp-env
+        uses: godaddy-wordpress/setup-wp-env@v1
+        with:
+          phpVersion: 8.3
+          plugins: '["./scoped/wp-thumbhash/", "./tests/E2E/e2e-plugin.php"]'
 
       - name: Run Playwright Tests Against the Scoped Release
         run: |

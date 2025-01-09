@@ -330,25 +330,23 @@ export function testRelease() {
 
   // run(`composer require --dev ${requireDev.join(" ")} --quiet --working-dir=${scopedFolder} --with-all-dependencies`); // prettier-ignore
 
-  /** @type {{ plugins: string[] }} */
-  const { plugins } = JSON.parse(readFile(".wp-env.json") || "{}");
-  const overrides = JSON.parse(readFile(".wp-env.override.json") || "{}");
+  if (!isGitHubActions()) {
+    /** @type {{ plugins: string[] }} */
+    const { plugins } = JSON.parse(readFile(".wp-env.json") || "{}");
+    const overrides = JSON.parse(readFile(".wp-env.override.json") || "{}");
 
-  overrides.plugins = plugins.map((path) => {
-    // return path.replace(/^\.\/?/, `./${scopedFolder}/`);
-    return path === "." ? `./${scopedFolder}/` : path;
-  });
+    overrides.plugins = plugins.map((path) => {
+      // return path.replace(/^\.\/?/, `./${scopedFolder}/`);
+      return path === "." ? `./${scopedFolder}/` : path;
+    });
 
-  writeJsonFile(".wp-env.override.json", overrides);
-  debug("Contents of .wp-env.override.json:", overrides);
+    writeJsonFile(".wp-env.override.json", overrides);
+    debug("Contents of .wp-env.override.json:", overrides);
 
-  info(`Re-Starting wp-env with ${scopedFolder}...`);
+    info(`Re-Starting wp-env with ${scopedFolder}...`);
 
-  // if (isGitHubActions()) {
-  //   run(`echo "yes" | wp-env destroy > /dev/null 2>&1`);
-  // }
-  run(`wp-env stop`);
-  run(`wp-env start --update`);
+    run(`wp-env start --update`);
+  }
 
   info(`Running e2e tests against ${scopedFolder}...`);
   run("pnpm run test:e2e");

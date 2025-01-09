@@ -3,6 +3,7 @@ name: Run Shared Setup
 inputs:
   php-version:
     description: The PHP version to install
+    default: 8.3
   playwright:
     description: Should Playwright be installed?
     default: false
@@ -34,11 +35,6 @@ runs:
     - name: Install Dependencies
       shell: bash
       run: pnpm install --frozen-lockfile
-
-    - name: Setup and Start wp-env
-      uses: godaddy-wordpress/setup-wp-env@v1
-      with:
-        phpVersion: ${{ inputs.php-version }}
 
     - name: Install Playwright
       if: ${{ inputs.playwright }} == 'true'
