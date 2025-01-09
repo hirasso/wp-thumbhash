@@ -22,34 +22,21 @@ jobs:
         php: [8.2, 8.3]
 
     steps:
-      - name: Checkout Code
-        uses: actions/checkout@v4
+      - uses: actions/checkout@v4
 
-      - name: Setup PHP
-        uses: shivammathur/setup-php@v2
+      - name: Run Shared Setup
+        uses: ./.github/actions/shared-setup
         with:
           php-version: ${{ matrix.php }}
-          tools: composer:v2
-          coverage: xdebug
-
-      - name: Install Composer Dependencies
-        uses: ramsey/composer-install@v3
-
-      - name: Install Node + PNPM
-        uses: ./.github/actions/install-js
 
       - name: Run PHPStan Tests
         run: pnpm run analyse
-
-      - name: Setup and Start wp-env
-        uses: godaddy-wordpress/setup-wp-env@v1
-        with:
-          phpVersion: ${{ matrix.php }}
 
       - name: Run Pest Tests Against the Unscoped Release
         run: pnpm run test:pest:ci
 
   e2e-tests:
+    needs: php-tests
     name: E2E Tests
     runs-on: ubuntu-latest
 
@@ -57,33 +44,13 @@ jobs:
       fail-fast: true
 
     steps:
-      - name: Checkout Code
-        uses: actions/checkout@v4
+      - uses: actions/checkout@v4
 
-      - name: Setup PHP
-        uses: shivammathur/setup-php@v2
+      - name: Run Shared Setup
+        uses: ./.github/actions/shared-setup
         with:
-          tools: composer:v2
-          coverage: xdebug
-          php-version: 8.3
-
-      - name: Install Composer Dependencies
-        uses: ramsey/composer-install@v3
-
-      - name: Install Node + PNPM
-        uses: ./.github/actions/install-js
-
-      - name: Setup and Start wp-env
-        uses: godaddy-wordpress/setup-wp-env@v1
-
-      - name: Install Playwright
-        id: install-playwright
-        uses: ./.github/actions/playwright
-
-      - name: Debug Playwright Cache
-        run: |
-          echo "Playwright version – ${{ steps.install-playwright.outputs.version }}"
-          echo "Playwright cached – ${{ steps.install-playwright.outputs.cache-hit }}"
+          php-version: ${{ matrix.php }}
+          playwright: true
 
       - name: Run Playwright Tests Against the Scoped Release
         run: |
