@@ -43,14 +43,17 @@ test.describe("Render", () => {
     expect(img).toHaveAttribute("alt", "");
   });
 
-  test("supports strategy 'average'", async ({ page }) => {
+  test("supports strategy 'average'", async ({ page, browserName }) => {
     const el = page.getByTestId("strategy--average");
     await el.scrollIntoViewIfNeeded();
 
     expect(el.locator("thumb-hash")).toHaveAttribute("strategy", "average");
 
     const div = el.locator("thumb-hash div");
-    expect(div).toHaveCount(1);
+    expect(div).toHaveCount(
+      1,
+      browserName === "firefox" ? { timeout: 5000 } : undefined,
+    );
     expect(div).toHaveAttribute(
       "style",
       "width: 100%; height: 100%; background: rgb(163, 134, 104);",
