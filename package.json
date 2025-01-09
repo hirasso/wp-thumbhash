@@ -14,7 +14,7 @@
     "wp:cli": "pnpm wp run cli --env-cwd=wp-content/plugins/wp-thumbhash",
     "wp:cli:tests": "pnpm wp run tests-cli --env-cwd=wp-content/plugins/wp-thumbhash",
     "wp:open": "open http://localhost:9783",
-    "wp:open:test": "open http://localhost:9784",
+    "wp:open:tests": "open http://localhost:9784",
     "test": "pnpm test:pest && pnpm wp clean && pnpm wp start && pnpm test:e2e",
     "test:pest": "pnpm wp:cli:tests vendor/bin/pest --no-coverage",
     "test:pest:ci": "pnpm wp:cli:tests vendor/bin/pest --coverage-clover coverage.xml",

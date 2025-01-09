@@ -13,6 +13,9 @@
       "port": 9784
     }
   },
+  "mappings": {
+    "__fixtures__": "./tests/__fixtures__"
+  },
   "lifecycleScripts": {
     "afterStart": "wp-env run cli wp theme activate twentytwentyfive"
   }

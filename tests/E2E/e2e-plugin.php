@@ -45,7 +45,8 @@ class WPThumbhashE2EPlugin
             ]);
         }
         if (! count($this->getImages())) {
-            $this->uploadImage(WP_PLUGIN_DIR.'/wp-thumbhash/tests/__fixtures__/original.jpg');
+            assert(file_exists('__fixtures__/original.jpg'));
+            $this->uploadImage('__fixtures__/original.jpg');
         }
     }
 

@@ -309,9 +309,6 @@ export function testRelease() {
 
   const scopedFolder = getScopedFolder();
 
-  info(`Copying required files for tests into ${scopedFolder}...`);
-  run(`cp -Rf composer.json phpunit.xml tests ${scopedFolder}/`);
-
   // info(`Installing dev dependencies in ${scopedFolder}...`);
   // const { devDependencies } = getInfosFromComposerJSON();
 
