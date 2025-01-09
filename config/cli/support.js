@@ -288,7 +288,7 @@ export function testDev() {
     run(`wp-env start --update`);
   }
 
-  info(`Running tests...`);
+  info(`Running tests against the development version...`);
   run("pnpm run test");
 }
 
@@ -309,12 +309,33 @@ export function testRelease() {
 
   const scopedFolder = getScopedFolder();
 
+  info(`Copying required files for tests into ${scopedFolder}...`);
+  run(`cp -Rf composer.json phpunit.xml tests ${scopedFolder}/`);
+
+  // info(`Installing dev dependencies in ${scopedFolder}...`);
+  // const { devDependencies } = getInfosFromComposerJSON();
+
+  // const requireDev = Object.entries(devDependencies).reduce(
+  //   /**
+  //    * @param {string[]} acc - The accumulator array.
+  //    * @param {[string, string]} entry - An array containing the dependency name and version.
+  //    * @returns {string[]} The updated accumulator array.
+  //    */
+  //   (acc, [name, version]) => {
+  //     acc.push(`"${name}:${version}"`);
+  //     return acc;
+  //   },
+  //   [],
+  // );
+
+  // run(`composer require --dev ${requireDev.join(" ")} --quiet --working-dir=${scopedFolder} --with-all-dependencies`); // prettier-ignore
+
   /** @type {{ plugins: string[] }} */
   const { plugins } = JSON.parse(readFile(".wp-env.json") || "{}");
   const overrides = JSON.parse(readFile(".wp-env.override.json") || "{}");
 
   overrides.plugins = plugins.map((path) => {
-    return path.replace(/^\.\/?/, `./${scopedFolder}/`);
+    // return path.replace(/^\.\/?/, `./${scopedFolder}/`);
     return path === "." ? `./${scopedFolder}/` : path;
   });
 
@@ -322,9 +343,10 @@ export function testRelease() {
   debug("Contents of .wp-env.override.json:", overrides);
 
   info(`Re-Starting wp-env with ${scopedFolder}...`);
+  run(`wp-env clean`);
   run(`wp-env start --update`);
 
-  info(`Running tests in ${scopedFolder}...`);
+  info(`Running e2e tests against ${scopedFolder}...`);
   run("pnpm run test:e2e");
 }
 

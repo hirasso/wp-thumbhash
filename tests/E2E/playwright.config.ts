@@ -7,7 +7,9 @@ const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
 /** The URL of the wp-env development site */
-export const baseURL = "http://localhost:9783";
+const devURL = "http://localhost:9783";
+const testURL = "http://localhost:9784";
+export const baseURL = testURL;
 export const authFile = path.join(__dirname, "playwright/.auth/user.json");
 
 /**

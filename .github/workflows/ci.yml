@@ -77,8 +77,8 @@ jobs:
       #     file: ./coverage.xml
       #     token: ${{ secrets.CODECOV_TOKEN }}
 
-      - name: Build Dependencies
-        run: pnpm run build
+      # - name: Build Dependencies
+      #   run: pnpm run build
 
       - name: Install Playwright
         id: install-playwright
@@ -89,9 +89,10 @@ jobs:
           echo "Playwright version – ${{ steps.install-playwright.outputs.version }}"
           echo "Playwright cached – ${{ steps.install-playwright.outputs.cache-hit }}"
 
-      # - name: Run Playwright Tests Against the Scoped Release
-      #   run: config/cli/cli.js test:release
+      - name: Run Playwright Tests Against the Scoped Release
+        run: |
+          config/cli/cli.js test:release
 
-      # - uses: daun/playwright-report-summary@v2
-      #   with:
-      #     report-file: playwright-results.json
+      - uses: daun/playwright-report-summary@v2
+        with:
+          report-file: playwright-results.json

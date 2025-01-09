@@ -14,12 +14,12 @@
 
 namespace Hirasso\WPThumbhash\E2EPlugin;
 
-use Hirasso\WPThumbhash\WPThumbhash;
-use WP_Query;
 use Exception;
 use Hirasso\WPThumbhash\Enums\QueryArgsCompare;
+use Hirasso\WPThumbhash\WPThumbhash;
+use WP_Query;
 
-add_action('plugins_loaded', fn () => new WPThumbhashE2EPlugin());
+add_action('plugins_loaded', fn () => new WPThumbhashE2EPlugin);
 
 class WPThumbhashE2EPlugin
 {
@@ -31,12 +31,21 @@ class WPThumbhashE2EPlugin
     }
 
     /**
-     * Automatically upload the fixtures image if it's missing
+     * Make sure necessary data is available
      */
     public function init()
     {
-        if (!count($this->getImages())) {
-            $this->uploadImage(WP_PLUGIN_DIR . '/wp-thumbhash/tests/__fixtures__/original.jpg');
+        if (! count(get_posts())) {
+            wp_insert_post([
+                'post_title' => 'Hello World',
+                'post_content' => 'Welcome to WordPress!',
+                'post_status' => 'publish',
+                'post_author' => 1,
+                'post_type' => 'post',
+            ]);
+        }
+        if (! count($this->getImages())) {
+            $this->uploadImage(WP_PLUGIN_DIR.'/wp-thumbhash/tests/__fixtures__/original.jpg');
         }
     }
 
@@ -81,14 +90,15 @@ class WPThumbhashE2EPlugin
     {
         $images = $this->getImages();
 
-        if (!count($images)) {
-            return "<p><strong>Please upload at least one image to test wp-thumbhash!</strong></p>";
+        if (! count($images)) {
+            return '<p><strong>Please upload at least one image to test wp-thumbhash!</strong></p>';
         }
 
         ob_start();
         foreach ($images as $id) {
             echo $this->renderImage($id);
         }
+
         return ob_get_clean();
     }
 
@@ -140,6 +150,7 @@ class WPThumbhashE2EPlugin
     private function getImages()
     {
         $query = new WP_Query(WPThumbhash::getQueryArgs(QueryArgsCompare::EXISTS));
+
         return $query->posts;
     }
 
@@ -149,28 +160,28 @@ class WPThumbhashE2EPlugin
     private function uploadImage(string $file)
     {
         // Check if the file exists
-        if (!file_exists($file)) {
+        if (! file_exists($file)) {
             throw new Exception(sprintf('The file %s does not exist', $file));
         }
 
         // Include necessary WordPress files
-        require_once ABSPATH . 'wp-admin/includes/file.php';
-        require_once ABSPATH . 'wp-admin/includes/media.php';
-        require_once ABSPATH . 'wp-admin/includes/image.php';
+        require_once ABSPATH.'wp-admin/includes/file.php';
+        require_once ABSPATH.'wp-admin/includes/media.php';
+        require_once ABSPATH.'wp-admin/includes/image.php';
 
         // Copy the file to a temporary location
         $tempFile = wp_tempnam($file);
-        if (!$tempFile) {
+        if (! $tempFile) {
             throw new Exception('Failed to create a temporary file.');
         }
 
-        if (!copy($file, $tempFile)) {
+        if (! copy($file, $tempFile)) {
             throw new Exception('Failed to copy the file to a temporary location.');
         }
 
         // Prepare the file for upload
         $fileArray = [
-            'name'     => basename($file),
+            'name' => basename($file),
             'tmp_name' => $tempFile,
         ];
 
