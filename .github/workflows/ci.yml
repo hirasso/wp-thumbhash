@@ -67,7 +67,7 @@ jobs:
       - name: Run PHPStan Tests
         run: pnpm run analyse
 
-      - name: Run Pest Tests
+      - name: Run Pest Tests Against the Unscoped Release
         run: pnpm run test:pest:ci
 
       # - name: Handle Code Coverage
@@ -91,6 +91,7 @@ jobs:
 
       - name: Run Playwright Tests Against the Scoped Release
         run: |
+          wp-env destroy
           config/cli/cli.js test:release
 
       - uses: daun/playwright-report-summary@v2
