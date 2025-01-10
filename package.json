@@ -2,7 +2,7 @@
   "name": "wp-thumbhash",
   "type": "module",
   "private": true,
-  "version": "0.1.1",
+  "version": "0.1.2",
   "scripts": {
     "prepare": "husky",
     "preinstall": "npx only-allow pnpm",

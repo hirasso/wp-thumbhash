@@ -1,5 +1,15 @@
 # Changelog
 
+## 0.1.2
+
+### Patch Changes
+
+- 993331a: `cli.js version:patch`: Infer the main plugin file from it's filename instead of assuming "Plugin Name" matches the `packageName`
+- 44f49e0: Do not create and attach an `assets.zip` to the release anymore
+- c633bb9: Load the scoper-autoload.php if available, as discussed in https://github.com/humbug/php-scoper/discussions/1101
+- dcef3ab: Optimize the admin intrface in the media library popup
+- d058228: Update `@hirasso/thumbhash-custom-element` to 0.5.4
+
 ## 0.1.1
 
 ### Patch Changes
