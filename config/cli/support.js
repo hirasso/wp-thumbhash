@@ -8,7 +8,7 @@ import {
   writeFileSync,
 } from "node:fs";
 import { fileURLToPath } from "node:url";
-import path, { basename, resolve } from "node:path";
+import path, { basename, extname, resolve } from "node:path";
 import { execSync } from "node:child_process";
 import { chdir, cwd, env, exit } from "node:process";
 import pc from "picocolors";
@@ -480,16 +480,19 @@ export async function pushReleaseToDist() {
  */
 export async function patchVersion() {
   const { version: packageVersion } = getInfosFromPackageJSON();
-  const { packageName: name } = getInfosFromComposerJSON();
+  const { packageName } = getInfosFromComposerJSON();
 
   const phpFiles = await fg("*.php");
 
-  const nameRegexp = new RegExp(`^\\s*\\*\\s*Plugin Name:\\s*${name}`, "m");
+  const nameRegexp = /\*\s*Plugin Name:\s*/;
   const versionRegexp = /\*\s*Version:\s*(\d+\.\d+\.\d+)/;
 
   const fileName = phpFiles.find((file) => {
     const contents = readFileSync(file, "utf-8");
-    return nameRegexp.test(contents) && versionRegexp.test(contents);
+    const fileSlug = basename(file, extname(file));
+    const hasName = nameRegexp.test(contents);
+    const hasVersion = versionRegexp.test(contents);
+    return fileSlug === packageName && hasName && hasVersion;
   });
 
   if (!fileName) {
