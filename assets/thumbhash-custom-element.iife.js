@@ -7,17 +7,17 @@
       o = t[3] | (t[4] << 8),
       h = (63 & i) / 63,
       u = ((i >> 6) & 63) / 31.5 - 1,
-      d = ((i >> 12) & 63) / 31.5 - 1,
-      c = ((i >> 18) & 31) / 31,
-      l = i >> 23,
+      l = ((i >> 12) & 63) / 31.5 - 1,
+      d = ((i >> 18) & 31) / 31,
+      c = i >> 23,
       g = ((o >> 3) & 63) / 63,
       f = ((o >> 9) & 63) / 63,
       m = o >> 15,
-      b = n(3, m ? (l ? 5 : 7) : 7 & o),
-      w = n(3, m ? 7 & o : l ? 5 : 7),
-      v = l ? (15 & t[5]) / 15 : 1,
+      b = n(3, m ? (c ? 5 : 7) : 7 & o),
+      w = n(3, m ? 7 & o : c ? 5 : 7),
+      v = c ? (15 & t[5]) / 15 : 1,
       y = (t[5] >> 4) / 15,
-      p = l ? 6 : 5,
+      p = c ? 6 : 5,
       C = 0,
       A = (e, r, n) => {
         let s = [];
@@ -28,10 +28,10 @@
             );
         return s;
       },
-      M = A(b, w, c),
-      I = A(3, 3, 1.25 * g),
-      E = A(3, 3, 1.25 * f),
-      k = l && A(5, 5, y),
+      M = A(b, w, d),
+      k = A(3, 3, 1.25 * g),
+      I = A(3, 3, 1.25 * f),
+      E = c && A(5, 5, y),
       x = (function (t) {
         let e = t[3],
           r = 128 & t[2],
@@ -46,12 +46,12 @@
     for (let t = 0, a = 0; t < S; t++)
       for (let i = 0; i < H; i++, a += 4) {
         let o = h,
-          c = u,
-          g = d,
+          d = u,
+          g = l,
           f = v;
-        for (let t = 0, r = n(b, l ? 5 : 3); t < r; t++)
+        for (let t = 0, r = n(b, c ? 5 : 3); t < r; t++)
           T[t] = s((e / H) * (i + 0.5) * t);
-        for (let r = 0, a = n(w, l ? 5 : 3); r < a; r++)
+        for (let r = 0, a = n(w, c ? 5 : 3); r < a; r++)
           $[r] = s((e / S) * (t + 0.5) * r);
         for (let t = 0, e = 0; t < w; t++)
           for (let r = t ? 0 : 1, n = 2 * $[t]; r * w < b * (w - t); r++, e++)
@@ -59,13 +59,13 @@
         for (let t = 0, e = 0; t < 3; t++)
           for (let r = t ? 0 : 1, n = 2 * $[t]; r < 3 - t; r++, e++) {
             let t = T[r] * n;
-            (c += I[e] * t), (g += E[e] * t);
+            (d += k[e] * t), (g += I[e] * t);
           }
-        if (l)
+        if (c)
           for (let t = 0, e = 0; t < 5; t++)
             for (let r = t ? 0 : 1, n = 2 * $[t]; r < 5 - t; r++, e++)
-              f += k[e] * T[r] * n;
-        let m = o - (2 / 3) * c,
+              f += E[e] * T[r] * n;
+        let m = o - (2 / 3) * d,
           y = (3 * o - m + g) / 2,
           p = y - g;
         (L[a] = n(0, 255 * r(1, y))),
@@ -141,7 +141,7 @@
         this.needsRender(t, e) &&
         ((this.currentHash = t),
         (this.currentStrategy = e),
-        (r.innerHTML = ""),
+        (r.innerHTML = "<slot></slot>"),
         t)
       )
         switch (e) {
@@ -172,7 +172,9 @@
           return { width: n, height: s, pixels: a };
         })(r),
         i = document.createElement("canvas");
-      (i.style.width = "100%"), (i.style.height = "100%");
+      (i.style.width = "100%"),
+        (i.style.height = "100%"),
+        (i.style.display = "block");
       const o = i.getContext("2d");
       if (!o) return;
       (i.width = n), (i.height = s);
@@ -213,6 +215,7 @@
       const n = document.createElement("img");
       (n.style.width = "100%"),
         (n.style.height = "100%"),
+        (n.style.display = "block"),
         (n.alt = ""),
         (n.src = (function (r) {
           return (function (e) {

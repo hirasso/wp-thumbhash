@@ -20,8 +20,8 @@ test.describe("Admin Interface", () => {
     const canvas = page.locator("thumb-hash canvas");
     expect(canvas).toHaveCount(1);
 
-    const button = page.locator("[data-placeholders-generate]");
+    const button = page.locator("[data-thumbhash-action]");
     expect(button).toHaveCount(1);
-    expect(button).toHaveText("Regenerate");
+    expect(button).toHaveText("Show");
   });
 });

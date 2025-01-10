@@ -6,7 +6,6 @@
 
 namespace Hirasso\WPThumbhash;
 
-use Hirasso\WPThumbhash\Enums\AdminContext;
 use WP_Post;
 
 class Admin
@@ -70,7 +69,7 @@ class Admin
         $fields['thumbhash-attachment-field'] = [
             'label' => __('Thumbhash', 'wp-thumbhash'),
             'input' => 'html',
-            'html' => static::renderAttachmentField($attachment->ID, AdminContext::INITIAL),
+            'html' => static::renderAttachmentField($attachment->ID),
         ];
 
         return $fields;
@@ -79,26 +78,36 @@ class Admin
     /**
      * Render the attachment field
      */
-    private static function renderAttachmentField(int $id, AdminContext $context): string
+    private static function renderAttachmentField(int $id): string
     {
-        $element = WPThumbhash::render($id);
-        $buttonLabel = (bool) $element ? __('Regenerate', 'wp-thumbhash') : __('Generate', 'wp-thumbhash');
+        $hash = WPThumbhash::getHash($id);
+
+        [, $width, $height] = wp_get_attachment_image_src($id, 'full');
+        $ratio = $width / $height;
+
+        $isGenerated = (bool) $hash;
+        $buttonLabel = $isGenerated ? __('Show', 'wp-thumbhash') : __('Generate', 'wp-thumbhash');
+        $action = $isGenerated ? 'show' : 'generate';
 
         ob_start() ?>
 
         <thumbhash-attachment-field data-id="<?= esc_attr($id) ?>">
-            <?= $element ?>
+
+            <?php if ($hash) { ?>
+                <thumb-hash
+                    value="<?= $hash ?>"
+                    strategy="img"
+                    style="aspect-ratio: <?= $ratio ?>;">
+                    <span data-thumb-hash-value><?= $hash ?></span>
+                </thumb-hash>
+            <?php } ?>
 
             <button
-                data-placeholders-generate
+                data-thumbhash-action="<?= $action ?>"
                 type="button"
                 class="button button-small">
                 <?php echo esc_html($buttonLabel) ?>
             </button>
-
-            <?php if ($context === AdminContext::REGENERATE) { ?>
-                <i aria-hidden="true" data-thumbhash-regenerated></i>
-            <?php } ?>
 
         </thumbhash-attachment-field>
 
@@ -124,7 +133,7 @@ class Admin
         WPThumbhash::generate($id);
 
         wp_send_json_success([
-            'html' => static::renderAttachmentField($id, AdminContext::REGENERATE),
+            'html' => static::renderAttachmentField($id),
         ]);
     }
 }

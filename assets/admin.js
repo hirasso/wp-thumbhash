@@ -25,11 +25,24 @@
 
     constructor() {
       super();
+
       const button = /** @type {!HTMLButtonElement} */ (
-        this.querySelector("[data-placeholders-generate]")
+        this.querySelector("[data-thumbhash-action]")
       );
+
       this.attachmendID = parseInt(String(this.getAttribute("data-id")), 10);
-      button.addEventListener("click", this.generate);
+
+      button.addEventListener("click", () => {
+        button.getAttribute("data-thumbhash-action") === "show"
+          ? this.toggleShow()
+          : this.generate();
+      });
+
+      const thumbHash =
+        /** @type {HTMLElement} */ this.querySelector("thumb-hash");
+      if (thumbHash) {
+        thumbHash.addEventListener("click", this.toggleShow);
+      }
     }
 
     generate = () => {
@@ -52,6 +65,10 @@
           console.error("AJAX Error:", error);
         },
       });
+    };
+
+    toggleShow = () => {
+      this.classList.toggle("show");
     };
   }
 
