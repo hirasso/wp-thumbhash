@@ -26,7 +26,7 @@
   },
   "devDependencies": {
     "@changesets/cli": "^2.27.9",
-    "@hirasso/thumbhash-custom-element": "^0.5.3",
+    "@hirasso/thumbhash-custom-element": "^0.5.4",
     "@playwright/test": "^1.49.1",
     "@types/node": "^22.10.5",
     "@wordpress/env": "^10.11.0",

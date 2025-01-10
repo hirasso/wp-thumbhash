@@ -12,8 +12,8 @@ importers:
         specifier: ^2.27.9
         version: 2.27.9
       '@hirasso/thumbhash-custom-element':
-        specifier: ^0.5.3
-        version: 0.5.3
+        specifier: ^0.5.4
+        version: 0.5.4
       '@playwright/test':
         specifier: ^1.49.1
         version: 1.49.1
@@ -100,8 +100,8 @@ packages:
   '@changesets/write@0.3.2':
     resolution: {integrity: sha512-kDxDrPNpUgsjDbWBvUo27PzKX4gqeKOlhibaOXDJA6kuBisGqNHv/HwGJrAu8U/dSf8ZEFIeHIPtvSlZI1kULw==}
 
-  '@hirasso/thumbhash-custom-element@0.5.3':
-    resolution: {integrity: sha512-tesAU5AIVew0GAkaMVOf44NwhFoFsBju/pDLw9+vGyrdZcxG6b67fBbU2dJZkzBS96kI5zF01XE2fZ06fCp6Yg==}
+  '@hirasso/thumbhash-custom-element@0.5.4':
+    resolution: {integrity: sha512-qCzjKnTP9YCJtSxjXx5PuFNoBsHZJVYjyGwcxFEr2w/6ISK8f5Xz57AI0EHb9I5C03L0R5IsIuLM5BG8zB+Pyg==}
 
   '@kwsites/file-exists@1.1.1':
     resolution: {integrity: sha512-m9/5YGR18lIwxSFDwfE3oA7bWuq9kdau6ugN4H2rJeyhFQZcG9AgSHkQtSD15a8WvTgfz9aikZMrKPHvbpqFiw==}
@@ -1207,7 +1207,7 @@ snapshots:
       human-id: 1.0.2
       prettier: 2.8.8
 
-  '@hirasso/thumbhash-custom-element@0.5.3':
+  '@hirasso/thumbhash-custom-element@0.5.4':
     dependencies:
       thumbhash: 0.1.1
 
