@@ -1,5 +1,11 @@
 # Changelog
 
+## 0.1.3
+
+### Patch Changes
+
+- d0c306c: Optimize the "View Details" appearance on the WP plugins screen
+
 ## 0.1.2
 
 ### Patch Changes
