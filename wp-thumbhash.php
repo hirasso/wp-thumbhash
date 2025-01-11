@@ -9,6 +9,7 @@
  *
  * @wordpress-plugin
  * Plugin Name: wp-thumbhash
+ * Plugin URI: https://github.com/hirasso/wp-thumbhash
  * Description: Generate and render thumbhash placeholders for your lazy-loaded images 🦦
  * Author: Rasso Hilber
  * Author URI: https://rassohilber.com/
