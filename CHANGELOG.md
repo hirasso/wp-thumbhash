@@ -1,5 +1,12 @@
 # Changelog
 
+## 0.1.3
+
+### Patch Changes
+
+- 32081bb: In the admin, switch back to the `canvas` render strategy for thumbhash previews
+- 6af28d8: Remove tests that are already covered by `@hirasso/thumbhash-custom-element`
+
 ## 0.1.2
 
 ### Patch Changes
