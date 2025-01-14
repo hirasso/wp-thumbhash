@@ -96,7 +96,6 @@ class Admin
             <?php if ($hash) { ?>
                 <thumb-hash
                     value="<?= $hash ?>"
-                    strategy="img"
                     style="aspect-ratio: <?= $ratio ?>;">
                     <span data-thumb-hash-value><?= $hash ?></span>
                 </thumb-hash>
