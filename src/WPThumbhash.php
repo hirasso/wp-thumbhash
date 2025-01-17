@@ -233,7 +233,7 @@ class WPThumbhash
             'meta_query' => [
                 [
                     'key' => WPThumbhash::META_KEY,
-                    'compare' => $compare->name,
+                    'compare' => $compare->value,
                 ],
             ],
         ];
