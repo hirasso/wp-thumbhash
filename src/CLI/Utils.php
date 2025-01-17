@@ -13,7 +13,7 @@ class Utils
     {
         $start = static::truncateMiddle($start);
 
-        $dotsAmount = static::getTerminalWidth() - mb_strlen($start) - mb_strlen($end) - 2;
+        $dotsAmount = max(0, static::getTerminalWidth() - mb_strlen($start) - mb_strlen($end) - 2);
         $dots = str_repeat('.', $dotsAmount);
 
         return sanitize_text_field("$start $dots $end $icon");
