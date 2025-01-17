@@ -55,8 +55,8 @@ class GenerateCommand extends Command
         $force = $input->getFlag('force');
 
         $io->title(match ($force) {
-            true => 'Generating Thumbhashes (force: true)',
-            default => 'Generating Thumbhashes'
+            true => 'Generating Thumbhash Placeholders (force: true)',
+            default => 'Generating Thumbhash Placeholders'
         });
 
         $validator = new InputValidator($io);
@@ -72,27 +72,41 @@ class GenerateCommand extends Command
 
         $query = new WP_Query($queryArgs);
 
+        $images = array_filter(
+            $query->posts,
+            fn ($image) => (bool) WPThumbhash::isEncodableImage($image)
+        );
+
         ImageDownloader::cleanupTemporaryFiles();
 
-        if (! $query->have_posts()) {
+        if (! count($images)) {
             $io->success('No images without placeholders found');
 
             return Command::SUCCESS;
         }
 
         $count = 0;
-        foreach ($query->posts as $id) {
+        foreach ($images as $id) {
+            $fileName = basename(wp_get_attachment_url($id));
             $thumbhash = WPThumbhash::generate($id);
-            $status = match ((bool) $thumbhash) {
-                true => $io->colorize('generated ✔︎', Text::GREEN),
-                default => $io->colorize('failed ❌', Text::RED)
-            };
 
-            $output->writeln(Utils::getStatusLine(
-                "ID $id – ".basename(wp_get_attachment_url($id)),
-                $status
-            ));
-            if ($thumbhash) {
+            $status = ! is_wp_error($thumbhash)
+                ? $io->colorize(__('generated', 'wp-thumbhash'), Text::GREEN)
+                : $io->colorize(__('failed', 'wp-thumbhash'), Text::RED);
+
+            $icon = ! is_wp_error($thumbhash)
+                ? $io->colorize('✔︎', Text::GREEN)
+                : $io->colorize('❌', Text::RED);
+
+            $message = Utils::getStatusLine(
+                start: "ID $id – $fileName",
+                end: $status,
+                icon: $icon,
+            );
+
+            $output->writeln($message);
+
+            if (! is_wp_error($thumbhash)) {
                 $count++;
             }
         }

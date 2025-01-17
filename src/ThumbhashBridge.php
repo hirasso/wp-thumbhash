@@ -20,7 +20,7 @@ class ThumbhashBridge
     public static function encode(
         string $file,
         string $mimeType
-    ): string {
+    ): string|WP_Error {
         if (! file_exists($file)) {
             throw new WP_Error(sprintf(
                 'File not found: %s',

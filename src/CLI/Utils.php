@@ -6,18 +6,17 @@ class Utils
 {
     /**
      * Create a status line, for example:
-     * image.jpg ..................................................... generated ✔︎
+     * image.jpg ..................................................... generated ✔
+     * missing.svg ...................................................... failed ❌
      */
-    public static function getStatusLine(string $start, string $end): string
+    public static function getStatusLine(string $start, string $end, string $icon = ''): string
     {
-        [$start, $end] = [
-            static::truncateMiddle($start),
-            static::truncateMiddle($end),
-        ];
-        $dotsAmount = max(0, static::getTerminalWidth() - strlen($start) - strlen($end));
+        $start = static::truncateMiddle($start);
+
+        $dotsAmount = static::getTerminalWidth() - mb_strlen($start) - mb_strlen($end) - 2;
         $dots = str_repeat('.', $dotsAmount);
 
-        return sanitize_text_field("$start $dots $end");
+        return sanitize_text_field("$start $dots $end $icon");
     }
 
     /**

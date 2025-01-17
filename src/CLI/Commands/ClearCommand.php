@@ -46,7 +46,7 @@ class ClearCommand extends Command
 
         $ids = $input->getRepeatingArgument('ids', []);
 
-        $io->title('Clearing Thumbhashes');
+        $io->title('Clearing Thumbhash Placeholders');
 
         $validator = new InputValidator($io);
         if (! $validator->isNumericArray($ids, 'Non-numeric ids provided')) {
@@ -74,7 +74,7 @@ class ClearCommand extends Command
 
             $output->writeln(Utils::getStatusLine(
                 "ID $id – ".basename(wp_get_attachment_url($id)),
-                $io->colorize('cleared ✔︎', Text::GREEN)
+                $io->colorize('cleared ✔︎', Text::GREEN),
             ));
 
             $count++;

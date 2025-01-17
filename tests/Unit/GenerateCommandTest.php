@@ -29,13 +29,13 @@ test('synopsis', function () {
 });
 
 test('execute', function () {
-    $tester = new CommandTester(new GenerateCommand());
+    $tester = new CommandTester(new GenerateCommand);
 
     $tester->run([], ['force' => true]);
 
     $tester->assertCommandIsSuccessful();
     $tester->assertStatusCode(0);
 
-    $tester->seeInStderr('Generating Thumbhashes (force: true)');
+    $tester->seeInStderr('Generating Thumbhash Placeholders (force: true)');
     $tester->seeInStderr('[OK]');
 });

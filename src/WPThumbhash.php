@@ -80,21 +80,38 @@ class WPThumbhash
     }
 
     /**
+     * Check if an attachment is an image and not an SVG
+     */
+    public static function isEncodableImage(WP_Post|int $attachment): bool
+    {
+        if (! wp_attachment_is_image($attachment)) {
+            return false;
+        }
+        if (get_post_mime_type($attachment) === 'image/svg+xml') {
+            return false;
+        }
+
+        return true;
+    }
+
+    /**
      * Generate and attach a thumbhash for an image
      */
     public static function generate(
         int $attachmentID
     ): bool|WP_Error {
-        if (! wp_attachment_is_image($attachmentID)) {
+        $fileName = basename(get_attached_file($attachmentID));
+
+        if (! static::isEncodableImage($attachmentID)) {
             static::throw(new InvalidArgumentException(sprintf(
-                'File is not an image: %s',
-                esc_html($attachmentID)
+                'The file is not suitable for encoding: %s',
+                esc_html($fileName)
             )));
 
             return new WP_Error('not_an_image', sprintf(
                 /* translators: %s is a path to a file */
-                __('File is not an image: %s', 'wp-thumbhash'),
-                esc_html($attachmentID)
+                __('The file is not suitable for encoding: %s', 'wp-thumbhash'),
+                esc_html($fileName)
             ));
         }
 
@@ -132,7 +149,7 @@ class WPThumbhash
     {
         $imageID = $imageID->ID ?? $imageID;
 
-        if (! wp_attachment_is_image($imageID)) {
+        if (! static::isEncodableImage($imageID)) {
             static::throw(new InvalidArgumentException(sprintf(
                 'Not an image: %s',
                 esc_html($imageID)

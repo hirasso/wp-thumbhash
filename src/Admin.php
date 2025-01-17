@@ -62,7 +62,7 @@ class Admin
         array $fields,
         WP_Post $attachment
     ): array {
-        if (! wp_attachment_is_image($attachment)) {
+        if (! WPThumbhash::isEncodableImage($attachment)) {
             return $fields;
         }
 
