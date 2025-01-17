@@ -31,7 +31,7 @@ class WPThumbhash
     public static function init()
     {
         // Hook for generating a thumbhash on upload
-        add_action('add_attachment', [static::class, 'generate']);
+        add_action('add_attachment', [static::class, 'handleAddAttachment']);
         add_action('plugins_loaded', [static::class, 'loadTextDomain']);
 
         // Load thumbhash-custom-element as early as possible on every page
@@ -92,6 +92,17 @@ class WPThumbhash
         }
 
         return true;
+    }
+
+    /**
+     * Attempt to generate a thumbhash when uploading
+     */
+    public static function handleAddAttachment(int $id): void
+    {
+        if (! static::isEncodableImage($id)) {
+            return;
+        }
+        static::generate($id);
     }
 
     /**
