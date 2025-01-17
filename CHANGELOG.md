@@ -1,5 +1,14 @@
 # Changelog
 
+## 0.1.5
+
+### Patch Changes
+
+- cce79ff: Do not attempt to create thumbhash placeholders for svg images
+- 17a98f6: Suppress errors during upload. Make errors non-blocking
+- cce79ff: Beautify console output for the generate command
+- 8257f3a: Fix the query in the `wp thumbhash generate` command
+
 ## 0.1.4
 
 ### Patch Changes
