@@ -1,5 +1,11 @@
 # Changelog
 
+## 0.1.4
+
+### Patch Changes
+
+- ad4defc: Re-apply readme and canonical plugin name (where did it go?!)
+
 ## 0.1.3
 
 ### Patch Changes
