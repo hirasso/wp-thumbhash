@@ -1,14 +1,14 @@
 <?php
 
 /**
- * Plugin Name
+ * WP Thumbhash
  *
  * @author            Rasso Hilber
  * @copyright         2024 Rasso Hilber
  * @license           GPL-2.0-or-later
  *
  * @wordpress-plugin
- * Plugin Name: wp-thumbhash
+ * Plugin Name: WP Thumbhash
  * Description: Generate and render thumbhash placeholders for your lazy-loaded images 🦦
  * Author: Rasso Hilber
  * Author URI: https://rassohilber.com/
