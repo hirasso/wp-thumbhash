@@ -1,5 +1,11 @@
 # Changelog
 
+## 0.1.6
+
+### Patch Changes
+
+- 25a1112: phpstan fails if there is an error ignored in `ignoreErrors` that is not being thrown 🤦‍😆
+
 ## 0.1.5
 
 ### Patch Changes
