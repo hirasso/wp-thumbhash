@@ -1,5 +1,11 @@
 # Changelog
 
+## 0.1.8
+
+### Patch Changes
+
+- 29c7ba9: Test release asset upload via GitHub CLI
+
 ## 0.1.7
 
 ### Patch Changes
