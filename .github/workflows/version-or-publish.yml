@@ -1,9 +1,11 @@
 name: Version or Publish
 
 on:
-  push:
-    branches:
-      - main
+  workflow_run:
+    workflows: ["CI"]
+    branches: [main]
+    types:
+      - completed
 
 permissions:
   contents: write
@@ -15,6 +17,7 @@ jobs:
   package-infos:
     name: Get Package Infos
     runs-on: ubuntu-latest
+    if: ${{ github.event.workflow_run.conclusion == 'success' }}
     outputs:
       fullName: ${{ steps.package-infos.outputs.fullName }}
       vendorName: ${{ steps.package-infos.outputs.vendorName }}
