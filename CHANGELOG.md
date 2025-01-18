@@ -1,5 +1,11 @@
 # Changelog
 
+## 0.1.7
+
+### Patch Changes
+
+- 5549157: Trigger a release
+
 ## 0.1.6
 
 ### Patch Changes
