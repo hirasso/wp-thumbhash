@@ -12,26 +12,6 @@ concurrency:
 
 jobs:
 
-  detect-release-commit:
-    runs-on: ubuntu-latest
-    outputs:
-      result: ${{ steps.check.outputs.is_release_commit }}
-    steps:
-      - name: Check changesets release commit
-        id: check
-        shell: bash
-        run: |
-          if [[ "${{ github.event.head_commit.message }}" == *"Merge pull request"* && "${{ github.event.head_commit.message }}" == *"changeset-release/main"* ]]; then
-            echo "is_release_commit=true" >> $GITHUB_ENV
-          else
-            echo "is_release_commit=false" >> $GITHUB_ENV
-          fi
-
-      - name: Debug changesets release commit
-        shell: bash
-        run: |
-          echo "Minimal Check Result: is_merge_commit=${{ steps.check.outputs.is_merge_commit }}"
-
   php-tests:
     name: PHP ${{ matrix.php }} Tests
     runs-on: ubuntu-latest

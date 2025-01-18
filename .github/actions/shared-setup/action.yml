@@ -37,12 +37,12 @@ runs:
       run: pnpm install --frozen-lockfile
 
     - name: Install Playwright
-      if: ${{ inputs.playwright }} == 'true'
+      if: ${{ inputs.playwright == 'true' }}
       id: install-playwright
       uses: ./.github/actions/install-playwright
 
     - name: Debug Playwright Cache
-      if: ${{ inputs.playwright }} == 'true'
+      if: ${{ inputs.playwright == 'true' }}
       shell: bash
       run: |
         echo "Playwright version: ${{ steps.install-playwright.outputs.version }}"
