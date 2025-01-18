@@ -87,21 +87,16 @@ jobs:
           # Doesn't work with GITHUB_TOKEN for some reason
           GITHUB_TOKEN: ${{ secrets.HIRASSO_ACTIONS_TOKEN }}
 
-
-      - name: "Get Latest Tag"
-        id: latest-tag
-        uses: "WyriHaximus/github-action-get-previous-tag@v1"
-
-      - name: Add artifacts to the latest release
-        uses: ncipollo/release-action@v1
+      - name: Upload release asset
         if: steps.cs.outputs.published == 'true'
-        with:
-          tag: ${{ steps.latest-tag.outputs.tag }}
-          allowUpdates: true
-          omitBodyDuringUpdate: true
-          omitNameDuringUpdate: true
-          omitPrereleaseDuringUpdate: true
-          artifacts: "${{ needs.package-infos.outputs.packageName }}.zip"
+        run: |
+          TAG=$(gh release list --limit 1 --json tagName -q '.[0].tagName')
+          ASSET="${{ needs.package-infos.outputs.packageName }}.zip"
+          echo "Latest tag: $TAG"
+          gh release upload "$TAG" "$ASSET" --clobber
+          echo "✅ Uploaded $ASSET to the release $TAG"
+        env:
+          GH_TOKEN: ${{ github.token }}
 
       - name: Push release to dist repo
         if: steps.cs.outputs.published == 'true'
