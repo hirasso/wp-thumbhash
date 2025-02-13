@@ -1,5 +1,13 @@
 # Changelog
 
+## 0.1.9
+
+### Patch Changes
+
+- b5e778c: Handle exceptions more gracefully
+- bf8cf8e: Clean up more reliably after `getDownsizedImage`
+- 3b1dd37: Optimize handling of temporary files: Always use the wp uploads dir for simpler permission handling.
+
 ## 0.1.8
 
 ### Patch Changes
