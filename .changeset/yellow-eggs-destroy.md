@@ -2,4 +2,4 @@
 "wp-thumbhash": patch
 ---
 
-Unify uploads dir handling
+Optimize handling of temporary files: Always use the wp uploads dir for simpler permission handling.
