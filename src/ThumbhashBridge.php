@@ -82,8 +82,14 @@ class ThumbhashBridge
     ): string|WP_Error {
         $editor->resize(32, 32, false);
 
+        $uploadDir = wp_upload_dir();
+        $dir = $uploadDir['basedir'].'/'.'wp-thumbhash/downsized';
+        if (! file_exists($dir)) {
+            wp_mkdir_p($dir);
+        }
+
         // Save the image to a temporary location
-        $tempFile = wp_tempnam();
+        $tempFile = wp_tempnam('', $dir);
 
         if (is_wp_error($result = $editor->save($tempFile, $mimeType))) {
             return $result;

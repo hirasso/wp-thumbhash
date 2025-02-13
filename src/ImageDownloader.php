@@ -23,7 +23,7 @@ class ImageDownloader
     private static function getDir(): string
     {
         $uploadDir = wp_upload_dir();
-        $dir = $uploadDir['basedir'].'/'.'wp-thumbhash';
+        $dir = $uploadDir['basedir'].'/'.'wp-thumbhash/downloaded';
         if (! file_exists($dir)) {
             wp_mkdir_p($dir);
         }
