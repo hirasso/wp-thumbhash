@@ -15,6 +15,7 @@ use Hirasso\WPThumbhash\CLI\Commands\GenerateCommand;
 use Hirasso\WPThumbhash\Enums\QueryArgsCompare;
 use Hirasso\WPThumbhash\Enums\RenderStrategy;
 use InvalidArgumentException;
+use RuntimeException;
 use Snicco\Component\BetterWPCLI\CommandLoader\ArrayCommandLoader;
 use Snicco\Component\BetterWPCLI\WPCLIApplication;
 use WP_CLI;
@@ -102,7 +103,12 @@ class WPThumbhash
         if (! static::isEncodableImage($id)) {
             return;
         }
-        static::generate($id);
+        try {
+            static::generate($id);
+        } catch (RuntimeException $exception) {
+            // @TODO: handle failed generation
+        }
+
     }
 
     /**

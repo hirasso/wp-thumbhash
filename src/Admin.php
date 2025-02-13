@@ -6,6 +6,7 @@
 
 namespace Hirasso\WPThumbhash;
 
+use RuntimeException;
 use WP_Post;
 
 class Admin
@@ -83,7 +84,8 @@ class Admin
         $hash = WPThumbhash::getHash($id);
 
         [, $width, $height] = wp_get_attachment_image_src($id, 'full');
-        $ratio = $width / $height;
+
+        $ratio = $width && $height ? $width / $height : 1;
 
         $isGenerated = (bool) $hash;
         $buttonLabel = $isGenerated ? __('Show', 'wp-thumbhash') : __('Generate', 'wp-thumbhash');
@@ -129,10 +131,17 @@ class Admin
             ]);
         }
 
-        WPThumbhash::generate($id);
+        try {
+            WPThumbhash::generate($id);
+            wp_send_json_success([
+                'html' => static::renderAttachmentField($id),
+            ]);
+        } catch (RuntimeException $exception) {
+            wp_send_json_error([
+                'html' => static::renderAttachmentField($id),
+                'error' => $exception->getMessage(),
+            ]);
+        }
 
-        wp_send_json_success([
-            'html' => static::renderAttachmentField($id),
-        ]);
     }
 }
