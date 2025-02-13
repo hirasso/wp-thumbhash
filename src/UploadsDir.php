@@ -43,16 +43,17 @@ class UploadsDir
     public static function cleanup(int $age = MINUTE_IN_SECONDS): void
     {
         $dir = static::getDir();
-        $files = list_files($dir);
-        $before = time() - $age;
 
-        if (is_dir("$dir/uploads")) {
-            rmdir("$dir/uploads");
+        if (is_dir("$dir/downloaded")) {
+            rmdir("$dir/downloaded");
         }
 
         if (is_dir("$dir/downsized")) {
             rmdir("$dir/downsized");
         }
+
+        $files = list_files($dir);
+        $before = time() - $age;
 
         foreach ($files as $file) {
             if (filemtime($file) < $before) {
