@@ -28,12 +28,31 @@ class UploadsDir
     }
 
     /**
+     * Get a temporary file name
+     */
+    public static function getTmpFile(string $name): string
+    {
+        $dir = static::getDir().'/';
+
+        return wp_tempnam('', $dir);
+    }
+
+    /**
      * Cleans up (deletes) files in the custom directory that are older than one hour.
      */
     public static function cleanup(int $age = MINUTE_IN_SECONDS): void
     {
-        $files = list_files(static::getDir());
+        $dir = static::getDir();
+        $files = list_files($dir);
         $before = time() - $age;
+
+        if (is_dir("$dir/uploads")) {
+            rmdir("$dir/uploads");
+        }
+
+        if (is_dir("$dir/downsized")) {
+            rmdir("$dir/downsized");
+        }
 
         foreach ($files as $file) {
             if (filemtime($file) < $before) {

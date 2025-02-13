@@ -74,7 +74,7 @@ class ThumbhashBridge
     }
 
     /**
-     * Get a resized version of an image
+     * Get a downsized version of an image
      */
     private static function getDownsizedImage(
         WP_Image_Editor $editor,
@@ -82,31 +82,34 @@ class ThumbhashBridge
     ): string|WP_Error {
         $editor->resize(32, 32, false);
 
-        $dir = UploadsDir::getDir();
         UploadsDir::cleanup();
 
-        // Save the image to a temporary location
-        $tempFile = wp_tempnam('', $dir);
+        $tmpFile = UploadsDir::getTmpFile('downsized');
 
-        if (is_wp_error($result = $editor->save($tempFile, $mimeType))) {
-            return $result;
+        $saved = $editor->save($tmpFile, $mimeType);
+
+        // clean up the temporary file
+        wp_delete_file($tmpFile);
+
+        if (is_wp_error($saved)) {
+            return $saved;
         }
 
-        $file = $result['path'];
+        $image = $saved['path'];
 
         $fs = Utils::getFilesystem();
 
-        // Check if the file exists and is readable
-        if (! $fs->exists($file) || ! $fs->is_readable($file)) {
+        // Check if the image exists and is readable
+        if (! $fs->exists($image) || ! $fs->is_readable($image)) {
             return new WP_Error('Temporary image file is not accessible.');
         }
 
         // Get the raw image data
         // phpcs:ignore WordPress.WP.AlternativeFunctions.file_get_contents_file_get_contents --- this file is always local
-        $imageData = $fs->get_contents($file);
+        $imageData = $fs->get_contents($image);
 
-        // Clean up the temporary file
-        wp_delete_file($tempFile);
+        // Clean up the image file
+        wp_delete_file($image);
 
         return $imageData ?: new WP_Error('Invalid $imageData');
     }
