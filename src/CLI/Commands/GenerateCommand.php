@@ -5,7 +5,7 @@ namespace Hirasso\WPThumbhash\CLI\Commands;
 use Hirasso\WPThumbhash\CLI\InputValidator;
 use Hirasso\WPThumbhash\CLI\Utils;
 use Hirasso\WPThumbhash\Enums\QueryArgsCompare;
-use Hirasso\WPThumbhash\ImageDownloader;
+use Hirasso\WPThumbhash\UploadsDir;
 use Hirasso\WPThumbhash\WPThumbhash;
 use Snicco\Component\BetterWPCLI\Command;
 use Snicco\Component\BetterWPCLI\Input\Input;
@@ -77,7 +77,7 @@ class GenerateCommand extends Command
             fn ($image) => (bool) WPThumbhash::isEncodableImage($image)
         );
 
-        ImageDownloader::cleanupTemporaryFiles();
+        UploadsDir::cleanup();
 
         if (! count($images)) {
             $io->success('No images without placeholders found');
