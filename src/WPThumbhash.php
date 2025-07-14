@@ -207,7 +207,14 @@ class WPThumbhash
             $strategy = RenderStrategy::CANVAS;
         }
 
-        echo static::render($imageID, $strategy);
+        try {
+            echo static::render($imageID, $strategy);
+        } catch (Exception $e) {
+            /** fail silently in the frontend */
+            $message = $e->getMessage();
+            echo "<!-- do_action('wp-thumbhash/render') error: $message -->";
+        }
+
     }
 
     /**
