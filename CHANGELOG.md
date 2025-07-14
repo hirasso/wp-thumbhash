@@ -1,5 +1,11 @@
 # Changelog
 
+## 0.1.10
+
+### Patch Changes
+
+- cd1ea10: Fail silently when using the WP_Thumbhash action
+
 ## 0.1.9
 
 ### Patch Changes
