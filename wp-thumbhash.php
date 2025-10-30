@@ -16,7 +16,7 @@
  * License: GPL-3.0-or-later
  * License URI: https://www.gnu.org/licenses/gpl-3.0.txt
  * Requires PHP: 8.2
- * Version: 0.1.10
+ * Version: 0.1.11
  */
 
 namespace Hirasso\WPThumbhash;
