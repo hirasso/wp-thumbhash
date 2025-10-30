@@ -17,9 +17,9 @@ class Admin
 
     public static function init()
     {
-        add_filter('attachment_fields_to_edit', [static::class, 'attachmentFieldsToEdit'], 10, 2);
-        add_action('admin_enqueue_scripts', [static::class, 'enqueueAssets']);
-        add_action('wp_ajax_'.static::$ajaxAction, [static::class, 'wpAjaxGenerateThumbhash']);
+        add_filter('attachment_fields_to_edit', [self::class, 'attachmentFieldsToEdit'], 10, 2);
+        add_action('admin_enqueue_scripts', [self::class, 'enqueueAssets']);
+        add_action('wp_ajax_'.self::$ajaxAction, [self::class, 'wpAjaxGenerateThumbhash']);
     }
 
     /**
@@ -34,19 +34,19 @@ class Admin
         $enqueued = true;
 
         // phpcs:disable WordPress.WP.EnqueuedResourceParameters.MissingVersion -- the version is derived from the filemtime
-        wp_enqueue_style(static::$assetHandle, WPThumbhash::getAssetURI('/assets/admin.css'), [], null);
-        wp_enqueue_script(static::$assetHandle, WPThumbhash::getAssetURI('/assets/admin.js'), ['jquery'], null, true);
+        wp_enqueue_style(self::$assetHandle, WPThumbhash::getAssetURI('/assets/admin.css'), [], null);
+        wp_enqueue_script(self::$assetHandle, WPThumbhash::getAssetURI('/assets/admin.js'), ['jquery'], null, true);
         // phpcs:enable WordPress.WP.EnqueuedResourceParameters.MissingVersion
 
         $globals = [
             'ajax' => [
                 'url' => admin_url('admin-ajax.php'),
-                'action' => static::$ajaxAction,
-                'nonce' => wp_create_nonce(static::$ajaxAction),
+                'action' => self::$ajaxAction,
+                'nonce' => wp_create_nonce(self::$ajaxAction),
             ],
         ];
         wp_add_inline_script(
-            static::$assetHandle,
+            self::$assetHandle,
             sprintf(
                 'var wpThumbhash = %s;',
                 wp_json_encode($globals, JSON_PRETTY_PRINT)
@@ -70,7 +70,7 @@ class Admin
         $fields['thumbhash-attachment-field'] = [
             'label' => __('Thumbhash', 'wp-thumbhash'),
             'input' => 'html',
-            'html' => static::renderAttachmentField($attachment->ID),
+            'html' => self::renderAttachmentField($attachment->ID),
         ];
 
         return $fields;
@@ -93,7 +93,7 @@ class Admin
 
         ob_start() ?>
 
-        <thumbhash-attachment-field data-id="<?= esc_attr($id) ?>">
+        <thumbhash-attachment-field data-id="<?= esc_attr((string) $id) ?>">
 
             <?php if ($hash) { ?>
                 <thumb-hash
@@ -121,11 +121,11 @@ class Admin
      */
     public static function wpAjaxGenerateThumbhash(): void
     {
-        check_ajax_referer(static::$ajaxAction, 'security');
+        check_ajax_referer(self::$ajaxAction, 'security');
 
-        $id = intval($_POST['id'] ?? null);
+        $id = filter_input(INPUT_POST, 'id', FILTER_VALIDATE_INT);
 
-        if (empty($id) || ! is_numeric($id)) {
+        if (! $id) {
             wp_send_json_error([
                 'message' => 'Invalid id provided',
             ]);
@@ -134,11 +134,11 @@ class Admin
         try {
             WPThumbhash::generate($id);
             wp_send_json_success([
-                'html' => static::renderAttachmentField($id),
+                'html' => self::renderAttachmentField($id),
             ]);
         } catch (RuntimeException $exception) {
             wp_send_json_error([
-                'html' => static::renderAttachmentField($id),
+                'html' => self::renderAttachmentField($id),
                 'error' => $exception->getMessage(),
             ]);
         }

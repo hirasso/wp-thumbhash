@@ -26,7 +26,7 @@ class UpdateChecker
 
         $checker->setBranch('main');
 
-        if ($token = static::getGitHubToken()) {
+        if ($token = self::getGitHubToken()) {
             $checker->setAuthentication($token);
         }
 
@@ -38,7 +38,7 @@ class UpdateChecker
         $api = $checker->getVcsApi();
         $api->enableReleaseAssets("/$slug\.zip/i", $api::REQUIRE_RELEASE_ASSETS);
 
-        $checker->addFilter('vcs_update_detection_strategies', [static::class, 'update_strategies'], 999);
+        $checker->addFilter('vcs_update_detection_strategies', [self::class, 'update_strategies'], 999);
     }
 
     /**

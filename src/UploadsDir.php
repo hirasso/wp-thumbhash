@@ -32,7 +32,7 @@ class UploadsDir
      */
     public static function getTmpFile(string $name): string
     {
-        $dir = static::getDir().'/';
+        $dir = self::getDir().'/';
 
         return wp_tempnam('', $dir);
     }
@@ -43,11 +43,10 @@ class UploadsDir
     public static function cleanup(int $age = MINUTE_IN_SECONDS): void
     {
         if (! function_exists('list_files')) {
-            // @phpstan-ignore requireOnce.fileNotFound
             require_once ABSPATH.'wp-admin/includes/file.php';
         }
 
-        $dir = static::getDir();
+        $dir = self::getDir();
         $files = array_filter(list_files($dir), 'is_file');
         $before = time() - $age;
 

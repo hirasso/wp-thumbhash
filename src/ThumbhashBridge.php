@@ -22,7 +22,7 @@ class ThumbhashBridge
         string $mimeType
     ): string|WP_Error {
         if (! file_exists($file)) {
-            throw new WP_Error(sprintf(
+            return new WP_Error(sprintf(
                 'File not found: %s',
                 esc_html($file)
             ));
@@ -37,9 +37,9 @@ class ThumbhashBridge
             return $editor;
         }
 
-        [$width, $height, $pixels] = static::extractSizeAndPixels(
-            driver: static::getImageDriver($editor),
-            image: static::getDownsizedImage($editor, get_post_mime_type($file))
+        [$width, $height, $pixels] = self::extractSizeAndPixels(
+            driver: self::getImageDriver($editor),
+            image: self::getDownsizedImage($editor, $mimeType)
         );
 
         $hash = Thumbhash::RGBAToHash($width, $height, $pixels);
@@ -124,7 +124,6 @@ class ThumbhashBridge
         return match ($driver) {
             ImageDriver::IMAGICK => extract_size_and_pixels_with_imagick($image),
             ImageDriver::GD => extract_size_and_pixels_with_gd($image),
-            default => throw new RuntimeException("Couldn't generate thumbhash data")
         };
     }
 

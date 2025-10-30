@@ -11,9 +11,9 @@ class Utils
      */
     public static function getStatusLine(string $start, string $end, string $icon = ''): string
     {
-        $start = static::truncateMiddle($start);
+        $start = self::truncateMiddle($start);
 
-        $dotsAmount = max(0, static::getTerminalWidth() - mb_strlen($start) - mb_strlen($end) - 2);
+        $dotsAmount = max(0, self::getTerminalWidth() - mb_strlen($start) - mb_strlen($end) - 2);
         $dots = str_repeat('.', $dotsAmount);
 
         return sanitize_text_field("$start $dots $end $icon");
@@ -51,8 +51,8 @@ class Utils
         $keepLength = ($maxLength - $placeholderLength) / 2;
 
         // Split the string into the parts to keep at the start and end
-        $start = substr($string, 0, floor($keepLength));
-        $end = substr($string, -ceil($keepLength));
+        $start = substr($string, 0, intval(floor($keepLength)));
+        $end = substr($string, -intval(ceil($keepLength)));
 
         return $start.$placeholder.$end;
     }

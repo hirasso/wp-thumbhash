@@ -1,7 +1,9 @@
 parameters:
-  level: 1
+  level: 5
   paths:
     - wp-thumbhash.php
     - src/
+  scanDirectories:
+    - vendor/.wordpress
   ignoreErrors:
-    # - '#Action callback returns .+ but should not return anything#'
+    - '#Constant FS_CHMOD_FILE not found#'

@@ -32,15 +32,15 @@ class WPThumbhash
     public static function init()
     {
         // Hook for generating a thumbhash on upload
-        add_action('add_attachment', [static::class, 'handleAddAttachment']);
-        add_action('plugins_loaded', [static::class, 'loadTextDomain']);
+        add_action('add_attachment', [self::class, 'handleAddAttachment']);
+        add_action('plugins_loaded', [self::class, 'loadTextDomain']);
 
         // Load thumbhash-custom-element as early as possible on every page
-        add_action('wp_enqueue_scripts', [static::class, 'enqueueCustomElement']);
-        add_action('admin_enqueue_scripts', [static::class, 'enqueueCustomElement']);
+        add_action('wp_enqueue_scripts', [self::class, 'enqueueCustomElement']);
+        add_action('admin_enqueue_scripts', [self::class, 'enqueueCustomElement']);
 
         // action-based interface
-        add_action('wp-thumbhash/render', [static::class, 'doActionRender'], 10, 2);
+        add_action('wp-thumbhash/render', [self::class, 'doActionRender'], 10, 2);
 
         // Initialize WP CLI application
         if (defined('WP_CLI') && class_exists(WP_CLI::class)) {
@@ -61,7 +61,7 @@ class WPThumbhash
     public static function loadTextDomain(): void
     {
         // phpcs:ignore WordPress.WP.DeprecatedParameters.Load_plugin_textdomainParam2Found -- plugin-check fails here
-        load_plugin_textdomain('wp-thumbhash', '', static::getAssetPath('/languages'));
+        load_plugin_textdomain('wp-thumbhash', '', self::getAssetPath('/languages'));
     }
 
     /**
@@ -73,7 +73,7 @@ class WPThumbhash
     {
         wp_enqueue_script(
             handle: 'thumbhash-custom-element',
-            src: static::getAssetURI('/assets/thumbhash-custom-element.iife.js'),
+            src: self::getAssetURI('/assets/thumbhash-custom-element.iife.js'),
             deps: [],
             ver: null,
             args: false
@@ -100,11 +100,11 @@ class WPThumbhash
      */
     public static function handleAddAttachment(int $id): void
     {
-        if (! static::isEncodableImage($id)) {
+        if (! self::isEncodableImage($id)) {
             return;
         }
         try {
-            static::generate($id);
+            self::generate($id);
         } catch (RuntimeException $exception) {
             // @TODO: handle failed generation
         }
@@ -119,8 +119,8 @@ class WPThumbhash
     ): bool|WP_Error {
         $fileName = basename(get_attached_file($attachmentID));
 
-        if (! static::isEncodableImage($attachmentID)) {
-            static::throw(new InvalidArgumentException(sprintf(
+        if (! self::isEncodableImage($attachmentID)) {
+            self::throw(new InvalidArgumentException(sprintf(
                 'The file is not suitable for encoding: %s',
                 esc_html($fileName)
             )));
@@ -154,7 +154,7 @@ class WPThumbhash
             return $hash;
         }
 
-        update_post_meta($attachmentID, static::META_KEY, $hash);
+        update_post_meta($attachmentID, self::META_KEY, $hash);
 
         return true;
     }
@@ -166,16 +166,16 @@ class WPThumbhash
     {
         $imageID = $imageID->ID ?? $imageID;
 
-        if (! static::isEncodableImage($imageID)) {
-            static::throw(new InvalidArgumentException(sprintf(
+        if (! self::isEncodableImage($imageID)) {
+            self::throw(new InvalidArgumentException(sprintf(
                 'Not an image: %s',
-                esc_html($imageID)
+                esc_html((string) $imageID)
             )));
 
             return null;
         }
 
-        return get_post_meta($imageID, static::META_KEY, true) ?: null;
+        return get_post_meta($imageID, self::META_KEY, true) ?: null;
     }
 
     /**
@@ -198,7 +198,7 @@ class WPThumbhash
         $strategy = RenderStrategy::tryFrom($strategyName);
 
         if (! $strategy) {
-            static::throw(new InvalidArgumentException(sprintf(
+            self::throw(new InvalidArgumentException(sprintf(
                 "do_action(\"wp-thumbhash/render\") was called wrong.
                 Invalid strategy '$strategyName' provided.
                 Available strategies: %s",
@@ -208,7 +208,7 @@ class WPThumbhash
         }
 
         try {
-            echo static::render($imageID, $strategy);
+            echo self::render($imageID, $strategy);
         } catch (Exception $e) {
             /** fail silently in the frontend */
             $message = $e->getMessage();
@@ -224,7 +224,7 @@ class WPThumbhash
         int|WP_Post $imageID,
         RenderStrategy $strategy = RenderStrategy::CANVAS
     ): ?string {
-        if (! $value = static::getHash($imageID)) {
+        if (! $value = self::getHash($imageID)) {
             return null;
         }
 
@@ -249,7 +249,7 @@ class WPThumbhash
     public static function getAssetURI(string $path): string
     {
         $uri = baseURL().'/'.ltrim($path, '/');
-        $file = static::getAssetPath($path);
+        $file = self::getAssetPath($path);
 
         if (file_exists($file)) {
             $version = filemtime($file);
