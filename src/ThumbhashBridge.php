@@ -116,6 +116,8 @@ class ThumbhashBridge
 
     /**
      * Extract the size and pixels from an image
+     *
+     * @return array{int, int, array<int>}
      */
     private static function extractSizeAndPixels(
         ImageDriver $driver,

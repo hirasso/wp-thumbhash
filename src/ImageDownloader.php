@@ -53,7 +53,7 @@ class ImageDownloader
         return $file;
     }
 
-    public function destroy()
+    public function destroy(): void
     {
         if ($this->file) {
             wp_delete_file($this->file);

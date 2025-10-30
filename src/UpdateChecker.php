@@ -11,7 +11,7 @@ use YahnisElsts\PluginUpdateChecker\v5\PucFactory;
  */
 class UpdateChecker
 {
-    public static function init(string $entryPoint)
+    public static function init(string $entryPoint): void
     {
         /** get vendorName and name from the composer.json */
         $composerJSON = json_decode(file_get_contents(baseDir().'/composer.json'));
@@ -51,6 +51,9 @@ class UpdateChecker
 
     /**
      * Only keep the "latest_release" strategy
+     *
+     * @param  array<string, mixed>  $strategies
+     * @return array<string, mixed>
      */
     public static function update_strategies(array $strategies): array
     {

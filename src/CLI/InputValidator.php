@@ -10,6 +10,9 @@ final class InputValidator
         protected SniccoStyle $io
     ) {}
 
+    /**
+     * @param  array<mixed>  $input
+     */
     public function isNumericArray(array $input, string $message): bool
     {
         $nonNumericValues = array_diff($input, array_filter($input, 'is_numeric'));

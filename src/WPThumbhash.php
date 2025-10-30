@@ -29,7 +29,7 @@ class WPThumbhash
     /**
      * Initialize the plugin
      */
-    public static function init()
+    public static function init(): void
     {
         // Hook for generating a thumbhash on upload
         add_action('add_attachment', [self::class, 'handleAddAttachment']);
@@ -181,7 +181,7 @@ class WPThumbhash
     /**
      * Throw an exception if WP_DEBUG is true
      */
-    public static function throw(Exception $exception)
+    public static function throw(Exception $exception): void
     {
         if (defined('WP_DEBUG') && WP_DEBUG) {
             throw $exception;
@@ -194,7 +194,7 @@ class WPThumbhash
     public static function doActionRender(
         int|WP_Post $imageID,
         ?string $strategyName = 'canvas'
-    ) {
+    ): void {
         $strategy = RenderStrategy::tryFrom($strategyName);
 
         if (! $strategy) {
@@ -261,6 +261,8 @@ class WPThumbhash
 
     /**
      * Get args for querying images
+     *
+     * @return array<string, mixed>
      */
     public static function getQueryArgs(QueryArgsCompare $compare): array
     {

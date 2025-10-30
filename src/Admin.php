@@ -11,11 +11,11 @@ use WP_Post;
 
 class Admin
 {
-    public static $assetHandle = 'wp-thumbhash-admin';
+    public static string $assetHandle = 'wp-thumbhash-admin';
 
-    public static $ajaxAction = 'generate_thumbhash';
+    public static string $ajaxAction = 'generate_thumbhash';
 
-    public static function init()
+    public static function init(): void
     {
         add_filter('attachment_fields_to_edit', [self::class, 'attachmentFieldsToEdit'], 10, 2);
         add_action('admin_enqueue_scripts', [self::class, 'enqueueAssets']);
@@ -58,6 +58,9 @@ class Admin
     /**
      * Render the placeholder field
      * Uses a custom element for simple self-initialization
+     *
+     * @param  array<string, mixed>  $fields
+     * @return array<string, mixed>
      */
     public static function attachmentFieldsToEdit(
         array $fields,
@@ -112,7 +115,7 @@ class Admin
 
         </thumbhash-attachment-field>
 
-<?php return ob_get_clean();
+<?php return ob_get_clean() ?: '';
     }
 
     /**

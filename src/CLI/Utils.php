@@ -38,7 +38,7 @@ class Utils
     /**
      * Trunkate a string in the middle if it's too long
      */
-    private static function truncateMiddle(string $string, int $maxLength = 40, string $placeholder = '...')
+    private static function truncateMiddle(string $string, int $maxLength = 40, string $placeholder = '...'): string
     {
         $strLength = strlen($string);
 

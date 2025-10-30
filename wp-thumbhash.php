@@ -42,13 +42,13 @@ if (is_readable(__DIR__.'/vendor/scoper-autoload.php')) {
 }
 
 /** Get the plugin's base URL */
-function baseURL()
+function baseURL(): string
 {
     return plugins_url('', __FILE__);
 }
 
 /** Get the plugin's base directory */
-function baseDir()
+function baseDir(): string
 {
     return __DIR__;
 }
