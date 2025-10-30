@@ -47,7 +47,7 @@ class UploadsDir
         }
 
         $dir = self::getDir();
-        $files = array_filter(list_files($dir), 'is_file');
+        $files = array_filter(list_files($dir) ?: [], 'is_file');
         $before = time() - $age;
 
         foreach ($files as $file) {

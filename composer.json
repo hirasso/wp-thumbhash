@@ -20,6 +20,7 @@
   "require-dev": {
     "laravel/pint": "^1.19",
     "pestphp/pest": "^1.23",
+    "php-stubs/wp-cli-stubs": "^2.12",
     "phpstan/extension-installer": "^1.4",
     "phpstan/phpstan": "^2.1",
     "roots/wordpress": "*",
