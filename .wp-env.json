@@ -3,8 +3,7 @@
   "core": null,
   "plugins": [
     ".",
-    "./tests/E2E/e2e-plugin.php",
-    "https://downloads.wordpress.org/plugin/debug-bar.latest-stable.zip"
+    "./tests/E2E/e2e-plugin.php"
   ],
   "phpVersion": "8.2",
   "port": 9783,
