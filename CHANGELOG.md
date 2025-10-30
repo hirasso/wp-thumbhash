@@ -1,5 +1,12 @@
 # Changelog
 
+## 0.1.11
+
+### Patch Changes
+
+- 29343d2: Increase phpstan level to 6
+- 42366d6: Increase phpstan level to 5
+
 ## 0.1.10
 
 ### Patch Changes
