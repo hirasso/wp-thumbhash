@@ -1,4 +1,5 @@
 name: Run Shared Setup
+description: Shared setup for everything
 
 inputs:
   php-version:
