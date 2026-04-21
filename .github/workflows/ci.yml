@@ -64,7 +64,7 @@ jobs:
         uses: godaddy-wordpress/setup-wp-env@v1
         with:
           phpVersion: 8.3
-          plugins: '["./scoped/wp-thumbhash/", "./tests/E2E/e2e-plugin.php"]'
+          plugins: '["./scoped/wp-thumbhash/", "./tests/E2E/e2e-plugin/"]'
 
       - name: Run Playwright Tests Against the Scoped Release
         run: |

@@ -38,7 +38,7 @@
       "Hirasso\\WPThumbhash\\Tests\\": "tests/"
     },
     "exclude-from-classmap": [
-      "tests/E2E/e2e-plugin.php"
+      "tests/E2E/e2e-plugin/"
     ]
   },
   "config": {

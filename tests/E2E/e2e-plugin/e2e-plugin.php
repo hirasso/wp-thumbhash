@@ -44,6 +44,7 @@ class WPThumbhashE2EPlugin
                 'post_type' => 'post',
             ]);
         }
+
         if (! count($this->getImages())) {
             assert(file_exists('__fixtures__/original.jpg'));
             $this->uploadImage('__fixtures__/original.jpg');
