@@ -10,14 +10,11 @@ declare(strict_types=1);
 namespace Hirasso\WPThumbhash;
 
 use Exception;
-use Hirasso\WPThumbhash\CLI\Commands\ClearCommand;
-use Hirasso\WPThumbhash\CLI\Commands\GenerateCommand;
+use Hirasso\WPThumbhash\CLI\ThumbhashCommand;
 use Hirasso\WPThumbhash\Enums\QueryArgsCompare;
 use Hirasso\WPThumbhash\Enums\RenderStrategy;
 use InvalidArgumentException;
 use RuntimeException;
-use Snicco\Component\BetterWPCLI\CommandLoader\ArrayCommandLoader;
-use Snicco\Component\BetterWPCLI\WPCLIApplication;
 use WP_CLI;
 use WP_Error;
 use WP_Post;
@@ -42,14 +39,9 @@ class WPThumbhash
         // action-based interface
         add_action('wp-thumbhash/render', [self::class, 'doActionRender'], 10, 2);
 
-        // Initialize WP CLI application
+        // Register WP CLI commands
         if (defined('WP_CLI') && class_exists(WP_CLI::class)) {
-
-            $cli = new WPCLIApplication('thumbhash', new ArrayCommandLoader([
-                GenerateCommand::class,
-                ClearCommand::class,
-            ]));
-            $cli->registerCommands();
+            WP_CLI::add_command('thumbhash', ThumbhashCommand::class);
         }
 
         Admin::init();
