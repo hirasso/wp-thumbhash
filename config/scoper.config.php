@@ -54,7 +54,7 @@ return [
     'php-version' => ComposerJSON::instance()->phpVersion,
     // 'exclude-files' => [...$excludeFiles],
 
-    'exclude-classes' => [...$wpClasses, 'WP_CLI', 'WP_CLI_Command'],
+    'exclude-classes' => [...$wpClasses, 'WP_CLI'],
     'exclude-functions' => [...$wpFunctions],
     'exclude-constants' => [...$wpConstants, 'WP_CLI', 'true', 'false'],
 

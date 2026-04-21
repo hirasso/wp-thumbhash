@@ -8,10 +8,9 @@ use Hirasso\WPThumbhash\Enums\QueryArgsCompare;
 use Hirasso\WPThumbhash\UploadsDir;
 use Hirasso\WPThumbhash\WPThumbhash;
 use WP_CLI;
-use WP_CLI_Command;
 use WP_Query;
 
-class ThumbhashCommand extends WP_CLI_Command
+final readonly class ThumbhashCommand
 {
     /**
      * Generate thumbhash placeholders.
