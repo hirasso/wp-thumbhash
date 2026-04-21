@@ -46,8 +46,9 @@ class WPThumbhashE2EPlugin
         }
 
         if (! count($this->getImages())) {
-            assert(file_exists('__fixtures__/original.jpg'));
-            $this->uploadImage('__fixtures__/original.jpg');
+            $image = '/var/www/html/__fixtures__/original.jpg';
+            assert(file_exists($image));
+            $this->uploadImage($image);
         }
     }
 

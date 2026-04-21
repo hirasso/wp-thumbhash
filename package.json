@@ -11,6 +11,7 @@
     "version": "pnpm changeset version && config/cli/cli.js version:patch",
     "pot:make": "SLUG=$(basename \"$(pwd)\"); wp i18n make-pot . languages/$SLUG.pot --include=src,$SLUG.php",
     "env": "wp-env",
+    "wp": "wp-env run cli wp --env-cwd=wp-content/plugins/wp-thumbhash",
     "env:cli": "wp-env run cli --env-cwd=wp-content/plugins/wp-thumbhash",
     "env:cli:tests": "wp-env run tests-cli --env-cwd=wp-content/plugins/wp-thumbhash",
     "launch": "open http://localhost:9783",
