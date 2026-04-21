@@ -1,10 +1,5 @@
 <?php
 
-/*
- * Copyright (c) Rasso Hilber
- * https://rassohilber.com
- */
-
 declare(strict_types=1);
 
 namespace Hirasso\WPThumbhash\CLI;
