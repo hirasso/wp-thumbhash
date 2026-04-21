@@ -1,5 +1,11 @@
 # Changelog
 
+## 0.1.12
+
+### Patch Changes
+
+- 8c35dea: PHP 8.4 compatibility
+
 ## 0.1.11
 
 ### Patch Changes
