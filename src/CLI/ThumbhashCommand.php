@@ -26,7 +26,7 @@ class ThumbhashCommand extends WP_CLI_Command
      *
      * @when after_wp_load
      *
-     * @param  array<int, string>  $args
+     * @param  list<string>  $args
      * @param  array<string, mixed>  $assoc_args
      */
     public function generate(array $args, array $assoc_args): void
@@ -103,7 +103,7 @@ class ThumbhashCommand extends WP_CLI_Command
      *
      * @when after_wp_load
      *
-     * @param  array<int, string>  $args
+     * @param  list<string>  $args
      */
     public function clear(array $args): void
     {
@@ -153,10 +153,12 @@ class ThumbhashCommand extends WP_CLI_Command
         if (empty($nonNumeric)) {
             return;
         }
+
         $values = implode(', ', array_map(
             fn ($v) => "'".sanitize_text_field((string) $v)."'",
             $nonNumeric
         ));
+
         WP_CLI::error("Non-numeric ids provided: $values");
     }
 }
