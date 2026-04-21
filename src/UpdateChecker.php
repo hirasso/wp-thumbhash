@@ -3,6 +3,7 @@
 namespace Hirasso\WPThumbhash;
 
 use YahnisElsts\PluginUpdateChecker\v5\PucFactory;
+use YahnisElsts\PluginUpdateChecker\v5p6\Vcs\GitHubApi;
 
 /**
  * Check for Updates using Plugin Update Checker
@@ -33,7 +34,7 @@ class UpdateChecker
         /**
          * Expect a "$slug.zip" attached to every release
          *
-         * @var \YahnisElsts\PluginUpdateChecker\v5p5\Vcs\GitHubApi $api
+         * @var GitHubApi $api
          */
         $api = $checker->getVcsApi();
         $api->enableReleaseAssets("/$slug\.zip/i", $api::REQUIRE_RELEASE_ASSETS);
