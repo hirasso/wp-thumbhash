@@ -17,7 +17,7 @@ use ZipArchive;
  * @see https://github.com/YahnisElsts/plugin-update-checker?tab=readme-ov-file#how-to-release-an-update-1
  */
 
-/** @var Symfony\Component\Finder\Finder $finder */
+/** @var \Symfony\Component\Finder\Finder $finder */
 $finder = Finder::class;
 
 /** exclude global WordPress symbols */
