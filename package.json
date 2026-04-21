@@ -26,15 +26,15 @@
     "analyse": "vendor/bin/phpstan analyse --memory-limit=2G"
   },
   "devDependencies": {
-    "@changesets/cli": "^2.27.9",
-    "@hirasso/thumbhash-custom-element": "^0.5.4",
-    "@playwright/test": "^1.49.1",
-    "@types/node": "^22.10.5",
-    "@wordpress/env": "^10.11.0",
-    "fast-glob": "^3.3.2",
-    "husky": "^9.1.1",
-    "lint-staged": "^15.2.7",
+    "@changesets/cli": "^2.31.0",
+    "@hirasso/thumbhash-custom-element": "^0.5.8",
+    "@playwright/test": "^1.59.1",
+    "@types/node": "^22.19.17",
+    "@wordpress/env": "^10.39.0",
+    "fast-glob": "^3.3.3",
+    "husky": "^9.1.7",
+    "lint-staged": "^15.5.2",
     "picocolors": "^1.1.1",
-    "prettier": "^3.3.3"
+    "prettier": "^3.8.3"
   }
 }
