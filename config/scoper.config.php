@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Hirasso\WPThumbhash;
 
 use Exception;
+use Isolated\Symfony\Component\Finder\Finder;
 use ZipArchive;
 
 /**
@@ -16,8 +17,8 @@ use ZipArchive;
  * @see https://github.com/YahnisElsts/plugin-update-checker?tab=readme-ov-file#how-to-release-an-update-1
  */
 
-/** @var Symfony\Component\Finder\Finder $finder */
-$finder = \Isolated\Symfony\Component\Finder\Finder::class;
+/** @var \Symfony\Component\Finder\Finder $finder */
+$finder = Finder::class;
 
 /** exclude global WordPress symbols */
 [$wpClasses, $wpFunctions, $wpConstants] = getWpExcludes();

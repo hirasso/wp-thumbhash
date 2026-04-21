@@ -31,3 +31,10 @@ dist/
 **/playwright/.auth
 playwright-results.json
 .wp-env.override.json
+
+# the uploads dir that maps into wp-env to fix permissions issues
+tests/uploads/*
+!tests/uploads/.gitkeep
+
+# agent plans
+plan.md

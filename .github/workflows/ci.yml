@@ -6,8 +6,9 @@ on:
       main
   pull_request:
 
+# Cancel all previous workflow runs for pull requests that have not completed
 concurrency:
-  group: ${{ github.workflow }}-${{ github.ref }}
+  group: ${{ github.workflow }}-${{ github.event_name == 'pull_request' && github.head_ref || github.sha }}
   cancel-in-progress: true
 
 jobs:
@@ -22,7 +23,7 @@ jobs:
         php: [8.2, 8.3]
 
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
 
       - name: Run Shared Setup
         uses: ./.github/actions/shared-setup
@@ -30,7 +31,7 @@ jobs:
           php-version: ${{ matrix.php }}
 
       - name: Setup and Start wp-env
-        uses: godaddy-wordpress/setup-wp-env@v1
+        uses: godaddy-wordpress/setup-wp-env@a94fb23f6f0b480767e634b478f615076e2baddf # 1.0.0
         with:
           phpVersion: ${{ matrix.php }}
 
@@ -48,7 +49,7 @@ jobs:
       fail-fast: true
 
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
 
       - name: Run Shared Setup
         uses: ./.github/actions/shared-setup
@@ -61,16 +62,16 @@ jobs:
           config/cli/cli.js release:create
 
       - name: Setup and Start wp-env
-        uses: godaddy-wordpress/setup-wp-env@v1
+        uses: godaddy-wordpress/setup-wp-env@a94fb23f6f0b480767e634b478f615076e2baddf # 1.0.0
         with:
           phpVersion: 8.3
-          plugins: '["./scoped/wp-thumbhash/", "./tests/E2E/e2e-plugin.php"]'
+          plugins: '["./scoped/wp-thumbhash/", "./tests/E2E/e2e-plugin/"]'
 
       - name: Run Playwright Tests Against the Scoped Release
         run: |
           pnpm run test:e2e
 
-      - uses: daun/playwright-report-summary@v3
+      - uses: daun/playwright-report-summary@1229105480a2a4bdd91598d8a146fbab41343fce # v3.11.0
         if: always()
         with:
           report-file: playwright-results.json

@@ -3,7 +3,7 @@
   "core": null,
   "plugins": [
     ".",
-    "./tests/E2E/e2e-plugin.php"
+    "./tests/E2E/e2e-plugin"
   ],
   "phpVersion": "8.2",
   "port": 9783,
@@ -13,7 +13,8 @@
     }
   },
   "mappings": {
-    "__fixtures__": "./tests/__fixtures__"
+    "__fixtures__": "./tests/__fixtures__",
+    "wp-content/uploads": "./tests/uploads"
   },
   "lifecycleScripts": {
     "afterStart": "wp-env run cli wp theme activate twentytwentyfive"

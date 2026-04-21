@@ -12,7 +12,6 @@
   "require": {
     "php": ">=8.2",
     "composer/installers": "^2.3",
-    "snicco/better-wp-cli": "^1.2",
     "sniccowp/php-scoper-wordpress-excludes": "*",
     "srwiez/thumbhash": "^1.3",
     "yahnis-elsts/plugin-update-checker": "^5.5"
@@ -24,7 +23,6 @@
     "phpstan/extension-installer": "^1.4",
     "phpstan/phpstan": "^2.1",
     "roots/wordpress": "*",
-    "snicco/better-wp-cli-testing": "^1.10",
     "symfony/var-dumper": "^7.2",
     "yoast/wp-test-utils": "^1.2"
   },
@@ -40,7 +38,7 @@
       "Hirasso\\WPThumbhash\\Tests\\": "tests/"
     },
     "exclude-from-classmap": [
-      "tests/E2E/e2e-plugin.php"
+      "tests/E2E/e2e-plugin/"
     ]
   },
   "config": {

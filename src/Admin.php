@@ -1,8 +1,4 @@
 <?php
-/*
- * Copyright (c) Rasso Hilber
- * https://rassohilber.com
- */
 
 namespace Hirasso\WPThumbhash;
 
