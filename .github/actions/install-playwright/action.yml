@@ -45,12 +45,17 @@ runs:
             core.setOutput("version", version);
           } else core.setFailed("Couldn't get Playwright version");
 
+    - name: Slugify the browser list for the cache key
+      id: browsers
+      shell: bash
+      run: echo "slug=$(echo '${{ inputs.browsers }}' | tr -s ' ' '-')" >> "$GITHUB_OUTPUT"
+
     - name: Cache Playwright
       id: cache
       uses: actions/cache@27d5ce7f107fe9357f9df03efb73ab90386fccae # v5.0.5
       with:
         path: ~/.cache/ms-playwright
-        key: playwright-${{ env.PLAYWRIGHT_VERSION }}
+        key: playwright-${{ runner.os }}-${{ env.PLAYWRIGHT_VERSION }}-${{ steps.browsers.outputs.slug }}
 
     - name: Install Playwright and its dependencies
       shell: bash

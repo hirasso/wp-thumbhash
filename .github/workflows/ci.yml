@@ -13,6 +13,20 @@ concurrency:
 
 jobs:
 
+  static-analysis:
+    name: Static Analysis
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
+
+      - name: Run Shared Setup
+        uses: ./.github/actions/shared-setup
+
+      # PHPStan scans vendor/.wordpress, so it needs composer but not wp-env
+      - name: Run PHPStan
+        run: pnpm run analyse
+
   php-tests:
     name: PHP ${{ matrix.php }} Tests
     runs-on: ubuntu-latest
@@ -30,46 +44,48 @@ jobs:
         with:
           php-version: ${{ matrix.php }}
 
-      - name: Setup and Start wp-env
-        uses: godaddy-wordpress/setup-wp-env@a94fb23f6f0b480767e634b478f615076e2baddf # 1.0.0
+      - name: Start wp-env
+        uses: ./.github/actions/start-wp-env
         with:
-          phpVersion: ${{ matrix.php }}
-
-      - name: Run PHPStan Tests
-        run: pnpm run analyse
+          php-version: ${{ matrix.php }}
 
       - name: Run Pest Tests Against the Unscoped Release
-        run: pnpm run test:pest:ci
+        run: pnpm run test:pest
 
   e2e-tests:
     name: E2E Tests
     runs-on: ubuntu-latest
-
-    strategy:
-      fail-fast: true
 
     steps:
       - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
 
       - name: Run Shared Setup
         uses: ./.github/actions/shared-setup
-        with:
-          php-version: ${{ matrix.php }}
-          playwright: true
 
       - name: Create Release Files
         run: |
           config/cli/cli.js release:create
 
-      - name: Setup and Start wp-env
-        uses: godaddy-wordpress/setup-wp-env@a94fb23f6f0b480767e634b478f615076e2baddf # 1.0.0
+      # Booting wp-env and installing browsers take about as long as each other
+      # and need nothing from one another, so they run side by side
+      - name: Start wp-env
+        uses: ./.github/actions/start-wp-env
         with:
-          phpVersion: 8.3
+          php-version: 8.3
           plugins: '["./scoped/wp-thumbhash/", "./tests/E2E/e2e-plugin/"]'
+          background: true
+
+      - name: Install Playwright
+        uses: ./.github/actions/install-playwright
+        with:
+          browsers: firefox
+
+      - name: Wait for wp-env
+        uses: ./.github/actions/wait-for-wp-env
 
       - name: Run Playwright Tests Against the Scoped Release
         run: |
-          pnpm run test:e2e
+          pnpm run test:e2e --project=firefox
 
       - uses: daun/playwright-report-summary@1229105480a2a4bdd91598d8a146fbab41343fce # v3.11.0
         if: always()

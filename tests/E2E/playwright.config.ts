@@ -69,7 +69,14 @@ export default defineConfig({
 
   /* Configure projects for setup and major browsers */
   projects: [
-    { name: "setup", testMatch: /.*\.setup\.ts/ },
+    {
+      name: "setup",
+      testMatch: /.*\.setup\.ts/,
+      /* Without this the setup project falls back to chromium, which CI does
+       * not install. The auth state it writes is portable JSON, so the browser
+       * it runs in does not have to match the one under test. */
+      use: { ...devices["Desktop Firefox"] },
+    },
     {
       name: "chromium",
       use: {
