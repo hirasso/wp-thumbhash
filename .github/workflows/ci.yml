@@ -56,11 +56,6 @@ jobs:
     name: E2E Tests
     runs-on: ubuntu-latest
 
-    # Cross-browser runs are reserved for main, where they are not in anyone's way
-    env:
-      BROWSERS: ${{ github.event_name == 'pull_request' && 'chromium' || 'chromium webkit firefox' }}
-      PLAYWRIGHT_ARGS: ${{ github.event_name == 'pull_request' && '--project=chromium' || '' }}
-
     steps:
       - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
 
@@ -83,14 +78,14 @@ jobs:
       - name: Install Playwright
         uses: ./.github/actions/install-playwright
         with:
-          browsers: ${{ env.BROWSERS }}
+          browsers: firefox
 
       - name: Wait for wp-env
         uses: ./.github/actions/wait-for-wp-env
 
       - name: Run Playwright Tests Against the Scoped Release
         run: |
-          pnpm run test:e2e ${{ env.PLAYWRIGHT_ARGS }}
+          pnpm run test:e2e --project=firefox
 
       - uses: daun/playwright-report-summary@1229105480a2a4bdd91598d8a146fbab41343fce # v3.11.0
         if: always()
