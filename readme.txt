@@ -1,5 +1,6 @@
 === WP Thumbhash ===
 Contributors: Rasso Hilber
+Requires PHP: 8.2
 License: GPL-3.0-or-later
 
 Generate and render thumbhash placeholders for your lazy-loaded images 🦦
