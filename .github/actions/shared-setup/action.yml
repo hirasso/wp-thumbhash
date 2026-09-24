@@ -8,6 +8,9 @@ inputs:
   playwright:
     description: Should Playwright be installed?
     default: false
+  coverage:
+    description: The PHP coverage driver to install. Slows down every PHP process, so off by default
+    default: none
 
 runs:
   using: composite
@@ -17,7 +20,7 @@ runs:
       with:
         php-version: ${{ inputs.php-version }}
         tools: composer:v2
-        coverage: xdebug
+        coverage: ${{ inputs.coverage }}
 
     - name: Install Composer Dependencies
       uses: ramsey/composer-install@65e4f84970763564f46a70b8a54b90d033b3bdda # 4.0.0

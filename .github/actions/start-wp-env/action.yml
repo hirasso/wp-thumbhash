@@ -1,0 +1,32 @@
+name: Start wp-env
+description: Configure and start wp-env, using the version pinned in the lockfile
+
+inputs:
+  php-version:
+    description: The PHP version to run WordPress on. Defaults to the one in .wp-env.json
+    default: ""
+  plugins:
+    description: A JSON array of plugins to install and activate, replacing the ones in .wp-env.json
+    default: ""
+
+runs:
+  using: composite
+  steps:
+    # wp-env merges this on top of .wp-env.json
+    - name: Create .wp-env.override.json
+      shell: bash
+      env:
+        PHP_VERSION: ${{ inputs.php-version }}
+        PLUGINS: ${{ inputs.plugins }}
+      run: |
+        jq -n \
+          --arg phpVersion "$PHP_VERSION" \
+          --argjson plugins "${PLUGINS:-null}" \
+          '{}
+            | if $phpVersion != "" then .phpVersion = $phpVersion else . end
+            | if $plugins != null then .plugins = $plugins else . end' \
+          | tee .wp-env.override.json
+
+    - name: Start wp-env
+      shell: bash
+      run: pnpm run env start
