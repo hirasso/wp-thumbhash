@@ -1,5 +1,11 @@
 # Changelog
 
+## 0.1.13
+
+### Patch Changes
+
+- e55e19a: Declare `Requires PHP: 8.2` in `readme.txt` so that the PHP requirement is actually part of the update metadata reported to WordPress
+
 ## 0.1.12
 
 ### Patch Changes
