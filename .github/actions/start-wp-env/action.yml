@@ -8,6 +8,12 @@ inputs:
   plugins:
     description: A JSON array of plugins to install and activate, replacing the ones in .wp-env.json
     default: ""
+  background:
+    description: Boot without blocking, so that slow independent steps can run alongside it
+    default: "false"
+  url:
+    description: The URL to poll for when waiting for a backgrounded boot
+    default: http://localhost:9784
 
 runs:
   using: composite
@@ -28,5 +34,13 @@ runs:
           | tee .wp-env.override.json
 
     - name: Start wp-env
+      if: inputs.background != 'true'
       shell: bash
       run: pnpm run env start
+
+    - name: Start wp-env in the background
+      if: inputs.background == 'true'
+      shell: bash
+      run: |
+        nohup pnpm run env start > wp-env.log 2>&1 &
+        echo $! > wp-env.pid

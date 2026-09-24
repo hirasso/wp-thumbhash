@@ -1,0 +1,42 @@
+name: Wait for wp-env
+description: Block until a backgrounded wp-env boot has the site responding
+
+inputs:
+  url:
+    description: The URL to poll
+    default: http://localhost:9784
+  timeout:
+    description: How many seconds to wait before giving up
+    default: "300"
+
+runs:
+  using: composite
+  steps:
+    - name: Wait for wp-env
+      shell: bash
+      env:
+        URL: ${{ inputs.url }}
+        TIMEOUT: ${{ inputs.timeout }}
+      run: |
+        deadline=$(( SECONDS + TIMEOUT ))
+
+        fail() {
+          echo "::error::$1"
+          cat wp-env.log
+          exit 1
+        }
+
+        until curl -sfo /dev/null "$URL"; do
+          # wp-env only exits once the site is installed, so a dead pid means
+          # either a crash or a boot that finished between two polls
+          if ! kill -0 "$(cat wp-env.pid)" 2>/dev/null; then
+            sleep 5
+            curl -sfo /dev/null "$URL" && break
+            fail "wp-env exited before $URL came up"
+          fi
+          (( SECONDS < deadline )) || fail "Timed out waiting for $URL"
+          sleep 2
+        done
+
+        echo "wp-env is up at $URL"
+        cat wp-env.log
