@@ -6,9 +6,12 @@ import path from "node:path";
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
-/** The URL of the wp-env development site */
-const devURL = "http://localhost:9783";
-const testURL = "http://localhost:9784";
+/** The URLs of the wp-env sites */
+import wpEnv from "../../.wp-env.json" with { type: "json" };
+import wpEnvTest from "../../.wp-env.test.json" with { type: "json" };
+
+const devURL = `http://localhost:${wpEnv.port}`;
+const testURL = `http://localhost:${wpEnvTest.port}`;
 export const baseURL = testURL;
 export const authFile = path.join(__dirname, "playwright/.auth/user.json");
 
@@ -106,7 +109,7 @@ export default defineConfig({
   /* Run your local dev server before starting the tests */
   webServer: {
     url: baseURL,
-    command: "pnpm run env start --update",
+    command: "pnpm run env:test start --update",
     reuseExistingServer: true,
   },
 });

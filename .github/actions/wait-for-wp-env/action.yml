@@ -1,5 +1,5 @@
 name: Wait for wp-env
-description: Block until a backgrounded wp-env boot has the site responding
+description: Block until a backgrounded wp-env boot has finished and the site is responding
 
 inputs:
   url:
@@ -26,17 +26,14 @@ runs:
           exit 1
         }
 
-        until curl -sfo /dev/null "$URL"; do
-          # wp-env only exits once the site is installed, so a dead pid means
-          # either a crash or a boot that finished between two polls
-          if ! kill -0 "$(cat wp-env.pid)" 2>/dev/null; then
-            sleep 5
-            curl -sfo /dev/null "$URL" && break
-            fail "wp-env exited before $URL came up"
-          fi
-          (( SECONDS < deadline )) || fail "Timed out waiting for $URL"
+        # The site already responds while wp-env is still configuring it,
+        # so wait for wp-env to exit instead of polling the URL
+        while kill -0 "$(cat wp-env.pid)" 2>/dev/null; do
+          (( SECONDS < deadline )) || fail "Timed out waiting for wp-env"
           sleep 2
         done
+
+        curl -sfo /dev/null "$URL" || fail "wp-env exited, but $URL is not up"
 
         echo "wp-env is up at $URL"
         cat wp-env.log

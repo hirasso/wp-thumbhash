@@ -1,9 +1,10 @@
 <?php
 
-uses(\Yoast\WPTestUtils\WPIntegration\TestCase::class);
-
+use Hirasso\WPThumbhash\Tests\Unit\TestCase;
 use Hirasso\WPThumbhash\UploadsDir;
 use Hirasso\WPThumbhash\WPThumbhash;
+
+uses(TestCase::class);
 
 test('generates a thumbhash on upload', function () {
     expect(has_action('add_attachment', [WPThumbhash::class, 'handleAddAttachment']))->toBeTruthy();

@@ -8,3 +8,5 @@ parameters:
     - vendor/php-stubs
   ignoreErrors:
     - '#Constant FS_CHMOD_FILE not found#'
+    # defined by WordPress inside wp_initial_constants()
+    - '#Constant MINUTE_IN_SECONDS not found#'

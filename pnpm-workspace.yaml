@@ -1,2 +1,2 @@
 allowBuilds:
-  fs-ext-extra-prebuilt: false
+  fs-ext-extra-prebuilt: true
