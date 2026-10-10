@@ -1,7 +1,8 @@
 <?php
 
-uses(\Yoast\WPTestUtils\WPIntegration\TestCase::class);
+uses(TestCase::class);
 
+use Hirasso\WPThumbhash\Tests\Unit\TestCase;
 use Hirasso\WPThumbhash\UploadsDir;
 use Hirasso\WPThumbhash\WPThumbhash;
 

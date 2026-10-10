@@ -328,17 +328,19 @@ function readFile(path) {
  * Run Unit and E2E tests from the unscoped version
  */
 export function testDev() {
-  if (existsSync(".wp-env.override.json")) {
-    info(`Deleting plugins in .wp-env.override.json...`);
-    const overrides = JSON.parse(readFile(".wp-env.override.json") || "{}");
-    rmSync(".wp-env.override.json", { force: true });
+  if (existsSync(".wp-env.test.override.json")) {
+    info(`Deleting plugins in .wp-env.test.override.json...`);
+    const overrides = JSON.parse(
+      readFile(".wp-env.test.override.json") || "{}",
+    );
+    rmSync(".wp-env.test.override.json", { force: true });
     delete overrides.plugins;
     if (Object.values(overrides).length) {
-      writeJsonFile(".wp-env.override.json", overrides);
+      writeJsonFile(".wp-env.test.override.json", overrides);
     }
 
     info(`Re-Starting wp-env with root folder...`);
-    run(`wp-env start --update`);
+    run(`wp-env --config .wp-env.test.json start --update`);
   }
 
   info(`Running tests against the development version...`);
@@ -383,20 +385,22 @@ export function testRelease() {
 
   if (!isGitHubActions()) {
     /** @type {{ plugins: string[] }} */
-    const { plugins } = JSON.parse(readFile(".wp-env.json") || "{}");
-    const overrides = JSON.parse(readFile(".wp-env.override.json") || "{}");
+    const { plugins } = JSON.parse(readFile(".wp-env.test.json") || "{}");
+    const overrides = JSON.parse(
+      readFile(".wp-env.test.override.json") || "{}",
+    );
 
     overrides.plugins = plugins.map((path) => {
       // return path.replace(/^\.\/?/, `./${scopedFolder}/`);
       return path === "." ? `./${scopedFolder}/` : path;
     });
 
-    writeJsonFile(".wp-env.override.json", overrides);
-    debug("Contents of .wp-env.override.json:", overrides);
+    writeJsonFile(".wp-env.test.override.json", overrides);
+    debug("Contents of .wp-env.test.override.json:", overrides);
 
     info(`Re-Starting wp-env with ${scopedFolder}...`);
 
-    run(`wp-env start --update`);
+    run(`wp-env --config .wp-env.test.json start --update`);
   }
 
   info(`Running e2e tests against ${scopedFolder}...`);

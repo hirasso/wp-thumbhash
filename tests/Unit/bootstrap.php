@@ -6,8 +6,6 @@
 
 namespace Hirasso\WPThumbhash\Tests\Unit;
 
-use Yoast\WPTestUtils\WPIntegration;
-
 define('WP_ENV_DEV_URL', 'http://localhost:9783');
 define('WP_ENV_TEST_URL', 'http://localhost:9784');
 define('FIXTURES_ORIGINAL_IMAGE', '/tests/__fixtures__/original.jpg');
@@ -20,25 +18,37 @@ if (\function_exists('xdebug_disable')) {
 }
 
 /*
- * Load the plugin(s).
+ * The Composer autoloader must be loaded before WordPress, to make the PHPUnit Polyfills available
  */
-require_once \dirname(__DIR__, 2) . '/vendor/yoast/wp-test-utils/src/WPIntegration/bootstrap-functions.php';
+require_once \dirname(__DIR__, 2).'/vendor/autoload.php';
+
+/**
+ * wp-env provides the WordPress PHPUnit test files in WP_TESTS_DIR (`/wordpress-phpunit/`)
+ */
+$testsDir = \getenv('WP_TESTS_DIR');
 
 /**
  * Get access (GLOBAL!!) to tests_add_filter() function.
- * wp-phpunit is located in `/wordpress-phpunit/` in the wp-env container
  */
-require_once WPIntegration\get_path_to_wp_test_dir() . 'includes/functions.php';
+require_once $testsDir.'/includes/functions.php';
 
 \tests_add_filter(
     'muplugins_loaded',
     static function () {
-        require_once \dirname(__DIR__, 2) . '/wp-thumbhash.php';
+        require_once \dirname(__DIR__, 2).'/wp-thumbhash.php';
     }
 );
 
 /*
- * Load WordPress, which will load the Composer autoload file,
- * and load the MockObject autoloader after that.
+ * Start up the WP testing environment.
  */
-WPIntegration\bootstrap_it();
+require_once $testsDir.'/includes/bootstrap.php';
+
+/**
+ * wp-phpunit's expectDeprecated() calls PHPUnit\Util\Test::parseTestMethodAnnotations(),
+ * removed in PHPUnit 10+. No @expectedDeprecated annotations are used here.
+ */
+class TestCase extends \WP_UnitTestCase
+{
+    public function expectDeprecated(): void {}
+}

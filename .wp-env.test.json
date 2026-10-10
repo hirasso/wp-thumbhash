@@ -1,0 +1,18 @@
+{
+  "$schema": "https://schemas.wp.org/trunk/wp-env.json",
+  "testsEnvironment": false,
+  "core": null,
+  "plugins": [
+    ".",
+    "./tests/E2E/e2e-plugin"
+  ],
+  "phpVersion": "8.2",
+  "port": 9784,
+  "mappings": {
+    "__fixtures__": "./tests/__fixtures__",
+    "wp-content/uploads": "./tests/uploads"
+  },
+  "lifecycleScripts": {
+    "afterStart": "wp-env --config .wp-env.test.json run cli wp theme activate twentytwentyfive"
+  }
+}

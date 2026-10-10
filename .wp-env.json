@@ -1,5 +1,6 @@
 {
   "$schema": "https://schemas.wp.org/trunk/wp-env.json",
+  "testsEnvironment": false,
   "core": null,
   "plugins": [
     ".",
@@ -7,11 +8,6 @@
   ],
   "phpVersion": "8.2",
   "port": 9783,
-  "env": {
-    "tests": {
-      "port": 9784
-    }
-  },
   "mappings": {
     "__fixtures__": "./tests/__fixtures__",
     "wp-content/uploads": "./tests/uploads"
