@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "a1f2e8d6f01945eff4af668584c5bbdf",
+    "content-hash": "c2f883c662854403baa36efe1abe0673",
     "packages": [
         {
             "name": "composer/installers",
@@ -201,16 +201,16 @@
         },
         {
             "name": "srwiez/thumbhash",
-            "version": "v1.5.0",
+            "version": "v1.6.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/SRWieZ/thumbhash.git",
-                "reference": "56f4ed1ca361ba39b243b33e5f47867a833b4973"
+                "reference": "ef50e204c4f3adbea23e1ab8b70fd677569a3824"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/SRWieZ/thumbhash/zipball/56f4ed1ca361ba39b243b33e5f47867a833b4973",
-                "reference": "56f4ed1ca361ba39b243b33e5f47867a833b4973",
+                "url": "https://api.github.com/repos/SRWieZ/thumbhash/zipball/ef50e204c4f3adbea23e1ab8b70fd677569a3824",
+                "reference": "ef50e204c4f3adbea23e1ab8b70fd677569a3824",
                 "shasum": ""
             },
             "require": {
@@ -219,7 +219,8 @@
             "require-dev": {
                 "ext-gd": "*",
                 "ext-imagick": "*",
-                "pestphp/pest": "^1.0|^2.0|^3.0|^4.0"
+                "pestphp/pest": "^1.0|^2.0|^3.0|^4.0",
+                "phpbench/phpbench": "^1.2"
             },
             "type": "library",
             "autoload": {
@@ -243,7 +244,7 @@
             "description": "A brief description of your package",
             "support": {
                 "issues": "https://github.com/SRWieZ/thumbhash/issues",
-                "source": "https://github.com/SRWieZ/thumbhash/tree/v1.5.0"
+                "source": "https://github.com/SRWieZ/thumbhash/tree/v1.6.0"
             },
             "funding": [
                 {
@@ -251,7 +252,7 @@
                     "type": "github"
                 }
             ],
-            "time": "2025-11-27T16:03:46+00:00"
+            "time": "2026-10-20T12:16:03+00:00"
         },
         {
             "name": "yahnis-elsts/plugin-update-checker",

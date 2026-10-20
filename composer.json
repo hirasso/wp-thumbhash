@@ -13,7 +13,7 @@
     "php": ">=8.2",
     "composer/installers": "^2.3",
     "sniccowp/php-scoper-wordpress-excludes": "*",
-    "srwiez/thumbhash": "^1.3",
+    "srwiez/thumbhash": "^1.6",
     "yahnis-elsts/plugin-update-checker": "^5.5"
   },
   "require-dev": {
