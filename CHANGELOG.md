@@ -1,5 +1,11 @@
 # Changelog
 
+## 0.1.14
+
+### Patch Changes
+
+- 781dff7: Update `srwiez/thumbhash` to v1.6.0 (~2.4× faster encoding) @see https://github.com/SRWieZ/thumbhash/releases/tag/v1.6.0
+
 ## 0.1.13
 
 ### Patch Changes
