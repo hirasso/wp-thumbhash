@@ -1,5 +1,17 @@
 # Changelog
 
+## 0.2.0
+
+### Minor Changes
+
+- 5dba36e: Prefix dependencies with Strauss instead of php-scoper. The composer package and the release zip are now the same, so composer installs no longer need the `wp-thumbhash-dist` repo. Update `yahnis-elsts/plugin-update-checker` to v5.7
+
+### Patch Changes
+
+- 8a19a22: `wp thumbhash generate`: log unreadable images as failed and continue instead of aborting
+- f5ba703: `wp thumbhash`: use the available terminal width for file names in status lines
+- 8a19a22: Docs: the render strategy is the second argument of `wp-thumbhash/render`
+
 ## 0.1.14
 
 ### Patch Changes
