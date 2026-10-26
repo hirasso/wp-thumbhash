@@ -2320,20 +2320,20 @@
         },
         {
             "name": "roots/wordpress",
-            "version": "6.9.4",
+            "version": "6.9.10",
             "source": {
                 "type": "git",
                 "url": "https://github.com/roots/wordpress.git",
-                "reference": "2fa44383ade9e8ccbb986e95ca70a365c8221eb1"
+                "reference": "eb3d108f216618a858dcaed691e00e68f0ccff9f"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/roots/wordpress/zipball/2fa44383ade9e8ccbb986e95ca70a365c8221eb1",
-                "reference": "2fa44383ade9e8ccbb986e95ca70a365c8221eb1",
+                "url": "https://api.github.com/repos/roots/wordpress/zipball/eb3d108f216618a858dcaed691e00e68f0ccff9f",
+                "reference": "eb3d108f216618a858dcaed691e00e68f0ccff9f",
                 "shasum": ""
             },
             "require": {
-                "roots/wordpress-core-installer": "^3.0",
+                "roots/wordpress-core-installer": "^4.0",
                 "roots/wordpress-no-content": "self.version"
             },
             "type": "metapackage",
@@ -2351,7 +2351,7 @@
             ],
             "support": {
                 "issues": "https://github.com/roots/wordpress/issues",
-                "source": "https://github.com/roots/wordpress/tree/6.9.4"
+                "source": "https://github.com/roots/wordpress/tree/7.1.3"
             },
             "funding": [
                 {
@@ -2359,24 +2359,24 @@
                     "type": "github"
                 }
             ],
-            "time": "2026-03-09T19:47:29+00:00"
+            "time": "2026-03-22T13:26:54+00:00"
         },
         {
             "name": "roots/wordpress-core-installer",
-            "version": "3.0.0",
+            "version": "v4.0.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/roots/wordpress-core-installer.git",
-                "reference": "714d2e2a9e523f6e7bde4810d5a04aedf0ec217f"
+                "reference": "85d3589252eb93eee836facf33b54ce30c565bea"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/roots/wordpress-core-installer/zipball/714d2e2a9e523f6e7bde4810d5a04aedf0ec217f",
-                "reference": "714d2e2a9e523f6e7bde4810d5a04aedf0ec217f",
+                "url": "https://api.github.com/repos/roots/wordpress-core-installer/zipball/85d3589252eb93eee836facf33b54ce30c565bea",
+                "reference": "85d3589252eb93eee836facf33b54ce30c565bea",
                 "shasum": ""
             },
             "require": {
-                "composer-plugin-api": "^1.0 || ^2.0",
+                "composer-plugin-api": "^2.0",
                 "php": ">=7.2.24"
             },
             "conflict": {
@@ -2386,7 +2386,7 @@
                 "johnpbloch/wordpress-core-installer": "*"
             },
             "require-dev": {
-                "composer/composer": "^1.0 || ^2.0",
+                "composer/composer": "^2.0",
                 "phpunit/phpunit": "^8.5"
             },
             "type": "composer-plugin",
@@ -2418,7 +2418,7 @@
             ],
             "support": {
                 "issues": "https://github.com/roots/wordpress-core-installer/issues",
-                "source": "https://github.com/roots/wordpress-core-installer/tree/3.0.0"
+                "source": "https://github.com/roots/wordpress-core-installer/tree/v4.0.0"
             },
             "funding": [
                 {
@@ -2426,27 +2426,27 @@
                     "type": "github"
                 }
             ],
-            "time": "2025-05-23T18:47:25+00:00"
+            "time": "2026-03-22T03:17:23+00:00"
         },
         {
             "name": "roots/wordpress-no-content",
-            "version": "6.9.4",
+            "version": "6.9.10",
             "source": {
                 "type": "git",
                 "url": "https://github.com/WordPress/WordPress.git",
-                "reference": "6.9.4"
+                "reference": "6.9.10"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://downloads.w.org/release/wordpress-6.9.4-no-content.zip",
-                "reference": "6.9.4",
-                "shasum": "8ae812bb54223ef859cd3de37f1c6b1db20e0e6f"
+                "url": "https://downloads.w.org/release/wordpress-6.9.10-no-content.zip",
+                "reference": "6.9.10",
+                "shasum": "b255daa6bfa0736c586b24cb0e87e6902540d4e0"
             },
             "require": {
                 "php": ">= 7.2.24"
             },
             "provide": {
-                "wordpress/core-implementation": "6.9.4"
+                "wordpress/core-implementation": "6.9.10"
             },
             "suggest": {
                 "ext-curl": "Performs remote request operations.",
@@ -2497,7 +2497,7 @@
                     "type": "other"
                 }
             ],
-            "time": "2026-03-11T15:49:55+00:00"
+            "time": "2026-10-06T17:19:32+00:00"
         },
         {
             "name": "sebastian/cli-parser",
