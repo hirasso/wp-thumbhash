@@ -40,6 +40,12 @@ jobs:
       - name: Audit composer dependencies
         run: composer audit
 
+      - name: Verify wp-env core matches composer.lock
+        run: |
+          tools/sync-wp-env-core.sh
+          git diff --exit-code -- .wp-env.json .wp-env.test.json \
+            || { echo "::error::Run tools/sync-wp-env-core.sh and commit .wp-env*.json"; exit 1; }
+
   php-tests:
     name: PHP ${{ matrix.php }} Tests
     runs-on: ubuntu-latest
