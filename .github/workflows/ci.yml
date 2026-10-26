@@ -27,6 +27,14 @@ jobs:
       - name: Run PHPStan
         run: pnpm run analyse
 
+      # extra.strauss is part of composer's content hash, so changing it silently
+      # invalidates the lock
+      - name: Validate composer.json and composer.lock
+        run: composer validate --no-check-all --no-check-publish
+
+      - name: Verify prefixed dependencies
+        run: config/cli/cli.js verify:prefixed
+
   php-tests:
     name: PHP ${{ matrix.php }} Tests
     runs-on: ubuntu-latest
@@ -49,7 +57,7 @@ jobs:
         with:
           php-version: ${{ matrix.php }}
 
-      - name: Run Pest Tests Against the Unscoped Release
+      - name: Run Pest Tests Against the Development Version
         run: pnpm run test:pest
 
   e2e-tests:
@@ -72,7 +80,7 @@ jobs:
         uses: ./.github/actions/start-wp-env
         with:
           php-version: 8.3
-          plugins: '["./scoped/wp-thumbhash/", "./tests/E2E/e2e-plugin/"]'
+          plugins: '["./build/wp-thumbhash/", "./tests/E2E/e2e-plugin/"]'
           background: true
 
       - name: Install Playwright
@@ -83,7 +91,7 @@ jobs:
       - name: Wait for wp-env
         uses: ./.github/actions/wait-for-wp-env
 
-      - name: Run Playwright Tests Against the Scoped Release
+      - name: Run Playwright Tests Against the Release
         run: |
           pnpm run test:e2e --project=firefox
 

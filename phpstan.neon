@@ -6,6 +6,7 @@ parameters:
   scanDirectories:
     - vendor/.wordpress
     - vendor/php-stubs
+    - vendor-prefixed
   ignoreErrors:
     - '#Constant FS_CHMOD_FILE not found#'
     # defined by WordPress inside wp_initial_constants()
