@@ -24,5 +24,6 @@
       ],
       "groupName": "prefixed dependencies"
     }
-  ]
+  ],
+  "dependencyDashboard": false
 }
