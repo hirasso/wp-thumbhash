@@ -1,5 +1,9 @@
 # Installation
 
+The plugin ships as one directory regardless of how it is installed: its dependencies are prefixed and committed, so the composer package and the release zip contain the same files. Sites that install via composer can therefore also update through the WP admin.
+
+A WP admin update still leaves the site's `composer.lock` at the version composer installed. Run `composer update hirasso/wp-thumbhash` afterwards, or the next `composer install` reinstates the older version.
+
 ## Via Composer
 
 ```shell
