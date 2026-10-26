@@ -56,10 +56,11 @@ pnpm test             # Pest + reset test env + e2e
 - Keep new code DRY! Propose deduplicating existing code. Ask if unsure.
 - Prefer fewer, bigger classes: bundle related functionality in one class/file instead of many small ones. A class doing several related, contained jobs is fine
 - Prefer WordPress-native functionality over reimplementing it (e.g. `list_files()` over `glob()`).
+- Runtime dependencies go in `require-dev` + `extra.strauss.packages`, never `require`. Use the prefixed namespace (`Hirasso\WPThumbhash\Vendor\...`) in `src/`. After changing one: `composer prefix`, then `config/cli/cli.js verify:prefixed`
 
 ## Do not touch without explicit request
 
-- Release tooling (`pnpm version`, `.changeset/`, `.github/workflows/`, `config/cli/` dist commands)
+- Release tooling (`pnpm version`, `.changeset/`, `.github/workflows/`, `config/cli/` release commands)
 - No commits without explicit request
 - do not edit TODO files
 
@@ -79,7 +80,9 @@ pnpm test             # Pest + reset test env + e2e
 | `src/CLI/` | WP-CLI `thumbhash` command |
 | `src/Enums/` | Enums |
 | `assets/` | Admin JS/CSS, thumbhash custom element |
-| `config/` | php-scoper, CLI helpers (`config/cli/cli.js`), stubs |
+| `vendor-prefixed/` | Dependencies prefixed by Strauss (committed, don't edit) |
+| `config/` | CLI helpers (`config/cli/cli.js`), stubs |
+| `tools/` | wp-env lifecycle scripts, `strauss.phar` |
 | `docs/` | Installation and usage docs |
 | `tests/Unit/` | Pest tests (run in wp-env test env) |
 | `tests/E2E/` | Playwright e2e tests + helper plugin |
