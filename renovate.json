@@ -1,31 +1,28 @@
 {
   "$schema": "https://docs.renovatebot.com/renovate-schema.json",
-  "extends": ["config:recommended", "helpers:pinGitHubActionDigests"],
+  "description": "Only dependencies that ship in the release zip. Dev tooling is updated by hand.",
+  "extends": ["config:recommended"],
+  "enabledManagers": ["composer"],
   "schedule": ["before 6am on monday"],
   "timezone": "Europe/Berlin",
   "ignorePaths": ["vendor-prefixed/**"],
+  "gitIgnoredAuthors": ["bot@rassohilber.com"],
   "packageRules": [
     {
-      "description": "One PR for all non-major updates",
-      "matchUpdateTypes": ["minor", "patch", "digest", "pin", "pinDigest"],
-      "groupName": "non-major dependencies"
+      "description": "Disable everything except the prefixed dependencies",
+      "matchPackageNames": [
+        "!srwiez/thumbhash",
+        "!yahnis-elsts/plugin-update-checker"
+      ],
+      "enabled": false
     },
     {
-      "description": "Prefixed dependencies need `composer prefix` on the branch, see AGENTS.md",
+      "description": "The Renovate Sync workflow runs `composer prefix` on the branch",
       "matchPackageNames": [
         "srwiez/thumbhash",
         "yahnis-elsts/plugin-update-checker"
       ],
-      "groupName": "prefixed dependencies",
-      "prBodyNotes": [
-        "Run `composer prefix` on this branch and commit `vendor-prefixed/`, otherwise `verify:prefixed` fails."
-      ]
-    },
-    {
-      "description": "WordPress core is pinned in .wp-env*.json; the Renovate Sync workflow updates it on the branch",
-      "matchPackageNames": ["roots/wordpress"],
-      "groupName": "wordpress core"
+      "groupName": "prefixed dependencies"
     }
-  ],
-  "gitIgnoredAuthors": ["bot@rassohilber.com"]
+  ]
 }
