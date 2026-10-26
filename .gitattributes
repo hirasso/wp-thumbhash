@@ -19,7 +19,6 @@ pnpm-workspace.yaml export-ignore
 postcss.config.cjs export-ignore
 bin export-ignore
 *.sh export-ignore
-config/ export-ignore
 tools/ export-ignore
 .husky/ export-ignore
 .lintstagedrc.js export-ignore

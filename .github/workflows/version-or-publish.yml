@@ -58,7 +58,7 @@ jobs:
 
       # Run this before changesets, to make sure releases actually work
       - name: Create Release Files
-        run: config/cli/cli.js release:create
+        run: tools/cli/cli.js release:create
 
       # Run changesets action either if there are unreleased changesets (= a PR must be created)
       # or if the commit message matches the release PR (= new versions must be published to NPM)

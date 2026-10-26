@@ -33,7 +33,7 @@ jobs:
         run: composer validate --no-check-all --no-check-publish
 
       - name: Verify prefixed dependencies
-        run: config/cli/cli.js verify:prefixed
+        run: tools/cli/cli.js verify:prefixed
 
   php-tests:
     name: PHP ${{ matrix.php }} Tests
@@ -72,7 +72,7 @@ jobs:
 
       - name: Create Release Files
         run: |
-          config/cli/cli.js release:create
+          tools/cli/cli.js release:create
 
       # Booting wp-env and installing browsers take about as long as each other
       # and need nothing from one another, so they run side by side

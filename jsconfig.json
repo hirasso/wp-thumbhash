@@ -8,6 +8,6 @@
   },
   "include": [
     "./assets/*.js",
-    "./config/cli/*.js"
+    "./tools/cli/*.js"
   ],
 }

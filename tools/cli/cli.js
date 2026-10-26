@@ -8,14 +8,11 @@ import pc from "picocolors";
 const { blue, red, bold } = pc;
 
 import {
-  dd,
   createRelease,
-  testRelease,
   patchVersion,
   isAtRootDir,
   validatePHPVersion,
   verifyPrefixedDependencies,
-  testDev,
   error,
 } from "./support.js";
 import { exit } from "node:process";
@@ -51,14 +48,6 @@ const commands = {
   "version:patch": {
     fn: patchVersion,
     description: "Patch the version in the main plugin file",
-  },
-  "test:dev": {
-    fn: testDev,
-    description: "Run tests against the development version of the plugin",
-  },
-  "test:release": {
-    fn: testRelease,
-    description: "Run tests against the release version of the plugin",
   },
   help: {
     fn: printUsage,

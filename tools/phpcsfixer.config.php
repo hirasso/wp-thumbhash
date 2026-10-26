@@ -13,7 +13,7 @@ use PhpCsFixer\Config;
 use PhpCsFixer\Finder;
 
 $finder = Finder::create()
-    ->in(['src', 'config']) // src/ and config/ folders
+    ->in(['src', 'tools']) // src/ and tools/ folders
     ->append(glob('*.php')); // toplevel php files
 
 return (new Config)
