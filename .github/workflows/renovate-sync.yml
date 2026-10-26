@@ -1,0 +1,42 @@
+name: Renovate Sync
+
+# Renovate updates composer.lock without running composer scripts,
+# so sync the derived files on its branches and commit them back.
+on:
+  pull_request:
+    types: [opened, synchronize, reopened]
+
+permissions:
+  contents: write
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.head_ref }}
+  cancel-in-progress: true
+
+jobs:
+  sync:
+    name: Sync wp-env core
+    if: >-
+      github.actor == 'renovate[bot]'
+      && startsWith(github.head_ref, 'renovate/')
+      && github.event.pull_request.head.repo.full_name == github.repository
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+
+    steps:
+      # A personal token, so that the pushed commit triggers CI again (GITHUB_TOKEN pushes don't)
+      - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
+        with:
+          ref: ${{ github.head_ref }}
+          token: ${{ secrets.HIRASSO_ACTIONS_TOKEN }}
+
+      - name: Sync wp-env core with composer.lock
+        run: tools/sync-wp-env-core.sh
+
+      - name: Commit and push
+        run: |
+          git diff --quiet -- .wp-env.json .wp-env.test.json && exit 0
+          git config user.email "bot@rassohilber.com"
+          git config user.name "Rasso Hilber's Bot"
+          git commit -m "Sync wp-env core with composer.lock" -- .wp-env.json .wp-env.test.json
+          git push

@@ -16,6 +16,7 @@ jobs:
   static-analysis:
     name: Static Analysis
     runs-on: ubuntu-latest
+    timeout-minutes: 10
 
     steps:
       - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
@@ -35,9 +36,20 @@ jobs:
       - name: Verify prefixed dependencies
         run: tools/cli/cli.js verify:prefixed
 
+      # Prefixed dependencies live in require-dev, so audit those too
+      - name: Audit composer dependencies
+        run: composer audit
+
+      - name: Verify wp-env core matches composer.lock
+        run: |
+          tools/sync-wp-env-core.sh
+          git diff --exit-code -- .wp-env.json .wp-env.test.json \
+            || { echo "::error::Run tools/sync-wp-env-core.sh and commit .wp-env*.json"; exit 1; }
+
   php-tests:
     name: PHP ${{ matrix.php }} Tests
     runs-on: ubuntu-latest
+    timeout-minutes: 15
 
     strategy:
       fail-fast: true
@@ -63,6 +75,8 @@ jobs:
   e2e-tests:
     name: E2E Tests
     runs-on: ubuntu-latest
+    # Playwright's browser download sometimes hangs
+    timeout-minutes: 15
 
     steps:
       - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
