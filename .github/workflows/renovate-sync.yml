@@ -1,7 +1,7 @@
 name: Renovate Sync
 
 # Renovate updates composer.lock without running composer scripts,
-# so sync the derived files on its branches and commit them back.
+# so regenerate the derived files on its branches and commit them back.
 on:
   pull_request:
     types: [opened, synchronize, reopened]
@@ -15,13 +15,13 @@ concurrency:
 
 jobs:
   sync:
-    name: Sync wp-env core
+    name: Sync prefixed dependencies and wp-env core
     if: >-
       github.actor == 'renovate[bot]'
       && startsWith(github.head_ref, 'renovate/')
       && github.event.pull_request.head.repo.full_name == github.repository
     runs-on: ubuntu-latest
-    timeout-minutes: 5
+    timeout-minutes: 10
 
     steps:
       # A personal token, so that the pushed commit triggers CI again (GITHUB_TOKEN pushes don't)
@@ -30,13 +30,21 @@ jobs:
           ref: ${{ github.head_ref }}
           token: ${{ secrets.HIRASSO_ACTIONS_TOKEN }}
 
-      - name: Sync wp-env core with composer.lock
-        run: tools/sync-wp-env-core.sh
+      - name: Run Shared Setup
+        uses: ./.github/actions/shared-setup
+
+      # installed.php embeds the commit SHA and is read by nothing, so keep the committed one
+      - name: Regenerate derived files
+        run: |
+          composer prefix --quiet
+          git checkout -- vendor-prefixed/composer/installed.php
+          tools/sync-wp-env-core.sh
 
       - name: Commit and push
         run: |
-          git diff --quiet -- .wp-env.json .wp-env.test.json && exit 0
+          git add -A -- vendor-prefixed .wp-env.json .wp-env.test.json
+          git diff --cached --quiet && exit 0
           git config user.email "bot@rassohilber.com"
           git config user.name "Rasso Hilber's Bot"
-          git commit -m "Sync wp-env core with composer.lock" -- .wp-env.json .wp-env.test.json
+          git commit -m "Regenerate prefixed dependencies and wp-env core"
           git push
