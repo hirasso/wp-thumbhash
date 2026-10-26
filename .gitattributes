@@ -16,6 +16,7 @@
 package.json export-ignore
 pnpm-lock.yaml export-ignore
 pnpm-workspace.yaml export-ignore
+renovate.json export-ignore
 postcss.config.cjs export-ignore
 bin export-ignore
 *.sh export-ignore
