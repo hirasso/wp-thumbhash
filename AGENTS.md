@@ -7,7 +7,7 @@ WordPress plugin generating [ThumbHash](https://evanw.github.io/thumbhash/) plac
 Local URL: derive dynamically via `pnpm launch` / `wp-env status --json`
 
 ```bash
-pnpm env start         # dev env (port 9783)
+pnpm run env start     # dev env (port 9783); `pnpm env` is a pnpm builtin
 pnpm env:test start    # test env (port 9784)
 pnpm wp <command>      # WP-CLI inside the dev env
 ```
