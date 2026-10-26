@@ -11,10 +11,7 @@
   ],
   "require": {
     "php": ">=8.2",
-    "composer/installers": "^2.3",
-    "sniccowp/php-scoper-wordpress-excludes": "*",
-    "srwiez/thumbhash": "^1.6",
-    "yahnis-elsts/plugin-update-checker": "^5.5"
+    "composer/installers": "^2.3"
   },
   "require-dev": {
     "laravel/pint": "^1.19",
@@ -23,7 +20,9 @@
     "phpstan/extension-installer": "^1.4",
     "phpstan/phpstan": "^2.1",
     "roots/wordpress": "*",
+    "srwiez/thumbhash": "^1.6",
     "symfony/var-dumper": "^7.2",
+    "yahnis-elsts/plugin-update-checker": "^5.5",
     "yoast/phpunit-polyfills": "^4.0"
   },
   "minimum-stability": "dev",
@@ -56,13 +55,40 @@
     }
   },
   "scripts": {
+    "prefix": [
+      "sh -c 'test -f ./tools/strauss.phar || curl -sfL https://github.com/BrianHenryIE/strauss/releases/download/0.30.0/strauss.phar -o tools/strauss.phar'",
+      "@php tools/strauss.phar"
+    ],
     "post-install-cmd": "tools/sync-wp-env-core.sh",
-    "post-update-cmd": "tools/sync-wp-env-core.sh",
+    "post-update-cmd": [
+      "@prefix",
+      "tools/sync-wp-env-core.sh"
+    ],
     "test": "pest --no-coverage"
   },
   "scripts-descriptions": {},
   "post-install-cmd": "composer normalize",
   "extra": {
-    "wordpress-install-dir": "vendor/.wordpress"
+    "wordpress-install-dir": "vendor/.wordpress",
+    "strauss": {
+      "target_directory": "vendor-prefixed",
+      "namespace_prefix": "Hirasso\\WPThumbhash\\Vendor\\",
+      "classmap_prefix": "WPThumbhash_Vendor_",
+      "constant_prefix": "WP_THUMBHASH_VENDOR_",
+      "function_prefix": false,
+      "packages": [
+        "srwiez/thumbhash",
+        "yahnis-elsts/plugin-update-checker"
+      ],
+      "exclude_from_prefix": {
+        "packages": [
+          "yahnis-elsts/plugin-update-checker"
+        ]
+      },
+      "delete_vendor_packages": false,
+      "delete_vendor_files": false,
+      "include_modified_date": false,
+      "include_author": false
+    }
   }
 }

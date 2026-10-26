@@ -15,10 +15,12 @@
 *.d.ts export-ignore
 package.json export-ignore
 pnpm-lock.yaml export-ignore
+pnpm-workspace.yaml export-ignore
 postcss.config.cjs export-ignore
 bin export-ignore
 *.sh export-ignore
 config/ export-ignore
+tools/ export-ignore
 .husky/ export-ignore
 .lintstagedrc.js export-ignore
 .nvmrc export-ignore
@@ -29,7 +31,10 @@ phpstan.neon export-ignore
 
 # composer
 composer.lock export-ignore
-composer.dist.json export-ignore
+
+# Prefixed dependencies: shipped, but collapsed in diffs
+vendor-prefixed/** linguist-vendored
+vendor-prefixed/** -diff
 
 # docs
 docs export-ignore

@@ -1,24 +1,18 @@
 import {
-  copyFileSync,
-  cpSync,
   existsSync,
   mkdirSync,
   readFileSync,
   rmSync,
   writeFileSync,
 } from "node:fs";
-import { fileURLToPath } from "node:url";
 import path, { basename, extname, resolve } from "node:path";
 import { execSync } from "node:child_process";
-import { chdir, cwd, env, exit } from "node:process";
+import { cwd, env, exit } from "node:process";
 import pc from "picocolors";
 import fg from "fast-glob";
 
 /** extract colors from common.js module picocolors */
 const { blue, red, bold, gray, green } = pc;
-
-/** Get the equivalent of __filename */
-const __filename = fileURLToPath(import.meta.url);
 
 /**
  * Dump and die
@@ -53,11 +47,11 @@ export function getInfosFromPackageJSON() {
 }
 
 /**
- * Get the path to the scoped folder
+ * Get the path to the release build folder
  */
-export function getScopedFolder() {
+export function getBuildFolder() {
   const { packageName } = getInfosFromComposerJSON();
-  return `scoped/${packageName}`;
+  return `build/${packageName}`;
 }
 
 /**
@@ -157,32 +151,6 @@ export const debug = (...args) => {
 export const isGitHubActions = () => env.GITHUB_ACTIONS === "true";
 
 /**
- * Compare two directories
- * @param {string} dir1
- * @param {string} dir2
- * @param {string[]} ignore
- */
-export const validateDirectories = async (dir1, dir2, ignore = [".git"]) => {
-  try {
-    const pattern = ["*", ...ignore.map((ig) => `!${ig}`)];
-
-    const { files1, files2 } = {
-      files1: await fg(pattern, { cwd: dir1, onlyFiles: false }),
-      files2: await fg(pattern, { cwd: dir2, onlyFiles: false }),
-    };
-
-    return (
-      !!files1.length &&
-      !!files2.length &&
-      files1.length === files2.length &&
-      files1.every((file, index) => file === files2[index])
-    );
-  } catch (err) {
-    error("Error comparing directories:", err);
-  }
-};
-
-/**
  * Extract the first version number from a composer constraint
  * e.g. ">=8.2" => "8.2"
  * @param {string|undefined} constraint
@@ -236,83 +204,149 @@ export function validatePHPVersion() {
 }
 
 /**
- * Create release files for usage in the release asset and dist repo
- * - scopes dependency namespaces using php-scoper
- * - creates a folder scoped/ with all required plugin files
- * - creates a zip file from the scoped/ folder, named after the package
+ * Create the release asset.
+ * Composer serves the tag's git archive; this zip is that same archive.
  */
-export function createRelease() {
+export async function createRelease() {
   headline(`Creating Release Files...`);
 
+  /** Bail early if the committed prefixed dependencies are stale */
+  await verifyPrefixedDependencies();
+
   const { packageName } = getInfosFromComposerJSON();
-  const scopedFolder = getScopedFolder();
+  const buildFolder = getBuildFolder();
 
   line();
-  info(`Creating a scoped release in ${blue(scopedFolder)}...`);
+  info(`Creating a release in ${blue(buildFolder)}...`);
   line();
 
-  /** Ensure php-scoper is available */
-  const phpScoperPath = "config/php-scoper";
-  info("Ensuring php-scoper is available...");
-
-  if (!existsSync(phpScoperPath)) {
-    run(`curl -sL https://github.com/humbug/php-scoper/releases/download/0.18.15/php-scoper.phar -o ${phpScoperPath}`); // prettier-ignore
-    run(`chmod +x ${phpScoperPath}`);
-  }
-
-  info("Installing non-dev composer dependencies...");
-  run("composer install --no-scripts --no-dev --quiet");
-
-  info("Scoping non-dev dependencies...");
-  rmSync(scopedFolder, { recursive: true, force: true });
-  run(`${phpScoperPath} add-prefix --quiet --output-dir=${scopedFolder} --config=config/scoper.config.php`); // prettier-ignore
-  success("Successfully scoped all namespaces!");
-  line();
-
-  info("Re-installing dev depdendencies...");
-  run("composer install --no-scripts --quiet");
-
-  /**
-   * This needs to be done manually, since PUC causes problems when scoped.
-   * All changes to the vendor dir have to run BEFORE dumping the autolaoder!
-   */
-  info(`Copying plugin-update-checker/ to ${scopedFolder}/...`);
-  cpSync(
-    "vendor/yahnis-elsts/plugin-update-checker",
-    `${scopedFolder}/vendor/yahnis-elsts/plugin-update-checker`,
-    { force: true, recursive: true },
-  );
-
-  /** Dump the autoloader in the scoped directory */
-  info(`Dumping the autoloader in ${scopedFolder}...`);
-  run(
-    `composer dump-autoload --working-dir=${scopedFolder} --classmap-authoritative`,
-  );
+  /** --worktree-attributes so an uncommitted .gitattributes still applies */
+  info(`Exporting tracked files to ${buildFolder}...`);
+  rmSync(path.dirname(buildFolder), { recursive: true, force: true });
+  mkdirSync(buildFolder, { recursive: true });
+  run(`git archive --worktree-attributes --format=tar HEAD | tar -x -C ${buildFolder}`); // prettier-ignore
 
   line();
 
-  /** Clean up the scoped directory */
-  info(`Cleaning up ${scopedFolder}...`);
-  ["composer.json", "composer.lock"].forEach((file) => {
-    rmSync(resolve(`${cwd()}/${scopedFolder}`, file), { force: true });
-  });
-
-  info(`Overwriting the composer.json in ${scopedFolder}/...`);
-  cpSync("composer.dist.json", `${scopedFolder}/composer.json`);
+  /** `zip` appends, so a leftover archive would keep stale files */
+  info(`Creating a zip file from ${buildFolder}...`);
+  rmSync(`${packageName}.zip`, { force: true });
+  run(`cd ${buildFolder} && zip -rq "${resolve(cwd(), `${packageName}.zip`)}" . && cd - >/dev/null`); // prettier-ignore
 
   line();
-
-  /** Create a zip file from the scoped directory */
-  info(`Creating a zip file from ${scopedFolder}...`);
-  run(
-    `cd ${scopedFolder} && zip -rq "../../${packageName}.zip" . && cd - >/dev/null`,
-  );
-
-  line();
-  success(`Created a scoped release folder: ${blue(scopedFolder)}`);
-  success(`Created a scoped release asset: ${blue(`${packageName}.zip`)}`);
+  success(`Created a release folder: ${blue(buildFolder)}`);
+  success(`Created a release asset: ${blue(`${packageName}.zip`)}`);
   line();
 }
+
+/** Regenerated with a different value on every commit, and read by nothing */
+const VOLATILE_PREFIXED_FILE = "vendor-prefixed/composer/installed.php";
+
+/**
+ * Verify vendor-prefixed/ matches composer.lock and that prefixing covered every symbol.
+ * Committed build output drifts silently, hence the check in CI.
+ */
+export async function verifyPrefixedDependencies() {
+  const { prefixedNamespaces, namespacePrefix } = getStraussConfig();
+
+  info("Regenerating the prefixed dependencies...");
+  run("composer prefix --quiet");
+
+  /**
+   * installed.php embeds the root package's commit SHA, so it changes on every commit
+   * and could never match what is committed. Nothing reads it, so restore it.
+   */
+  run(`git checkout -- ${VOLATILE_PREFIXED_FILE} 2>/dev/null || true`);
+
+  /** Against the index, not `git status`: staged-but-uncommitted still counts as in sync */
+  const capture = (command) => execSync(command, { encoding: "utf-8" }).trim();
+
+  const changed = [
+    capture("git diff --name-only -- vendor-prefixed"),
+    capture("git ls-files --others --exclude-standard -- vendor-prefixed"),
+  ]
+    .filter(Boolean)
+    .join("\n");
+
+  if (changed.length) {
+    error(
+      `vendor-prefixed/ is out of sync with composer.lock. Run ${blue("composer prefix")} and commit the result:`,
+      `\n${changed}`,
+    );
+  }
+
+  success("vendor-prefixed/ is in sync with composer.lock");
+
+  /** Catches what a static rewriter misses: dynamic class names, names in strings */
+  info("Checking that no unprefixed namespaces survived...");
+
+  const files = await fg("**/*.php", {
+    cwd: "vendor-prefixed",
+    absolute: true,
+  });
+  const leaked = [];
+
+  for (const file of files) {
+    /** Normalise escaped backslashes to match names inside strings too */
+    const contents = readFileSync(file, "utf-8").replaceAll("\\\\", "\\");
+
+    for (const prefixedNamespace of prefixedNamespaces) {
+      const pattern = new RegExp(
+        `(?<!${escapeRegExp(`${namespacePrefix}\\`)})\\b${escapeRegExp(prefixedNamespace)}\\\\`,
+      );
+      if (pattern.test(contents)) {
+        leaked.push(
+          `  - ${prefixedNamespace} in ${path.relative(cwd(), file)}`,
+        );
+      }
+    }
+  }
+
+  if (leaked.length) {
+    error(`Unprefixed namespaces survived in vendor-prefixed/:`, `\n${leaked.join("\n")}`); // prettier-ignore
+  }
+
+  success("No unprefixed namespaces found in vendor-prefixed/");
+}
+
+/**
+ * Read the prefixed namespaces from the generated autoloader rather than hardcoding them.
+ *
+ * @return {{ prefixedNamespaces: string[], namespacePrefix: string }}
+ */
+function getStraussConfig() {
+  const composerJson = JSON.parse(readFile("composer.json") || "{}");
+  const strauss = composerJson.extra?.strauss ?? {};
+  const namespacePrefix = (strauss.namespace_prefix ?? "").replace(/\\+$/, "");
+
+  if (!namespacePrefix) {
+    error(`No extra.strauss.namespace_prefix found in composer.json`);
+  }
+
+  const psr4 = readFile("vendor-prefixed/composer/autoload_psr4.php") || "";
+
+  /** e.g. "Hirasso\\WPThumbhash\\Vendor\\Thumbhash\\" => "Thumbhash" */
+  const prefixedNamespaces = [
+    ...new Set(
+      [...psr4.matchAll(/'((?:[A-Za-z0-9_]+\\\\)+)'\s*=>/g)]
+        .map(([, ns]) => ns.replaceAll("\\\\", "\\").replace(/\\+$/, ""))
+        .filter((ns) => ns.startsWith(`${namespacePrefix}\\`))
+        .map((ns) => ns.slice(namespacePrefix.length + 1)),
+    ),
+  ];
+
+  if (!prefixedNamespaces.length) {
+    error(`No prefixed namespaces found in vendor-prefixed/composer/autoload_psr4.php`); // prettier-ignore
+  }
+
+  return { prefixedNamespaces, namespacePrefix };
+}
+
+/**
+ * Escape a string for literal use inside a RegExp
+ * @param {string} value
+ */
+const escapeRegExp = (value) => value.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
 
 /**
  * Read a file, fall back to undefined if it doesn't exist
@@ -325,7 +359,7 @@ function readFile(path) {
 }
 
 /**
- * Run Unit and E2E tests from the unscoped version
+ * Run Unit and E2E tests from the development version
  */
 export function testDev() {
   if (existsSync(".wp-env.test.override.json")) {
@@ -357,15 +391,15 @@ function writeJsonFile(name, data) {
 }
 
 /**
- * Run E2E tests from the scoped release folder.
+ * Run E2E tests from the release folder.
  * This command is only required for local tests.
  */
-export function testRelease() {
-  createRelease();
+export async function testRelease() {
+  await createRelease();
 
-  const scopedFolder = getScopedFolder();
+  const buildFolder = getBuildFolder();
 
-  // info(`Installing dev dependencies in ${scopedFolder}...`);
+  // info(`Installing dev dependencies in ${buildFolder}...`);
   // const { devDependencies } = getInfosFromComposerJSON();
 
   // const requireDev = Object.entries(devDependencies).reduce(
@@ -381,7 +415,7 @@ export function testRelease() {
   //   [],
   // );
 
-  // run(`composer require --dev ${requireDev.join(" ")} --quiet --working-dir=${scopedFolder} --with-all-dependencies`); // prettier-ignore
+  // run(`composer require --dev ${requireDev.join(" ")} --quiet --working-dir=${buildFolder} --with-all-dependencies`); // prettier-ignore
 
   if (!isGitHubActions()) {
     /** @type {{ plugins: string[] }} */
@@ -391,144 +425,20 @@ export function testRelease() {
     );
 
     overrides.plugins = plugins.map((path) => {
-      // return path.replace(/^\.\/?/, `./${scopedFolder}/`);
-      return path === "." ? `./${scopedFolder}/` : path;
+      // return path.replace(/^\.\/?/, `./${buildFolder}/`);
+      return path === "." ? `./${buildFolder}/` : path;
     });
 
     writeJsonFile(".wp-env.test.override.json", overrides);
     debug("Contents of .wp-env.test.override.json:", overrides);
 
-    info(`Re-Starting wp-env with ${scopedFolder}...`);
+    info(`Re-Starting wp-env with ${buildFolder}...`);
 
     run(`wp-env --config .wp-env.test.json start --update`);
   }
 
-  info(`Running e2e tests against ${scopedFolder}...`);
+  info(`Running e2e tests against ${buildFolder}...`);
   run("pnpm run test:e2e");
-}
-
-/**
- * Prepare the dist folder
- * - clones the dist repo into dist/
- * - checks out the empty root commit in dist/
- * - copies all files from scoped/ into dist/
- */
-export function prepareDistFolder() {
-  headline(`Preparing Dist Folder...`);
-
-  const { fullName } = getInfosFromComposerJSON();
-  const scopedFolder = getScopedFolder();
-
-  /** Check if the scoped folder exists */
-  if (!existsSync(scopedFolder)) {
-    error(`'${scopedFolder}' scoped folder does not exist`);
-  }
-
-  /** Re-create the release files if the scoped folder is not clean */
-  if (existsSync(`${scopedFolder}/phpunit.xml`)) {
-    createRelease();
-  }
-
-  /** Initialize the dist folder if not in GitHub Actions */
-  if (env.GITHUB_ACTIONS !== "true") {
-    info(`Cloning the dist repo into dist/...`);
-    rmSync("dist", { recursive: true, force: true });
-    run(`git clone -b empty git@github.com:${fullName}-dist.git dist/`); // prettier-ignore
-  }
-
-  info(`Checking out the empty tagged root commit..`);
-  run("git -C dist checkout --detach empty");
-
-  line();
-
-  info(`Copying files from ${scopedFolder} to dist/...`);
-  cpSync(scopedFolder, "dist", { recursive: true, force: true });
-
-  success(`Dist folder preparation complete!`);
-}
-
-/**
- * Copy files from one foldder to another
- *
- * @param {string} sourceDir
- * @param {string} destDir
- * @param {string} pattern
- */
-export async function copyFiles(sourceDir, destDir, pattern = "**/*.{js,css}") {
-  const files = await fg(pattern, {
-    cwd: sourceDir,
-    absolute: true,
-  });
-
-  /** Ensure the destination directory exists */
-  mkdirSync(destDir, { recursive: true });
-
-  /** Copy each file */
-  files.forEach((file) => {
-    const relativePath = path.relative(sourceDir, file);
-    const destPath = path.join(destDir, relativePath);
-
-    /** Ensure destination subdirectories exist */
-    mkdirSync(path.dirname(destPath), { recursive: true });
-
-    /** Copy the file */
-    copyFileSync(file, destPath);
-
-    success(`Copied: ${sourceDir}/${relativePath} → ${destPath}`);
-  });
-}
-
-/**
- * Push scoped release files to the dist repo
- */
-export async function pushReleaseToDist() {
-  const rootDir = cwd();
-  const packageInfos = getInfosFromPackageJSON();
-  const { packageName } = getInfosFromComposerJSON();
-  const packageVersion = `v${packageInfos.version}`;
-  const scopedFolder = getScopedFolder();
-
-  const onGitHub = isGitHubActions();
-  debug({ onGitHub });
-
-  const hasValidDirectories = await validateDirectories(scopedFolder, "dist");
-
-  debug({ hasValidDirectories });
-
-  if (hasValidDirectories !== true) {
-    error(
-      `The validation of the scoped and dist folder failed.`,
-      `Did you run 'release:prepare'?`,
-    );
-  }
-
-  /** Ensure the script is running in a GitHub Action */
-  if (!onGitHub) {
-    error(`${basename(__filename)} can only run on GitHub`);
-  }
-
-  if (!packageVersion) {
-    error("Empty package version");
-  }
-
-  info(`Committing and pushing new release: 'v${packageVersion}'...`);
-  line();
-
-  /** Navigate to the dist folder and perform Git operations */
-  try {
-    chdir("dist/");
-    run(`git add .`);
-    run(`git commit -m "Release: ${packageName}@${packageVersion}"`);
-    run(`git tag "${packageVersion}"`);
-    run(`git push origin "${packageVersion}"`);
-    success(`Released '${packageVersion}' to the dist repo.`);
-    chdir(rootDir);
-  } catch (err) {
-    error("An error occurred while releasing the package.", err);
-  }
-
-  /** Change back to the root dir */
-  chdir(rootDir);
 }
 
 /**
