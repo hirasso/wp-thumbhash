@@ -7,7 +7,9 @@ namespace Hirasso\WPThumbhash\CLI;
 use Hirasso\WPThumbhash\Enums\QueryArgsCompare;
 use Hirasso\WPThumbhash\UploadsDir;
 use Hirasso\WPThumbhash\WPThumbhash;
+use RuntimeException;
 use WP_CLI;
+use WP_Error;
 use WP_Query;
 
 final readonly class ThumbhashCommand
@@ -67,7 +69,12 @@ final readonly class ThumbhashCommand
         $count = 0;
         foreach ($images as $id) {
             $fileName = basename(wp_get_attachment_url($id));
-            $thumbhash = WPThumbhash::generate($id);
+
+            try {
+                $thumbhash = WPThumbhash::generate($id);
+            } catch (RuntimeException $exception) {
+                $thumbhash = new WP_Error('generate_failed', $exception->getMessage());
+            }
 
             if (! is_wp_error($thumbhash)) {
                 $status = WP_CLI::colorize('%Ggenerated%n');
@@ -83,6 +90,10 @@ final readonly class ThumbhashCommand
                 end: $status,
                 icon: $icon,
             ));
+
+            if (is_wp_error($thumbhash)) {
+                WP_CLI::warning($thumbhash->get_error_message());
+            }
         }
 
         WP_CLI::success(match ($count) {

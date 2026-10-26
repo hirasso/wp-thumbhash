@@ -38,7 +38,7 @@ wp-thumbhash supports three different render strategies:
 - `img`: Looks the same as `canvas`, but uses an image with a data URI instead
 - `average`: Display a div with the average color of the original image
 
-For example, pass `"average"` as the third argument to display a div with the average color instead:
+For example, pass `"average"` as the second argument to display a div with the average color instead:
 
 ```php
 <figure>
