@@ -16,6 +16,7 @@
  * License: GPL-3.0-or-later
  * License URI: https://www.gnu.org/licenses/gpl-3.0.txt
  * Requires PHP: 8.2
+ * Update URI: https://github.com/hirasso/wp-thumbhash
  * Version: 0.2.0
  */
 

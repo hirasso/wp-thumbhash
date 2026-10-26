@@ -1,0 +1,26 @@
+{
+  "$schema": "https://docs.renovatebot.com/renovate-schema.json",
+  "extends": ["config:recommended", "helpers:pinGitHubActionDigests"],
+  "schedule": ["before 6am on monday"],
+  "timezone": "Europe/Berlin",
+  "ignorePaths": ["vendor-prefixed/**"],
+  "packageRules": [
+    {
+      "description": "One PR for all non-major updates",
+      "matchUpdateTypes": ["minor", "patch", "digest", "pin", "pinDigest"],
+      "groupName": "non-major dependencies"
+    },
+    {
+      "description": "Prefixed dependencies need `composer prefix` on the branch, see AGENTS.md",
+      "matchPackageNames": ["srwiez/thumbhash", "yahnis-elsts/plugin-update-checker"],
+      "groupName": "prefixed dependencies",
+      "prBodyNotes": ["Run `composer prefix` on this branch and commit `vendor-prefixed/`, otherwise `verify:prefixed` fails."]
+    },
+    {
+      "description": "WordPress core is pinned in .wp-env*.json, see tools/sync-wp-env-core.sh",
+      "matchPackageNames": ["roots/wordpress"],
+      "groupName": "wordpress core",
+      "prBodyNotes": ["Run `tools/sync-wp-env-core.sh` on this branch and commit `.wp-env*.json`."]
+    }
+  ]
+}

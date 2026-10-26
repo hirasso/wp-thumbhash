@@ -16,6 +16,7 @@ jobs:
   package-infos:
     name: Get Package Infos
     runs-on: ubuntu-latest
+    timeout-minutes: 5
     if: ${{ github.event.workflow_run.conclusion == 'success' }}
     outputs:
       fullName: ${{ steps.package-infos.outputs.fullName }}
@@ -40,6 +41,7 @@ jobs:
 
     name: Create Version PR or Publish
     runs-on: ubuntu-latest
+    timeout-minutes: 15
 
     strategy:
       fail-fast: true
