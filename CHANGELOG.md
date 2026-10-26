@@ -1,5 +1,11 @@
 # Changelog
 
+## 0.2.1
+
+### Patch Changes
+
+- 7cf9150: Add an `Update URI` header, so WordPress never offers a wordpress.org plugin with the same slug as an update. Regenerate the translation template
+
 ## 0.2.0
 
 ### Minor Changes

@@ -2,7 +2,7 @@
 # This file is distributed under the GPL-3.0-or-later.
 msgid ""
 msgstr ""
-"Project-Id-Version: WP Thumbhash 0.2.0\n"
+"Project-Id-Version: WP Thumbhash 0.2.1\n"
 "Report-Msgid-Bugs-To: https://github.com/hirasso/wp-thumbhash/\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
