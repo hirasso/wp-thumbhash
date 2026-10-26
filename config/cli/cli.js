@@ -11,11 +11,10 @@ import {
   dd,
   createRelease,
   testRelease,
-  pushReleaseToDist,
   patchVersion,
-  prepareDistFolder,
   isAtRootDir,
   validatePHPVersion,
+  verifyPrefixedDependencies,
   testDev,
   error,
 } from "./support.js";
@@ -38,7 +37,11 @@ const __filename = fileURLToPath(import.meta.url);
 const commands = {
   "release:create": {
     fn: createRelease,
-    description: "Create a scoped release",
+    description: "Create a release folder and zip",
+  },
+  "verify:prefixed": {
+    fn: verifyPrefixedDependencies,
+    description: "Verify vendor-prefixed/ is in sync with composer.lock",
   },
   "validate:php": {
     fn: validatePHPVersion,
@@ -49,22 +52,13 @@ const commands = {
     fn: patchVersion,
     description: "Patch the version in the main plugin file",
   },
-  "dist:prepare": {
-    fn: prepareDistFolder,
-    description: "Prepare the folder for pushing to the dist repo",
-  },
-  "dist:push": {
-    fn: pushReleaseToDist,
-    description: "Push the prepared dist folder to the dist repo",
-  },
   "test:dev": {
     fn: testDev,
-    description:
-      "Run tests against the development (unscoped) version of the plugin",
+    description: "Run tests against the development version of the plugin",
   },
   "test:release": {
     fn: testRelease,
-    description: "Run tests against the release (scoped) version of the plugin",
+    description: "Run tests against the release version of the plugin",
   },
   help: {
     fn: printUsage,

@@ -4,13 +4,13 @@ namespace Hirasso\WPThumbhash;
 
 use Exception;
 use Hirasso\WPThumbhash\Enums\ImageDriver;
+use Hirasso\WPThumbhash\Vendor\Thumbhash\Thumbhash;
 use RuntimeException;
-use Thumbhash\Thumbhash;
 use WP_Error;
 use WP_Image_Editor;
 
-use function Thumbhash\extract_size_and_pixels_with_gd;
-use function Thumbhash\extract_size_and_pixels_with_imagick;
+use function Hirasso\WPThumbhash\Vendor\Thumbhash\extract_size_and_pixels_with_gd;
+use function Hirasso\WPThumbhash\Vendor\Thumbhash\extract_size_and_pixels_with_imagick;
 
 class ThumbhashBridge
 {

@@ -56,20 +56,9 @@ jobs:
       - name: Shared Setup
         uses: ./.github/actions/shared-setup
 
-      - name: Checkout Distribution Repository
-        uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
-        with:
-          repository: ${{ needs.package-infos.outputs.fullName }}-dist
-          ref: empty
-          path: dist
-          # secrets.GITHUB_TOKEN is not enough to push to the dist repo (needed later)
-          token: ${{ secrets.HIRASSO_ACTIONS_TOKEN }}
-
       # Run this before changesets, to make sure releases actually work
-      - name: Create Release Files and Prepare Dist Folder
-        run: |
-          config/cli/cli.js release:create
-          config/cli/cli.js dist:prepare
+      - name: Create Release Files
+        run: config/cli/cli.js release:create
 
       # Run changesets action either if there are unreleased changesets (= a PR must be created)
       # or if the commit message matches the release PR (= new versions must be published to NPM)
@@ -97,8 +86,3 @@ jobs:
           echo "✅ Uploaded $ASSET to the release $TAG"
         env:
           GH_TOKEN: ${{ github.token }}
-
-      - name: Push release to dist repo
-        if: steps.cs.outputs.published == 'true'
-        run: |
-          config/cli/cli.js dist:push
