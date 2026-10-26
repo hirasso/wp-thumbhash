@@ -11,12 +11,23 @@ class Utils
      */
     public static function getStatusLine(string $start, string $end, string $icon = ''): string
     {
-        $start = self::truncateMiddle($start);
+        $width = self::getTerminalWidth();
+        $endLength = self::getVisibleLength("$end $icon");
 
-        $dotsAmount = max(0, self::getTerminalWidth() - mb_strlen($start) - mb_strlen($end) - 2);
+        $start = self::truncateMiddle($start, max(40, $width - $endLength - 6));
+
+        $dotsAmount = max(0, $width - mb_strlen($start) - $endLength - 2);
         $dots = str_repeat('.', $dotsAmount);
 
         return sanitize_text_field("$start $dots $end $icon");
+    }
+
+    /**
+     * Get the length of a string without ANSI color codes
+     */
+    private static function getVisibleLength(string $string): int
+    {
+        return mb_strlen(preg_replace('/\e\[[\d;]*m/', '', $string));
     }
 
     /**
