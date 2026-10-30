@@ -29,7 +29,7 @@ pnpm test             # Pest + reset test env + e2e
 - derive from the existing code
 - prefix getters with `get`; methods that request data from a remote API may use `fetch`
 - names must reflect what code does; if a change alters a class/function's behavior, check its name still fits; propose renames that touch call sites
-- use domain terms from `CONTEXT.md` for names, if present
+- use domain terms from `GLOSSARY.md` for names, if present
 - don't rename untouched code
 - keep comments as short as possible
 - do not add comments if not really required
@@ -99,4 +99,4 @@ Canonical vocabulary (`needs-triage`, `needs-info`, `ready-for-agent`, `ready-fo
 
 ### Domain docs
 
-Single-context: `CONTEXT.md` + `docs/adr/` at the repo root.
+Single-context: `GLOSSARY.md` + `docs/adr/` at the repo root.
