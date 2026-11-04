@@ -30,6 +30,9 @@ class UpdateChecker
 
         $checker->setBranch('main');
 
+        /** Remove PUC hooks before the plugin files get deleted */
+        register_deactivation_hook($entryPoint, [$checker, 'removeHooks']);
+
         if ($token = self::getGitHubToken()) {
             $checker->setAuthentication($token);
         }
