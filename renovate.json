@@ -25,5 +25,5 @@
       "groupName": "prefixed dependencies"
     }
   ],
-  "dependencyDashboard": false
+  "dependencyDashboard": { "enabled": false }
 }
